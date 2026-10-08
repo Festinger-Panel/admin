@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css">
   <script>
     (() => { const mode = localStorage.getItem('festieTheme') || 'system'; const dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; document.documentElement.style.setProperty('--red', localStorage.getItem('festieAccent') || '#fa5458'); })();
   </script>
@@ -232,7 +233,7 @@
     .profile-photo-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
     .profile-photo { width: 66px; height: 66px; display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft-heavy) center/cover no-repeat; color: var(--red); font-weight: 600; }
     .settings-button { height: 31px; padding: 0 13px; border: 1px solid #d7d9dd; border-radius: 9px; background: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; cursor: pointer; }
-    .settings-button .app-icon { font-size: 14px; }
+    .settings-button :is(.app-icon, .hgi) { font-size: 14px; line-height: 1; }
     .settings-button.primary { min-width: 130px; border-color: var(--red); background: var(--red); color: white; font-weight: 700; }
     .settings-button.primary:hover:not(:disabled) { border-color: var(--red-dark); background: var(--red-dark); }
     .settings-button:disabled { border-color: #dedfe2; background: #ececef; color: #9a9ca1; cursor: not-allowed; opacity: 1; }
@@ -325,6 +326,7 @@
     .users-tab { height:29px; padding:0 13px; border:1px solid var(--line); border-radius:9px; background:white; font-size:10px; font-weight:700; cursor:pointer; }
     .users-tab.active { border-color:var(--red); background:var(--red); color:white; }
     .users-circle { width:29px; height:29px; padding:0; border:1px solid var(--line); border-radius:50%; background:white; cursor:pointer; }
+    .users-circle .hgi { font-size:14px; line-height:1; }
     .users-inline-search { display:none; height:35px; align-items:center; gap:8px; margin-bottom:10px; padding:0 11px; border:1px solid var(--line); border-radius:10px; }
     .users-inline-search.open { display:flex; }
     .users-inline-search input { width:100%; border:0; outline:0; background:transparent; }
@@ -400,7 +402,12 @@
     .role-chip button { width:auto; padding:0; border:0; background:transparent; color:inherit; font-size:13px; line-height:1; }
     .role-menu { position:absolute; z-index:3; top:calc(100% + 5px); left:0; width:145px; display:none; padding:5px; border:1px solid var(--line); border-radius:10px; background:white; box-shadow:0 8px 22px rgba(0,0,0,.13); }
     .role-menu.open { display:grid; }
-    .role-menu button { width:100%; border:0; padding:8px 9px; background:transparent; text-align:left; }
+    .role-menu button { width:100%; border:0; padding:8px 9px; background:transparent; display:flex; align-items:center; gap:8px; text-align:left; }
+    .role-menu button::before { width:3px; height:10px; flex:0 0 auto; border-radius:999px; background:#7c5ce5; content:""; }
+    .role-menu button[data-role="Team Manager"]::before { background:#2e82d1; }
+    .role-menu button[data-role="Media"]::before { background:#e85d75; }
+    .role-menu button[data-role="Volunteer"]::before { background:#24a06b; }
+    .role-menu button[data-role="Judge"]::before { background:#d89521; }
     .role-menu button:hover { background:color-mix(in srgb,var(--red) 10%,white); }
     .role-menu button.selected { background:color-mix(in srgb,var(--red) 14%,white); color:var(--red); }
     .access-row button.selected { border-style:solid; border-color:var(--red); background:color-mix(in srgb,var(--red) 11%,white); color:var(--red); }
@@ -480,6 +487,7 @@
       <symbol id="icon-ci-users" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 20c0-1.742-1.67-3.223-4-3.773M15 20c0-2.21-2.686-4-6-4s-6 1.79-6 4m12-7a4 4 0 0 0 0-8m-6 8a4 4 0 1 1 0-8a4 4 0 0 1 0 8"/></symbol>
       <symbol id="icon-ci-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17v1a3 3 0 1 1-6 0v-1m6 0H9m6 0h3.59c.383 0 .575 0 .73-.052a1 1 0 0 0 .627-.628c.053-.156.053-.348.053-.734c0-.169 0-.253-.014-.334a1 1 0 0 0-.173-.42c-.048-.067-.108-.127-.227-.246l-.39-.39a.67.67 0 0 1-.196-.474V10a7 7 0 1 0-14 0v3.722a.67.67 0 0 1-.196.474l-.39.39c-.12.12-.179.179-.226.245a1 1 0 0 0-.175.421c-.013.08-.013.165-.013.334c0 .386 0 .578.052.734a1 1 0 0 0 .629.628c.155.052.346.052.729.052H9"/></symbol>
       <symbol id="icon-ci-user-03" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 19c0-2.21-2.686-4-6-4s-6 1.79-6 4m6-7a4 4 0 1 1 0-8a4 4 0 0 1 0 8"/></symbol>
+      <symbol id="icon-hugeicons-paint-brush-01" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="m14 4l6 6-9.5 9.5a4.243 4.243 0 0 1-6 0l-.5-.5a4.243 4.243 0 0 1 0-6Z"/><path d="m8 10l6 6"/><path d="M4.5 19.5 2 22"/></g></symbol>
       <symbol id="icon-codicon-globe" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1C4.141 1 1 4.141 1 8s3.141 7 7 7s7-3.141 7-7s-3.141-7-7-7m0 13c-.578 0-1.314-1.094-1.712-3h3.425c-.398 1.906-1.134 3-1.712 3zm-1.879-4A16 16 0 0 1 6 8c0-.723.044-1.392.121-2h3.757c.077.608.121 1.277.121 2s-.044 1.392-.121 2zM2 8c0-.701.121-1.374.343-2h2.778a16.6 16.6 0 0 0 0 4H2.343A6 6 0 0 1 2 8m6-6c.578 0 1.314 1.094 1.712 3H6.287C6.685 3.094 7.422 2 8 2m2.879 4h2.778c.222.626.343 1.299.343 2s-.121 1.374-.343 2h-2.778a16.6 16.6 0 0 0 0-4m2.316-1h-2.473c-.206-1.062-.523-2.02-.947-2.732A6.03 6.03 0 0 1 13.195 5M6.226 2.268c-.424.712-.742 1.67-.947 2.732H2.806a6.03 6.03 0 0 1 3.42-2.732M2.805 11h2.473c.206 1.062.523 2.02.947 2.732A6.03 6.03 0 0 1 2.805 11m6.969 2.732c.424-.712.742-1.67.947-2.732h2.473a6.03 6.03 0 0 1-3.42 2.732"/></symbol>
       <symbol id="icon-codicon-settings-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6m0 4.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 13.5m9.848 1.072l-1.93-1.63a1.232 1.232 0 0 1 0-1.884l1.93-1.63a.62.62 0 0 0 .189-.662a10.5 10.5 0 0 0-2.209-3.804a.62.62 0 0 0-.668-.168l-2.381.848a1.3 1.3 0 0 1-.419.073a1.24 1.24 0 0 1-1.219-1.014l-.454-2.478a.62.62 0 0 0-.482-.493a10.7 10.7 0 0 0-4.408 0a.62.62 0 0 0-.482.493l-.453 2.478a1.24 1.24 0 0 1-1.638.942l-2.38-.848a.62.62 0 0 0-.669.168a10.5 10.5 0 0 0-2.21 3.805a.615.615 0 0 0 .189.661l1.929 1.63q.077.066.143.143c.444.52.379 1.299-.143 1.742l-1.929 1.63a.62.62 0 0 0-.189.662a10.5 10.5 0 0 0 2.21 3.803a.62.62 0 0 0 .669.168l2.38-.847a1.3 1.3 0 0 1 .419-.072c.588 0 1.11.417 1.219 1.014l.453 2.478a.62.62 0 0 0 .482.493a10.7 10.7 0 0 0 4.408 0a.62.62 0 0 0 .482-.493l.454-2.478q.018-.099.053-.194a1.24 1.24 0 0 1 1.585-.748l2.379.848q.105.036.208.036a.62.62 0 0 0 .461-.204a10.5 10.5 0 0 0 2.208-3.804a.615.615 0 0 0-.189-.662z"/></symbol>
       <symbol id="icon-carbon-light" viewBox="0 0 32 32"><path fill="currentColor" d="M15 2h2v5h-2zm6.688 6.9l3.506-3.506l1.414 1.414l-3.506 3.506zM25 15h5v2h-5zm-3.312 8.1l1.414-1.413l3.506 3.506l-1.414 1.414zM15 25h2v5h-2zm-9.606.192L8.9 21.686l1.414 1.414l-3.505 3.506zM2 15h5v2H2zm3.395-8.192l1.414-1.414L10.315 8.9L8.9 10.314zM16 12a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6"/></symbol>
@@ -522,7 +530,7 @@
         <a class="nav-link" href="#subfests"><span class="icon-box"><iconify-icon icon="ci:ticket-voucher"></iconify-icon></span><span>Subfests</span></a>
         <a class="nav-link" href="dashboard.html?tab=users" data-dashboard-tab="users"><span class="icon-box"><iconify-icon icon="hugeicons:users"></iconify-icon></span><span>Users</span></a>
         <a class="nav-link" href="#website"><span class="icon-box"><iconify-icon icon="codicon:globe"></iconify-icon></span><span>Website</span></a>
-        <a class="nav-link" id="settings-nav" href="#settings"><span class="icon-box"><iconify-icon icon="codicon:settings-gear"></iconify-icon></span><span>Settings</span></a>
+        <a class="nav-link" id="settings-nav" href="#settings"><span class="icon-box"><i class="hgi hgi-stroke hgi-rounded hgi-settings-01" aria-hidden="true"></i></span><span>Settings</span></a>
         <button class="nav-link mobile-more" id="mobile-more-button" type="button"><span class="icon-box"><iconify-icon icon="ci:more-horizontal"></iconify-icon></span><span>More</span></button>
       </nav>
       <div class="sidebar-footer">
@@ -547,10 +555,10 @@
         <span class="account-copy"><strong data-user-name>Account user</strong><span data-user-email>Anonymous Firebase account</span></span>
       </div>
       <div class="account-links">
-        <button class="account-item" id="manage-account" type="button" role="menuitem"><iconify-icon icon="hugeicons:user-cog"></iconify-icon>Manage Account</button>
+        <button class="account-item" id="manage-account" type="button" role="menuitem"><i class="hgi hgi-stroke hgi-rounded hgi-user-round-cog"></i>Manage Account</button>
       </div>
       <div class="account-logout">
-        <button class="account-item" id="logout-button" type="button" role="menuitem"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out</button>
+        <button class="account-item" id="logout-button" type="button" role="menuitem"><i class="hgi hgi-stroke hgi-rounded hgi-power" aria-hidden="true"></i>Log out</button>
       </div>
     </div>
 
@@ -593,7 +601,7 @@
         <a class="mobile-menu-link" href="#subfests"><iconify-icon icon="ci:ticket-voucher"></iconify-icon>Subfests</a>
         <a class="mobile-menu-link" href="dashboard.html?tab=users" data-dashboard-tab="users"><iconify-icon icon="hugeicons:users"></iconify-icon>Users</a>
         <a class="mobile-menu-link" href="#website"><iconify-icon icon="codicon:globe"></iconify-icon>Website</a>
-        <button class="mobile-menu-link" id="mobile-settings" type="button"><iconify-icon icon="codicon:settings-gear"></iconify-icon>Settings</button>
+        <button class="mobile-menu-link" id="mobile-settings" type="button"><i class="hgi hgi-stroke hgi-rounded hgi-settings-03" aria-hidden="true"></i>Settings</button>
       </nav>
     </div>
   </div>
@@ -606,7 +614,7 @@
         <nav class="settings-tabs" aria-label="Account settings">
           <button class="settings-tab active" data-panel="profile" type="button"><iconify-icon icon="ci:user-03"></iconify-icon><span>Profile</span></button>
           <button class="settings-tab" data-panel="security" type="button"><iconify-icon icon="ci:security-check"></iconify-icon><span>Security</span></button>
-          <button class="settings-tab" data-panel="preference" type="button"><iconify-icon icon="fluent:line-style-sketch-32-filled"></iconify-icon><span>Preference</span></button>
+          <button class="settings-tab" data-panel="preference" type="button"><i class="hgi hgi-stroke hgi-rounded hgi-ai-paintbrush" aria-hidden="true"></i><span>Preference</span></button>
           <button class="settings-tab" data-panel="notifications" type="button"><iconify-icon icon="ci:bell"></iconify-icon><span>Notifications</span></button>
           <button class="settings-tab" data-panel="activity" type="button"><iconify-icon icon="hugeicons:activity-01"></iconify-icon><span>Activity</span></button>
         </nav>
@@ -619,7 +627,7 @@
             <div class="profile-photo-row"><span class="profile-photo" data-user-initials data-user-avatar>--</span><button class="settings-button" id="change-photo" type="button"><iconify-icon icon="ci:upload"></iconify-icon><span>Change photo</span></button><input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden /></div>
             <div class="settings-fields"><label class="settings-field">Full Name<input class="settings-input" id="profile-name" /></label><label class="settings-field">Contact Email <span style="color:#999;font-weight:400">(optional)</span><input class="settings-input" id="profile-email" type="email" placeholder="No email set" /></label></div>
             <div class="settings-message" id="profile-message" role="status"></div>
-            <div class="settings-actions"><button class="settings-button" id="modal-logout" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Logout</button><button class="settings-button primary" id="save-profile" type="button">Save Changes</button></div>
+            <div class="settings-actions"><button class="settings-button" id="modal-logout" type="button"><i class="hgi hgi-stroke hgi-rounded hgi-power" aria-hidden="true"></i>Logout</button><button class="settings-button primary" id="save-profile" type="button">Save Changes</button></div>
             <div class="account-created" id="account-created">ACCOUNT CREATED —</div>
           </section>
 
@@ -634,7 +642,7 @@
           </section>
 
           <section class="settings-panel" data-content="preference">
-            <h2 class="settings-heading"><span class="settings-heading-icon"><iconify-icon icon="fluent:line-style-sketch-32-filled"></iconify-icon></span>Interface Preferences</h2>
+            <h2 class="settings-heading"><span class="settings-heading-icon"><i class="hgi hgi-stroke hgi-rounded hgi-ai-paintbrush" aria-hidden="true"></i></span>Interface Preferences</h2>
             <div class="preference-group"><h3 class="section-title">VISUAL THEME</h3><div class="choice-row" id="theme-choices"><button class="choice" data-theme-choice="light" type="button" title="Light"><iconify-icon icon="carbon:light"></iconify-icon></button><button class="choice" data-theme-choice="dark" type="button" title="Dark"><iconify-icon icon="carbon:moon"></iconify-icon></button><button class="choice" data-theme-choice="system" type="button" title="System"><iconify-icon icon="carbon:laptop"></iconify-icon></button></div><div class="preference-note">YOUR PREFERENCE IS SAVED AUTOMATICALLY</div></div>
             <div class="preference-group"><h3 class="section-title">FONT SIZE</h3><div class="choice-row"><button class="choice active" type="button"><small>AA</small></button><button class="choice" type="button"><small>AA</small></button><button class="choice" type="button"><strong>AA</strong></button></div></div>
             <div class="preference-group"><h3 class="section-title">MAIN THEME COLOR</h3><div class="choice-row" id="accent-choices"><button class="choice color" data-accent="#fa5458" type="button" title="Red"><span class="swatch" style="--swatch:#fa5458"></span></button><button class="choice color" data-accent="#3478ba" type="button" title="Blue"><span class="swatch" style="--swatch:#3478ba"></span></button><button class="choice color" data-accent="#d08a00" type="button" title="Gold"><span class="swatch" style="--swatch:#d08a00"></span></button></div></div>
@@ -647,7 +655,7 @@
           </section>
 
           <section class="settings-panel" data-content="activity">
-            <div class="activity-head"><h2 class="settings-heading" style="margin:0"><span class="settings-heading-icon"><iconify-icon icon="hugeicons:activity-01"></iconify-icon></span>Account Activity</h2><button class="settings-button" id="logout-other-sessions" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out other sessions</button></div>
+            <div class="activity-head"><h2 class="settings-heading" style="margin:0"><span class="settings-heading-icon"><iconify-icon icon="hugeicons:activity-01"></iconify-icon></span>Account Activity</h2><button class="settings-button" id="logout-other-sessions" type="button"><i class="hgi hgi-stroke hgi-rounded hgi-power" aria-hidden="true"></i>Log out other sessions</button></div>
             <p id="activity-summary" style="font-size:9px">Loading sessions…</p>
             <div id="activity-list"></div>
           </section>
@@ -670,8 +678,8 @@
     const cloudinaryConfig = { cloudName: 'da6fjyirm', uploadPreset: 'festinger' };
     let firebase = null;
     let currentPhotoURL = '';
-    const sessionId = sessionStorage.getItem('festieSessionId') || crypto.randomUUID();
-    sessionStorage.setItem('festieSessionId', sessionId);
+    const sessionId = localStorage.getItem('festieSessionId') || crypto.randomUUID();
+    localStorage.setItem('festieSessionId', sessionId);
     let stopSessionsListener = null;
     async function getFirebase() {
       if (firebase) return firebase;
@@ -1073,6 +1081,7 @@
         localStorage.removeItem('festieAccountUsername');
         localStorage.removeItem('festieAccountRole');
         localStorage.removeItem('festieLandingPage');
+        localStorage.removeItem('festieSessionId');
         sessionStorage.removeItem('festieWebsiteAuthenticated');
         sessionStorage.removeItem('festieAccountUsername');
         sessionStorage.removeItem('festieAccountRole');
@@ -1225,7 +1234,7 @@
       return { browser, os, type, userAgent: ua };
     }
 
-    async function registerSession(fb, user) {
+    async function registerSession(fb, accountId) {
       let ip = 'Unavailable';
       try {
         const response = await fetch('https://api64.ipify.org?format=json');
@@ -1233,33 +1242,37 @@
       } catch {}
       const sessionRef = fb.doc(fb.db, 'appConfig', 'auth', 'sessions', sessionId);
       const existing = await fb.getDoc(sessionRef);
+      if (existing.exists() && existing.data().revoked) {
+        throw new Error('This device was signed out remotely.');
+      }
       await fb.setDoc(sessionRef, {
-        ...detectDevice(), ip, active: true, revoked: false,
+        ...detectDevice(), accountId, ip, active: true, revoked: false,
         createdAt: existing.exists() ? existing.data().createdAt : fb.serverTimestamp(),
         lastSeen: fb.serverTimestamp()
       }, { merge: true });
       setInterval(() => fb.setDoc(sessionRef, { lastSeen: fb.serverTimestamp(), active: true }, { merge: true }).catch(() => {}), 60000);
     }
 
-    function renderSessions(fb, user) {
+    function renderSessions(fb, accountId) {
       const list = document.querySelector('#activity-list');
       const summary = document.querySelector('#activity-summary');
       stopSessionsListener?.();
-      stopSessionsListener = fb.onSnapshot(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'), (snapshot) => {
+      const sessionsQuery = fb.query(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'), fb.where('accountId', '==', accountId));
+      stopSessionsListener = fb.onSnapshot(sessionsQuery, (snapshot) => {
         const sessions = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
         const current = sessions.find((item) => item.id === sessionId);
         if (current?.revoked) signOutUser();
         const isRecentlyActive = (item) => item.active && !item.revoked && (!item.lastSeen?.seconds || Date.now() - item.lastSeen.seconds * 1000 < 150000);
         const active = sessions.filter(isRecentlyActive);
         summary.textContent = `${active.length} active session${active.length === 1 ? '' : 's'} across ${new Set(active.map((item) => item.ip).filter(Boolean)).size} IP${new Set(active.map((item) => item.ip).filter(Boolean)).size === 1 ? '' : 's'}`;
-        const visibleSessions = sessions.filter((item) => !item.revoked);
+        const visibleSessions = sessions.filter((item) => item.active && !item.revoked);
         list.replaceChildren(...visibleSessions.sort((a, b) => (b.lastSeen?.seconds || 0) - (a.lastSeen?.seconds || 0)).map((item) => {
           const card = document.createElement('div');
           card.className = 'activity-card';
           const isCurrent = item.id === sessionId;
           const isActive = isRecentlyActive(item);
           const lastSeen = item.lastSeen?.toDate ? item.lastSeen.toDate().toLocaleString() : 'Just now';
-          card.innerHTML = `<span class="device-icon"><iconify-icon icon="${item.type === 'Mobile device' ? 'ci:mobile' : 'carbon:laptop'}"></iconify-icon></span><span class="device-copy"><strong>${item.browser || 'Browser'} on ${item.os || 'Unknown OS'}</strong>${isActive ? '<span class="badge">ACTIVE</span>' : ''}${isCurrent ? '<span class="badge device">THIS DEVICE</span>' : ''}<small style="display:block;margin-top:5px;color:#777">${item.ip || 'IP unavailable'} · Last seen ${lastSeen}</small></span><button class="settings-button session-logout" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out</button>`;
+          card.innerHTML = `<span class="device-icon"><iconify-icon icon="${item.type === 'Mobile device' ? 'ci:mobile' : 'carbon:laptop'}"></iconify-icon></span><span class="device-copy"><strong>${item.browser || 'Browser'} on ${item.os || 'Unknown OS'}</strong>${isActive ? '<span class="badge">ACTIVE</span>' : ''}${isCurrent ? '<span class="badge device">THIS DEVICE</span>' : ''}<small style="display:block;margin-top:5px;color:#777">${item.ip || 'IP unavailable'} · Last seen ${lastSeen}</small></span><button class="settings-button session-logout" type="button"><i class="hgi hgi-stroke hgi-rounded hgi-power" aria-hidden="true"></i>Log out</button>`;
           card.querySelector('.session-logout').addEventListener('click', async () => {
             if (isCurrent) return signOutUser();
             await fb.setDoc(fb.doc(fb.db, 'appConfig', 'auth', 'sessions', item.id), { revoked: true, active: false }, { merge: true });
@@ -1305,8 +1318,9 @@
           : 'ACCOUNT CREATED —';
         if (!credentials.createdAt) await fb.setDoc(credentialsRef, { createdAt: fb.serverTimestamp() }, { merge: true }).catch(() => {});
         await fb.setDoc(profileRef, { name, updatedAt: fb.serverTimestamp() }, { merge: true }).catch(() => {});
-        await registerSession(fb, user).catch((error) => console.error('Session registration failed:', error));
-        renderSessions(fb, user);
+        const accountId = String(username).trim().toLowerCase();
+        await registerSession(fb, accountId).catch((error) => console.error('Session registration failed:', error));
+        renderSessions(fb, accountId);
       });
     }).catch(() => window.location.replace('index.html'));
 
@@ -1315,8 +1329,8 @@
       button.disabled = true;
       try {
         const fb = await getFirebase();
-        const user = fb.auth.currentUser;
-        const snapshot = await fb.getDocs(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'));
+        const accountId = String(sessionStorage.getItem('festieAccountUsername') || localStorage.getItem('festieAccountUsername') || '').trim().toLowerCase();
+        const snapshot = await fb.getDocs(fb.query(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'), fb.where('accountId', '==', accountId)));
         await Promise.all(snapshot.docs.filter((item) => item.id !== sessionId).map((item) => fb.setDoc(item.ref, { revoked: true, active: false }, { merge: true })));
       } finally { button.disabled = false; }
     });

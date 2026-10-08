@@ -220,6 +220,7 @@
         localStorage.setItem('festieAccountUsername', account.username);
         localStorage.setItem('festieAccountRole', account.role);
         localStorage.setItem('festieLandingPage', account.landingPage);
+        localStorage.setItem('festieSessionId', crypto.randomUUID());
         sessionStorage.setItem('festieAccountUsername', account.username);
         sessionStorage.setItem('festieAccountRole', account.role);
         sessionStorage.setItem('festieCurrentPassword', passwordInput.value);

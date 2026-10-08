@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Email Registration</title>
+  <link rel="icon" type="image/png" href="Asett/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    (() => { const mode = localStorage.getItem('festieTheme') || 'system'; const dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; document.documentElement.style.setProperty('--accent', localStorage.getItem('festieAccent') || '#fa5458') })();
+  </script>
+  <style>
+    :root {
+      --accent: #fa5458
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: #fffafa;
+      color: #171719;
+      font: 14px Inter, sans-serif
+    }
+
+    .card {
+      width: min(430px, 100%);
+      padding: 30px;
+      border: 1px solid #dedfe3;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 14px 40px #1a151512
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      display: block;
+      margin: 0 auto 18px
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 23px
+    }
+
+    p {
+      margin: 8px 0 24px;
+      color: #74767c;
+      text-align: center;
+      line-height: 1.5
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-top: 15px;
+      font-size: 12px;
+      font-weight: 500
+    }
+
+    .email-builder {
+      height: 43px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      border: 1px solid #dfe0e4;
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden
+    }
+
+    .email-builder:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent)
+    }
+
+    .email-builder input {
+      width: 100%;
+      height: 100%;
+      padding: 0 6px 0 13px;
+      border: 0;
+      background: transparent;
+      outline: 0;
+      font: inherit
+    }
+
+    .email-domain {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 13px 0 8px;
+      border-left: 1px solid #ececef;
+      color: var(--accent);
+      font-weight: 500;
+      white-space: nowrap
+    }
+
+    button {
+      width: 100%;
+      height: 42px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font: 600 13px Inter, sans-serif;
+      cursor: pointer
+    }
+
+    button:disabled {
+      opacity: .65;
+      cursor: wait
+    }
+
+    .message {
+      min-height: 16px;
+      margin: 10px 0 0;
+      color: #b3262b;
+      font-size: 11px;
+      text-align: center
+    }
+
+    .success {
+      display: none;
+      text-align: center
+    }
+
+    .success.show {
+      display: block;
+      animation: success-in .42s cubic-bezier(.2, .8, .2, 1)
+    }
+
+    .form.hidden {
+      display: none
+    }
+
+    .check {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin: 5px auto 19px;
+      border-radius: 50%;
+      background: #e7f8f1;
+      color: #0a966c;
+      font-size: 34px;
+      animation: check-pop .5s cubic-bezier(.2, 1.5, .4, 1)
+    }
+
+    @keyframes success-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes check-pop {
+      0% {
+        transform: scale(.35) rotate(-20deg);
+        opacity: 0
+      }
+
+      100% {
+        transform: scale(1) rotate(0);
+        opacity: 1
+      }
+    }
+
+    html[data-theme=dark] body {
+      background: #111216;
+      color: #f5f5f6
+    }
+
+    html[data-theme=dark] .card {
+      background: #1d1f24;
+      border-color: #393b42
+    }
+
+    html[data-theme=dark] .email-builder {
+      background: #27292f;
+      border-color: #3b3e45
+    }
+
+    html[data-theme=dark] .email-builder input {
+      color: #fff
+    }
+
+    html[data-theme=dark] .email-domain {
+      border-color: #3b3e45
+    }
+
+    .field>input {
+      width: 100%;
+      height: 43px;
+      padding: 0 13px;
+      border: 1px solid #dfe0e4;
+      border-radius: 12px;
+      background: #fff;
+      outline: 0;
+      font: inherit
+    }
+
+    .field>input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent)
+    }
+
+    html[data-theme=dark] .field>input {
+      background: #27292f;
+      border-color: #3b3e45;
+      color: #fff
+    }
+
+    .availability {
+      min-height: 16px;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 400
+    }
+
+    .availability.checking {
+      color: #7a7d83
+    }
+
+    .availability.available {
+      color: #07845f
+    }
+
+    .availability.unavailable {
+      color: #c52d35
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="form" id="registration-form-wrap"><img class="logo" src="Asett/favicon.png" alt="Festinger" />
+      <h1>Get your Festinger email</h1>
+      <p>Enter your details and choose your branded email address.</p>
+      <form id="registration-form"><label class="field">Full Name<input id="full-name" name="fullName"
+            autocomplete="name" required placeholder="Enter your full name" /></label><label class="field">Email
+          name<span class="email-builder"><input id="email-name" name="emailName" autocomplete="username" required
+              pattern="[A-Za-z0-9._-]+" placeholder="yourname" /><span
+              class="email-domain">@festinger.com</span></span><span class="availability" id="availability"
+            aria-live="polite"></span></label><label class="field">Username<input id="username" name="username"
+            type="text" autocomplete="username" required minlength="3" maxlength="30" pattern="[A-Za-z0-9._-]+"
+            placeholder="Choose a username" /></label><label class="field">Password<input id="password" name="password"
+            type="password" autocomplete="new-password" required minlength="6"
+            placeholder="Enter at least 6 characters" /></label><button id="submit" type="submit">Submit</button>
+        <div class="message" id="message" role="status"></div>
+      </form>
+    </div>
+    <section class="success" id="success">
+      <div class="check">✓</div>
+      <h1>Submitted</h1>
+      <p>Your Festinger email has been saved successfully.</p>
+    </section>
+  </main>
+  <script type="module">
+    const firebaseConfig = { apiKey: "AIzaSyCxbG-k87afwF687taz-TupzSkxI4_9p2g", authDomain: "festinger-panel.firebaseapp.com", projectId: "festinger-panel", storageBucket: "festinger-panel.firebasestorage.app", messagingSenderId: "375631831919", appId: "1:375631831919:web:e40c8c00dbe07f18bebe9a" };
+    const [{ initializeApp }, authModule, firestoreModule] = await Promise.all([import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'), import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'), import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')]);
+    const app = initializeApp(firebaseConfig), auth = authModule.getAuth(app), db = firestoreModule.getFirestore(app); if (!auth.currentUser) await authModule.signInAnonymously(auth);
+    const form = document.querySelector('#registration-form'), button = document.querySelector('#submit'), message = document.querySelector('#message'), fullNameInput = document.querySelector('#full-name'), emailNameInput = document.querySelector('#email-name'), usernameInput = document.querySelector('#username'), passwordInput = document.querySelector('#password'), availability = document.querySelector('#availability'); let availabilityTimer, emailIsAvailable = false;
+    const emailFromName = (name) => `${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '.').replace(/^\.+|\.+$/g, '') || 'name'}@festinger.com`;
+    const bytesToBase64 = (bytes) => btoa(String.fromCharCode(...bytes));
+    const passwordHash = async (password, saltBase64) => { const salt = Uint8Array.from(atob(saltBase64), (character) => character.charCodeAt(0)); const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']); const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 210000 }, key, 256); return bytesToBase64(new Uint8Array(bits)) };
+    const registrations = firestoreModule.collection(db, 'appConfig', 'auth', 'emailRegistrations');
+    form.addEventListener('submit', async (event) => { event.preventDefault(); event.stopImmediatePropagation(); message.textContent = ''; if (!form.reportValidity()) return; const name = fullNameInput.value.trim(), email = emailFromName(emailNameInput.value), username = usernameInput.value.trim().toLowerCase(), password = passwordInput.value; button.disabled = true; button.textContent = 'Submitting...'; try { const [emailDuplicate, usernameDuplicate] = await Promise.all([firestoreModule.getDocs(firestoreModule.query(registrations, firestoreModule.where('email', '==', email), firestoreModule.limit(1))), firestoreModule.getDocs(firestoreModule.query(registrations, firestoreModule.where('username', '==', username), firestoreModule.limit(1)))]); if (!emailDuplicate.empty) throw Object.assign(new Error('This Festinger email is already registered.'), { code: 'email/already-registered' }); if (!usernameDuplicate.empty) throw Object.assign(new Error('This username is already registered.'), { code: 'username/already-registered' }); await firestoreModule.addDoc(registrations, { name, email, username, password, createdAt: firestoreModule.serverTimestamp() }); passwordInput.value = ''; document.querySelector('#registration-form-wrap').classList.add('hidden'); document.querySelector('#success').classList.add('show') } catch (error) { message.textContent = error.code === 'email/already-registered' || error.code === 'username/already-registered' ? error.message : error.code === 'auth/operation-not-allowed' ? 'Anonymous Firebase authentication must be enabled.' : 'Submission failed. Please try again.'; button.disabled = false; button.textContent = 'Submit' } }, { capture: true });
+    emailNameInput.addEventListener('input', () => { clearTimeout(availabilityTimer); emailIsAvailable = false; const value = emailNameInput.value.trim(); if (!value || !emailNameInput.checkValidity()) { availability.textContent = value ? 'Use only letters, numbers, dots, dashes, or underscores.' : ''; availability.className = 'availability unavailable'; return } availability.textContent = 'Checking availability…'; availability.className = 'availability checking'; availabilityTimer = setTimeout(async () => { try { const email = emailFromName(value); const result = await firestoreModule.getDocs(firestoreModule.query(registrations, firestoreModule.where('email', '==', email), firestoreModule.limit(1))); if (emailNameInput.value.trim() !== value) return; emailIsAvailable = result.empty; availability.textContent = emailIsAvailable ? 'Available' : 'Not available'; availability.className = `availability ${emailIsAvailable ? 'available' : 'unavailable'}` } catch { availability.textContent = 'Could not check availability'; availability.className = 'availability unavailable' } }, 450) });
+    form.addEventListener('submit', async (event) => { event.preventDefault(); message.textContent = ''; if (!form.reportValidity()) return; const name = fullNameInput.value.trim(), email = emailFromName(emailNameInput.value); button.disabled = true; button.textContent = 'Submitting…'; try { const duplicate = await firestoreModule.getDocs(firestoreModule.query(registrations, firestoreModule.where('email', '==', email), firestoreModule.limit(1))); if (!duplicate.empty) throw Object.assign(new Error('This Festinger email is already registered.'), { code: 'email/already-registered' }); await firestoreModule.addDoc(registrations, { name, email, createdAt: firestoreModule.serverTimestamp() }); document.querySelector('#registration-form-wrap').classList.add('hidden'); document.querySelector('#success').classList.add('show') } catch (error) { message.textContent = error.code === 'email/already-registered' ? error.message : error.code === 'auth/operation-not-allowed' ? 'Anonymous Firebase authentication must be enabled.' : 'Submission failed. Please try again.'; button.disabled = false; button.textContent = 'Submit' } });
+  </script>
+</body>
+
+</html>

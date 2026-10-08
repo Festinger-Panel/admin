@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Festinger festival dashboard" />
+  <title>Festival Dashboard</title>
+  <link rel="icon" type="image/png" href="Asett/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (() => { const mode = localStorage.getItem('festieTheme') || 'system'; const dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; document.documentElement.style.setProperty('--red', localStorage.getItem('festieAccent') || '#fa5458'); })();
+  </script>
+  <style>
+    :root {
+      --red: #fa5458;
+      --red-dark: #ed4146;
+      --accent-soft: color-mix(in srgb, var(--red) 8%, white);
+      --accent-soft-strong: color-mix(in srgb, var(--red) 12%, white);
+      --accent-soft-heavy: color-mix(in srgb, var(--red) 18%, white);
+      --accent-border: color-mix(in srgb, var(--red) 34%, white);
+      --ink: #111214;
+      --muted: #64666c;
+      --line: #dedfe3;
+      --shell: color-mix(in srgb, var(--red) 5%, white);
+    }
+
+    * { box-sizing: border-box; }
+    .app-icon { width: 1em; height: 1em; display: inline-block; flex: 0 0 auto; vertical-align: -.125em; }
+    .app-icon [stroke] { stroke-width: 2; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--accent-soft);
+      color: var(--ink);
+      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+    }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+
+    .app { min-height: 100vh; padding: 10px 10px 10px 79px; }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 5;
+      width: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--shell);
+      border-right: 1px solid #f0e9e8;
+    }
+    .logo { width: 29px; height: 29px; margin: 22px 0 24px; display: block; object-fit: contain; }
+    .nav { width: 100%; display: grid; gap: 14px; justify-items: center; }
+    .nav-link {
+      width: 58px;
+      min-height: 46px;
+      color: #151515;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      border-radius: 13px;
+    }
+    .nav-link :is(i, .app-icon) { font-size: 18px; line-height: 1; }
+    .nav-link.active { color: var(--red); }
+    .nav-link.active .icon-box { background: color-mix(in srgb, var(--red) 16%, transparent); }
+    .icon-box { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; margin-bottom: -3px; }
+    .sidebar-footer { margin-top: auto; display: grid; justify-items: center; gap: 17px; padding-bottom: 15px; }
+    .side-action { border: 0; background: transparent; padding: 0; cursor: pointer; }
+    .side-action :is(i, .app-icon) { font-size: 17px; line-height: 1; }
+    .avatar { position: relative; width: 31px; height: 31px; border: 0; padding: 0; border-radius: 50%; display: grid; place-items: center; background: var(--red) center/cover no-repeat; color: white; font-size: 9px; font-weight: 700; cursor: pointer; }
+    .account-menu {
+      position: fixed;
+      z-index: 20;
+      left: 68px;
+      bottom: 10px;
+      width: 192px;
+      overflow: hidden;
+      border: 1px solid #e1e1e3;
+      border-radius: 0 0 12px 0;
+      background: white;
+      box-shadow: 0 8px 24px rgba(21, 18, 18, .14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px) scale(.98);
+      transform-origin: left bottom;
+      transition: opacity .16s ease, transform .16s ease, visibility .16s;
+    }
+    .account-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+    .account-header { display: flex; align-items: center; gap: 10px; padding: 8px 12px 7px; }
+    .account-avatar { flex: 0 0 auto; width: 35px; height: 35px; display: grid; place-items: center; border-radius: 12px; background: var(--red) center/cover no-repeat; color: white; font-size: 12px; font-weight: 700; box-shadow: 0 2px 5px color-mix(in srgb, var(--red) 28%, transparent); }
+    .account-copy { min-width: 0; }
+    .account-copy strong, .account-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .account-copy strong { margin-bottom: 2px; font-size: 11px; }
+    .account-copy span { color: #55575c; font-size: 9px; }
+    .account-links { padding: 3px 0 7px; }
+    .account-item { width: 100%; height: 30px; padding: 0 12px; border: 0; background: white; display: flex; align-items: center; gap: 9px; text-align: left; text-decoration: none; color: #191a1d; font-size: 11px; font-weight: 500; cursor: pointer; }
+    .account-item:hover, .account-item:focus-visible { background: #f7f7f8; outline: 0; }
+    .account-item :is(i, .app-icon) { width: 13px; color: #42454a; font-size: 14px; line-height: 1; text-align: center; }
+    .account-logout { border-top: 1px solid #e7e7e8; padding: 7px 0; }
+
+    .shell { min-height: calc(100vh - 20px); overflow: hidden; border: 1px solid #dcdde1; border-radius: 11px; background: white; box-shadow: 0 2px 7px rgba(32, 25, 25, .08); }
+    .topbar { height: 47px; border-bottom: 1px solid #eff0f1; display: grid; grid-template-columns: 1fr minmax(270px, 320px); align-items: center; padding: 0 16px; }
+    .breadcrumb { display: flex; align-items: center; gap: 11px; font-weight: 600; }
+    .breadcrumb :is(i, .app-icon) { font-size: 14px; line-height: 1; }
+    .breadcrumb .chevron { font-size: 12px; color: #8d8f94; }
+    .search { width: 100%; height: 31px; justify-self: end; border: 1px solid #dcdee2; border-radius: 18px; display: flex; align-items: center; padding: 0 10px; color: #4e5055; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    .search i { font-size: 14px; line-height: 1; margin-right: 9px; }
+    .search input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; font-size: 10px; }
+    .key { width: 19px; height: 19px; display: grid; place-items: center; margin-left: 5px; border: 1px solid #e4e4e4; border-radius: 5px; background: #fafafa; color: #777; font-size: 9px; }
+    .top-action { justify-self: end; border: 0; border-radius: 17px; padding: 8px 12px; background: var(--accent-soft-strong); color: var(--red); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .top-action i { font-size: 14px; line-height: 1; }
+
+    .content { width: min(820px, calc(100% - 42px)); margin: 29px auto; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .page-title { display: flex; align-items: center; gap: 10px; }
+    .page-title-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; background: var(--accent-soft-strong); color: var(--red); }
+    .page-title-icon :is(i, .app-icon) { font-size: 15px; line-height: 1; }
+    h1 { margin: 0; font-size: 17px; letter-spacing: -.04em; }
+    .outline-button { height: 28px; border: 1px solid #d8d9dd; border-radius: 9px; padding: 0 11px; background: white; display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
+    .outline-button i { font-size: 14px; line-height: 1; }
+
+    .trial-card {
+      width: 100%;
+      min-height: 152px;
+      padding: 33px 31px;
+      border-radius: 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      background: #030303;
+      box-shadow: 0 7px 15px rgba(28, 29, 55, .11);
+    }
+    .trial-card::before {
+      content: "";
+      position: absolute;
+      width: 245px;
+      height: 245px;
+      top: 50%;
+      left: 76%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(242, 55, 36, .92) 0%, rgba(187, 39, 29, .62) 18%, rgba(54, 8, 6, .25) 45%, transparent 70%);
+      filter: blur(3px);
+    }
+    .trial-content { position: relative; z-index: 1; }
+    .trial-card h2 {
+      max-width: 330px;
+      margin: 0 0 7px;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -.025em;
+      font-weight: 500;
+    }
+    .trial-card p { margin: 0; color: #aaa5b5; font-size: 13px; line-height: 1.35; letter-spacing: -.015em; }
+
+    .site-card { min-height: 88px; margin-top: 13px; padding: 19px; border: 1px solid #dedfe3; border-radius: 24px; display: flex; align-items: center; }
+    .site-icon { position: relative; flex: 0 0 auto; width: 47px; height: 47px; display: grid; place-items: center; border-radius: 15px; background: color-mix(in srgb, var(--red) 12%, white); color: var(--red); }
+    .site-icon :is(i, .app-icon) { font-size: 24px; line-height: 1; }
+    .online { position: absolute; right: -3px; bottom: -4px; width: 14px; height: 14px; border: 3px solid white; border-radius: 50%; background: #00be78; }
+    .site-info { min-width: 0; margin-left: 14px; }
+    .site-info h3 { margin: 0 0 5px; font-size: 14px; }
+    .site-info a { color: #222; text-decoration: none; font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .site-actions { margin-left: auto; display: flex; gap: 7px; }
+    .site-button { height: 31px; border: 1px solid #d9dade; border-radius: 10px; background: white; padding: 0 10px; display: flex; align-items: center; gap: 7px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .site-button i { font-size: 14px; line-height: 1; }
+    .site-button.primary { border-color: var(--red); background: var(--red); color: #070707; }
+    .site-button:hover, .outline-button:hover { background: #f7f7f8; }
+    .site-button.primary:hover { background: var(--red-dark); }
+
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(18, 18, 20, .43);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .18s ease, visibility .18s;
+    }
+    .settings-overlay.open { opacity: 1; visibility: visible; }
+    .settings-modal {
+      width: min(635px, 100%);
+      height: min(540px, calc(100vh - 48px));
+      display: grid;
+      grid-template-columns: 198px 1fr;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 15px;
+      background: white;
+      box-shadow: 0 24px 70px rgba(0,0,0,.22);
+      transform: translateY(8px) scale(.985);
+      transition: transform .18s ease;
+    }
+    .settings-overlay.open .settings-modal { transform: none; }
+    .settings-sidebar { padding: 22px 13px; background: #f4f4f4; }
+    .settings-user { display: flex; align-items: center; gap: 9px; padding: 0 8px 34px; }
+    .settings-user-avatar { width: 37px; height: 37px; display: grid; place-items: center; border: 1px solid white; border-radius: 50%; background: #f0f0f0 center/cover no-repeat; box-shadow: 0 0 0 1px #dedede; font-size: 11px; font-weight: 700; }
+    .settings-user-copy strong, .settings-user-copy span { display: block; }
+    .settings-user-copy strong { font-size: 10px; }
+    .settings-user-copy span { margin-top: 2px; color: #666; font-size: 9px; }
+    .settings-label { margin: 0 8px 8px; color: #999; font-size: 9px; font-weight: 700; letter-spacing: .16em; }
+    .settings-tabs { display: grid; gap: 2px; }
+    .settings-tab { height: 36px; border: 1px solid transparent; border-radius: 12px; background: transparent; display: flex; align-items: center; gap: 10px; padding: 0 11px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .settings-tab :is(i, .app-icon) { width: 14px; color: #4e5054; font-size: 13px; font-weight: 300; line-height: 1; opacity: .82; }
+    .settings-tab.active { background: white; color: #111; }
+    .settings-tab.active :is(i, .app-icon) { color: var(--red); opacity: 1; }
+    .settings-tab[data-panel="profile"].active { border-color: #9fc4ff; box-shadow: 0 0 0 1px #c8ddff; }
+    .settings-main { min-width: 0; background: white; }
+    .settings-topbar { height: 47px; border-bottom: 1px solid #eeeeef; display: flex; align-items: center; padding: 0 26px; }
+    .settings-crumb { color: #98999d; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+    .settings-crumb-icon { margin: 0 12px; color: #b7b8bb; font-size: 11px; line-height: 1; }
+    .settings-current { font-size: 11px; font-weight: 700; }
+    .settings-close { width: 28px; height: 28px; margin-left: auto; border: 0; border-radius: 8px; background: transparent; display: grid; place-items: center; cursor: pointer; }
+    .settings-close i { font-size: 16px; line-height: 1; }
+    .settings-close:hover { background: #f4f4f5; }
+    .settings-body { height: calc(100% - 47px); overflow-y: auto; padding: 25px 27px; }
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+    .settings-heading { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; font-size: 17px; letter-spacing: -.035em; }
+    .settings-heading-icon { width: 27px; height: 27px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 8px; background: var(--accent-soft-strong); color: var(--red); }
+    .settings-heading-icon :is(i, .app-icon) { font-size: 14px; }
+    .profile-photo-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .profile-photo { width: 66px; height: 66px; display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft-heavy) center/cover no-repeat; color: var(--red); font-weight: 600; }
+    .settings-button { height: 31px; padding: 0 13px; border: 1px solid #d7d9dd; border-radius: 9px; background: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; cursor: pointer; }
+    .settings-button .app-icon { font-size: 14px; }
+    .settings-button.primary { min-width: 130px; border-color: var(--red); background: var(--red); color: white; font-weight: 700; }
+    .settings-button.primary:hover:not(:disabled) { border-color: var(--red-dark); background: var(--red-dark); }
+    .settings-button:disabled { border-color: #dedfe2; background: #ececef; color: #9a9ca1; cursor: not-allowed; opacity: 1; }
+    .settings-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .settings-field { display: grid; gap: 5px; font-size: 10px; font-weight: 600; }
+    .settings-input { width: 100%; height: 40px; border: 1px solid #e0e1e4; border-radius: 12px; background: #fbfbfb; padding: 0 12px; outline: none; }
+    .settings-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 14%, transparent); }
+    .settings-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 25px; }
+    .account-created { margin-top: 8px; padding: 14px; border: 1px dashed #e6e6e7; border-radius: 12px; color: #999; text-align: center; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+    .password-fields { display: grid; gap: 14px; }
+    .password-wrap { position: relative; }
+    .password-wrap .settings-input { padding-right: 38px; }
+    .password-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; cursor: pointer; }
+    .password-eye svg { display: block; transition: color .18s ease; }
+    .forgot { display: block; margin-top: 5px; color: var(--red); text-align: right; text-decoration: none; font-size: 9px; }
+    .settings-message { display: none; margin-top: 14px; padding: 9px 11px; border-radius: 9px; font-size: 10px; }
+    .settings-message.show { display: block; }
+    .settings-message.error { background: #fff0f0; color: #b3262b; }
+    .settings-message.success { background: #eaf8f1; color: #14775e; }
+    .section-title { margin: 0 0 8px; color: #888a8f; font-size: 12px; letter-spacing: .08em; }
+    .preference-group { margin-bottom: 21px; }
+    .choice-row { display: flex; gap: 7px; }
+    .choice { width: 34px; height: 34px; border: 1px solid #e0e1e4; border-radius: 11px; background: #fff; display: grid; place-items: center; cursor: pointer; }
+    .choice.active { border-color: var(--red); background: var(--red); color: white; }
+    .choice.color.active { background: white; box-shadow: inset 0 0 0 1px var(--red); }
+    .swatch { width: 17px; height: 17px; border-radius: 6px; background: var(--swatch); }
+    .preference-note { margin-top: 9px; color: #999; font-size: 9px; }
+    .notification-card, .activity-card { border: 1px solid #e1e2e4; border-radius: 13px; padding: 13px; }
+    .notification-card + .notification-card { margin-top: 19px; }
+    .notification-card strong { display: block; margin-bottom: 5px; font-size: 10px; }
+    .notification-card p { margin: 0; color: #555; font-size: 9px; line-height: 1.5; }
+    .toggle { float: right; width: 30px; height: 16px; border: 0; border-radius: 9px; background: #d0d3d9; padding: 2px; cursor: pointer; }
+    .toggle::before { content: ""; display: block; width: 12px; height: 12px; border-radius: 50%; background: white; transition: transform .15s; }
+    .toggle.on { background: var(--red); }
+    .toggle.on::before { transform: translateX(14px); }
+    .notification-date { display: block; margin-top: 8px; color: #999; font-size: 9px; font-weight: 600; }
+    .activity-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .activity-card { margin-top: 20px; border-color: var(--accent-border); display: flex; align-items: center; gap: 12px; }
+    .device-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: var(--accent-soft-strong); color: var(--red); font-size: 17px; }
+    .device-copy { flex: 1; }
+    .device-copy strong { font-size: 10px; }
+    .badge { display: inline-block; margin-left: 7px; padding: 3px 7px; border-radius: 10px; background: #e1f7ef; color: #16836b; font-size: 8px; }
+    .badge.device { display: block; width: max-content; margin: 4px 0 0; background: var(--accent-soft-heavy); color: var(--red); }
+    body.modal-open { overflow: hidden; }
+    html[data-theme="dark"] { color-scheme: dark; --ink: #f5f5f6; --muted: #aaaeb5; --line: #383a40; --shell: #191a1e; }
+    html[data-theme="dark"] body { background: #111216; }
+    html[data-theme="dark"] .shell,
+    html[data-theme="dark"] .topbar,
+    html[data-theme="dark"] .content,
+    html[data-theme="dark"] .settings-main,
+    html[data-theme="dark"] .settings-body,
+    html[data-theme="dark"] .settings-panel,
+    html[data-theme="dark"] .account-menu { background-color: #1d1f24; color: var(--ink); }
+    html[data-theme="dark"] .site-card { background: #1d1f24; border-color: #383a40; }
+    html[data-theme="dark"] .sidebar,
+    html[data-theme="dark"] .settings-sidebar { background: #17181c; border-color: #303238; }
+    html[data-theme="dark"] .settings-topbar,
+    html[data-theme="dark"] .topbar { border-color: #303238; }
+    html[data-theme="dark"] .settings-tab.active,
+    html[data-theme="dark"] .choice,
+    html[data-theme="dark"] .settings-button,
+    html[data-theme="dark"] .settings-input,
+    html[data-theme="dark"] .notification-card,
+    html[data-theme="dark"] .activity-card { background-color: #27292f; border-color: #3b3e45; color: #f4f4f5; }
+    html[data-theme="dark"] .nav-link { color: #e9e9eb; }
+    html[data-theme="dark"] .nav-link.active { color: var(--red); }
+    html[data-theme="dark"] .account-item:hover { background: #292b31; }
+
+    .toast { position: fixed; top: 20px; right: 20px; z-index: 100; min-width: 260px; max-width: min(360px, calc(100vw - 40px)); display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #e4e5e8; border-radius: 12px; background: white; color: #202124; box-shadow: 0 10px 26px rgba(25,25,27,.16); opacity: 0; transform: translateY(-12px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast-icon { width: 20px; height: 20px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; background: #dcf7e8; color: #148556; font-size: 12px; font-weight: 800; }
+    .toast.error .toast-icon { background: #ffebec; color: #c8373e; }
+    .toast-message { font-size: 11px; font-weight: 600; line-height: 1.35; }
+    .mobile-header, .mobile-more, .mobile-more-overlay { display: none; }
+    .users-layout { width:100%; display:grid; grid-template-columns:180px minmax(0,1fr); gap:26px; align-items:start; }
+    .content.users-content { width:min(1080px,calc(100% - 56px)); }
+    .users-view { width:100%; min-width:0; }
+    .users-submenu { display:grid; gap:4px; padding-top:2px; }
+    .users-submenu button { height:36px; display:flex; align-items:center; gap:10px; padding:0 11px; border:0; border-radius:9px; background:transparent; text-align:left; cursor:pointer; }
+    .users-submenu button :is(i, .app-icon) { width:15px; font-size:14px; }
+    .users-submenu button.active { background:color-mix(in srgb,var(--red) 12%,white); color:var(--red); }
+    .users-title-row,.users-controls,.users-toolbar,.users-tabs,.users-tools { display:flex; align-items:center; gap:9px; }
+    .users-title-row { margin-bottom:24px; }
+    .users-title-icon { width:28px; height:28px; display:grid; place-items:center; border-radius:9px; background:color-mix(in srgb,var(--red) 11%,white); color:var(--red); }
+    .users-title-row h1 { margin:0; font-size:18px; letter-spacing:-.04em; }
+    .users-toolbar { margin-left:auto; }
+    .users-button { height:31px; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:0 13px; border:1px solid #d7d9dd; border-radius:9px; background:white; cursor:pointer; }
+    .users-button.primary { border-color:var(--red); background:var(--red); color:white; }
+    .users-controls { justify-content:space-between; margin-bottom:12px; }
+    .users-tab { height:29px; padding:0 13px; border:1px solid var(--line); border-radius:9px; background:white; font-size:10px; font-weight:700; cursor:pointer; }
+    .users-tab.active { border-color:var(--red); background:var(--red); color:white; }
+    .users-circle { width:29px; height:29px; padding:0; border:1px solid var(--line); border-radius:50%; background:white; cursor:pointer; }
+    .users-inline-search { display:none; height:35px; align-items:center; gap:8px; margin-bottom:10px; padding:0 11px; border:1px solid var(--line); border-radius:10px; }
+    .users-inline-search.open { display:flex; }
+    .users-inline-search input { width:100%; border:0; outline:0; background:transparent; }
+    .users-table { width:100%; border-collapse:collapse; }
+    .users-table th { height:38px; border-block:1px solid var(--line); color:#92949a; text-align:left; font-size:9px; letter-spacing:.12em; }
+    .users-table td { height:56px; border-bottom:1px solid #f0f0f2; }
+    .users-check { width:38px; text-align:center!important; }
+    .users-table input[type="checkbox"] { width:14px; height:14px; accent-color:var(--red); }
+    .users-person { display:flex; align-items:center; gap:9px; font-weight:600; }
+    .users-avatar { width:27px; height:27px; display:grid; place-items:center; border:1px solid color-mix(in srgb,var(--red) 35%,white); border-radius:9px; background:color-mix(in srgb,var(--red) 10%,white); color:var(--red); font-size:10px; }
+    .users-pill { display:inline-block; margin-right:5px; padding:4px 8px; border:1px solid #dfe1e5; border-radius:8px; color:#555; font-size:9px; }
+    .users-status { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:9px; background:#e7f8f1; color:#07845f; font-size:8px; font-weight:700; }
+    .users-status::before { content:""; width:4px; height:4px; border-radius:50%; background:#10b981; }
+    .users-empty { display:none; padding:35px; color:var(--muted); text-align:center; }
+    .selection-bar { min-height:45px; display:none; align-items:center; gap:12px; padding:7px 13px; border-block:1px solid var(--line); }
+    .selection-bar.show { display:flex; }
+    .selection-bar button { height:30px; display:inline-flex; align-items:center; gap:7px; padding:0 11px; border:0; border-radius:10px; background:var(--red); color:white; cursor:pointer; transition:background .18s ease,opacity .18s ease; }
+    .selection-bar button:not(:disabled):hover { background:color-mix(in srgb,var(--red) 86%,black); }
+    .selection-bar button:disabled { background:#e5e6e9; color:#999ba0; cursor:not-allowed; }
+    .email-view[hidden] { display:none; }
+    .emails-empty { padding:45px 20px; border:1px dashed var(--line); border-radius:13px; color:var(--muted); text-align:center; }
+    .emails-table td:first-child { font-weight:500; }
+    .email-delete-column { width:100px; text-align:right!important; }
+    .email-delete-button { width:30px; height:30px; display:grid; place-items:center; margin-left:auto; border:1px solid #ffd1d3; border-radius:9px; background:#fff3f3; color:#c52d35; cursor:pointer; }
+    .email-delete-button:hover { background:#ffe5e6; }
+    .email-password { display:flex; align-items:center; gap:8px; }
+    .email-password-value { min-width:58px; letter-spacing:1px; }
+    .email-password-view { width:27px; height:27px; display:grid; place-items:center; padding:0; border:0; border-radius:8px; background:transparent; color:#777; cursor:pointer; }
+    .email-password-view:hover { background:color-mix(in srgb,var(--red) 9%,transparent); color:var(--red); }
+    .email-password-view i { font-size:14px; line-height:1; }
+    .email-password-edit { height:27px; padding:0 9px; border:1px solid #dfe1e5; border-radius:8px; background:#fff; color:#555; font:500 10px Inter,sans-serif; cursor:pointer; }
+    .email-password-edit:hover { border-color:var(--red); color:var(--red); }
+    .email-password-edit:disabled { opacity:.55; cursor:wait; }
+    .email-password-input { width:96px; height:27px; padding:0 8px; border:1px solid var(--red); border-radius:8px; outline:0; font:500 10px Inter,sans-serif; }
+    .email-password-update { height:27px; padding:0 9px; border:1px solid var(--red); border-radius:8px; background:var(--red); color:white; font:600 10px Inter,sans-serif; cursor:pointer; }
+    .email-password-cancel { height:27px; padding:0 7px; border:0; background:transparent; color:#777; font:500 10px Inter,sans-serif; cursor:pointer; }
+    .add-user-overlay { position:fixed; inset:0; z-index:70; display:grid; place-items:center; padding:18px; background:rgba(20,20,22,.42); opacity:0; visibility:hidden; transition:opacity .18s,visibility .18s; backdrop-filter:blur(3px); }
+    .add-user-overlay.open { opacity:1; visibility:visible; }
+    .add-user-modal { width:min(740px,100%); padding:20px; border:1px solid var(--line); border-radius:16px; background:white; box-shadow:0 24px 70px rgba(0,0,0,.25); transform:translateY(12px); transition:transform .18s; font-family:"Inter",ui-sans-serif,system-ui,sans-serif; }
+    .add-user-modal button,.add-user-modal input { font-family:inherit; }
+    .add-user-overlay.open .add-user-modal { transform:none; }
+    .add-user-modal header { display:flex; align-items:center; margin-bottom:8px; }
+    .add-user-modal h2 { margin:0; font-size:13px; font-weight:500; }
+    .add-user-modal header button { margin-left:auto; border:0; background:transparent; cursor:pointer; }
+    .add-user-field { display:grid; gap:6px; font-weight:400; }
+    .add-user-field span { color:var(--red); }
+    .add-user-field input,.fest-search { height:40px; border:1px solid var(--line); border-radius:12px; background:#fbfbfb; padding:0 12px; outline:none; }
+    .add-user-field input:focus { border-color:var(--red); }
+    .add-fest-button { height:28px; margin:13px 0 8px; padding:0 10px; border:0; border-radius:8px; background:color-mix(in srgb,var(--red) 62%,white); color:white; font-weight:400; cursor:pointer; }
+    .email-selector { min-height:42px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:5px 8px; border:1px solid var(--line); border-radius:12px; background:#fbfbfb; }
+    .email-selector:focus-within { border-color:var(--red); }
+    .email-selector #invite-email { min-width:150px; flex:1; height:30px; padding:0 6px; border:0; background:transparent; }
+    .selected-invite-emails { display:flex; flex-wrap:wrap; gap:6px; }
+    .email-chip { display:inline-flex; align-items:center; gap:7px; padding:5px 8px; border:1px solid var(--line); border-radius:9px; background:white; font-size:10px; }
+    .email-chip::before { content:'@'; width:20px; height:20px; display:grid; place-items:center; border-radius:50%; background:color-mix(in srgb,var(--red) 13%,white); color:var(--red); }
+    .email-chip button { padding:0; border:0; background:transparent; cursor:pointer; }
+    .email-suggestions { display:none; margin-top:4px; overflow:hidden; border:1px solid var(--line); border-radius:11px; background:white; box-shadow:0 7px 20px rgba(0,0,0,.08); }
+    .email-suggestions.open { display:grid; }
+    .email-suggestion { min-height:40px; display:flex; align-items:center; gap:9px; padding:6px 11px; border:0; background:white; text-align:left; cursor:pointer; }
+    .email-suggestion:hover { background:color-mix(in srgb,var(--red) 8%,white); }
+    .email-suggestion-avatar { width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:var(--red); color:white; font-size:9px; }
+    .fest-search { display:flex; align-items:center; gap:8px; }
+    .fest-search input { width:100%; border:0; outline:0; background:transparent; }
+    .access-table { overflow:visible; margin-top:8px; border:1px solid var(--line); border-radius:13px; }
+    .access-head,.access-row { display:grid; grid-template-columns:1fr 1.4fr; align-items:center; min-height:44px; padding:0 16px; }
+    .access-head { min-height:32px; border-bottom:1px solid var(--line); color:#8c8e94; font-size:9px; font-weight:700; letter-spacing:.1em; }
+    .access-row button { width:max-content; padding:4px 9px; border:1px dashed var(--line); border-radius:8px; background:white; cursor:pointer; }
+    .access-row strong { font-weight:400; }
+    .add-user-modal .users-button { font-weight:400; }
+    .role-picker { position:relative; width:max-content; }
+    .role-selection,.selected-roles { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+    .role-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border:1px solid color-mix(in srgb,var(--red) 42%,white); border-radius:8px; background:color-mix(in srgb,var(--red) 10%,white); color:var(--red); font-size:10px; }
+    .role-chip button { width:auto; padding:0; border:0; background:transparent; color:inherit; font-size:13px; line-height:1; }
+    .role-menu { position:absolute; z-index:3; top:calc(100% + 5px); left:0; width:145px; display:none; padding:5px; border:1px solid var(--line); border-radius:10px; background:white; box-shadow:0 8px 22px rgba(0,0,0,.13); }
+    .role-menu.open { display:grid; }
+    .role-menu button { width:100%; border:0; padding:8px 9px; background:transparent; text-align:left; }
+    .role-menu button:hover { background:color-mix(in srgb,var(--red) 10%,white); }
+    .role-menu button.selected { background:color-mix(in srgb,var(--red) 14%,white); color:var(--red); }
+    .access-row button.selected { border-style:solid; border-color:var(--red); background:color-mix(in srgb,var(--red) 11%,white); color:var(--red); }
+    .add-user-error { min-height:14px; margin:8px 0 0; color:#b3262b; font-size:10px; }
+    .add-user-modal footer { display:flex; justify-content:flex-end; gap:8px; margin-top:4px; }
+    html[data-theme="dark"] .users-button,html[data-theme="dark"] .users-tab,html[data-theme="dark"] .users-circle { background:#27292f; border-color:#3b3e45; color:#f4f4f5; }
+    html[data-theme="dark"] .users-button.primary,html[data-theme="dark"] .users-tab.active { background:var(--red); border-color:var(--red); color:white; }
+    html[data-theme="dark"] .users-submenu button.active { background:color-mix(in srgb,var(--red) 18%,#1d1f24); }
+    html[data-theme="dark"] .add-user-modal,html[data-theme="dark"] .add-user-field input,html[data-theme="dark"] .fest-search,html[data-theme="dark"] .access-row button,html[data-theme="dark"] .role-menu,html[data-theme="dark"] .email-selector,html[data-theme="dark"] .email-chip,html[data-theme="dark"] .email-suggestions,html[data-theme="dark"] .email-suggestion { background:#1d1f24; color:#f4f4f5; }
+
+    @media (max-width: 760px) {
+      .app { padding: 61px 7px 76px; }
+      .mobile-header { position: fixed; inset: 0 0 auto; z-index: 15; height: 54px; display: flex; align-items: center; gap: 14px; padding: 0 15px; border-bottom: 1px solid #e7e4e4; background: var(--shell); }
+      .mobile-header .back, .mobile-header .mobile-action { border: 0; background: transparent; padding: 4px; font-size: 17px; cursor: pointer; }
+      .mobile-header .mobile-logo { width: 26px; height: 26px; object-fit: contain; }
+      .mobile-header .spacer { flex: 1; }
+      .mobile-header .mobile-avatar { width: 31px; height: 31px; border: 0; border-radius: 50%; background: var(--red) center/cover no-repeat; color: white; font-size: 9px; font-weight: 700; cursor: pointer; }
+      .sidebar { inset: auto 7px 7px; width: auto; height: 61px; border: 1px solid #e5e0df; border-radius: 16px; flex-direction: row; justify-content: space-around; box-shadow: 0 3px 15px rgba(0,0,0,.1); }
+      .logo, .sidebar-footer, #settings-nav { display: none; }
+      .account-menu { left: auto; right: 10px; top: 49px; bottom: auto; border-radius: 12px; transform-origin: right top; }
+      .nav { display: flex; width: 100%; justify-content: space-around; gap: 0; }
+      .nav-link { width: 65px; min-height: 52px; }
+      .mobile-more { display: flex; border: 0; background: transparent; cursor: pointer; }
+      .shell { min-height: calc(100vh - 83px); }
+      .topbar { grid-template-columns: 1fr auto; padding: 0 12px; }
+      .search { display: none; }
+      .content { width: calc(100% - 28px); margin-top: 22px; }
+      .trial-card { min-height: 152px; padding: 30px 20px; }
+      .trial-card::before { left: 82%; }
+      .trial-card h2 { font-size: 22px; max-width: 220px; }
+      .trial-card p { max-width: 430px; font-size: 11px; line-height: 1.4; }
+      .site-card { align-items: flex-start; flex-wrap: wrap; border-radius: 19px; }
+      .site-actions { flex-basis: 100%; margin: 15px 0 0; display: grid; grid-template-columns: 1fr 1fr; }
+      .site-button { justify-content: center; }
+      .site-button:last-child { grid-column: 1 / -1; }
+      .settings-overlay { padding: 10px; }
+      .settings-modal { height: min(650px, calc(100vh - 20px)); grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .settings-sidebar { padding: 12px; }
+      .settings-user, .settings-label { display: none; }
+      .settings-tabs { display: flex; overflow-x: auto; }
+      .settings-tab { flex: 0 0 auto; padding: 0 9px; }
+      .settings-tab span { display: none; }
+      .settings-tab[data-panel="profile"].active { border-color: transparent; box-shadow: none; }
+      .settings-topbar { padding: 0 16px; }
+      .settings-body { padding: 20px 16px; }
+      .settings-fields { grid-template-columns: 1fr; gap: 12px; }
+      .users-title-row { flex-wrap:wrap; }
+      .content.users-content { width:calc(100% - 24px); }
+      .users-layout { grid-template-columns:1fr; gap:12px; }
+      .users-submenu { display:flex; overflow-x:auto; padding-bottom:3px; }
+      .users-submenu button { flex:0 0 auto; }
+      .users-toolbar { width:100%; margin:4px 0 0; }
+      .users-button { flex:1; }
+      .users-tabs { max-width:100%; overflow-x:auto; }
+      .users-tools { display:none; }
+      .users-table:not(.emails-table) th:nth-child(3),.users-table:not(.emails-table) td:nth-child(3) { display:none; }
+      .mobile-more-overlay { position: fixed; inset: 0; z-index: 40; display: block; background: rgba(12,13,16,.48); opacity: 0; visibility: hidden; transition: opacity .18s, visibility .18s; }
+      .mobile-more-overlay.open { opacity: 1; visibility: visible; }
+      .mobile-more-panel { position: absolute; inset: 120px 6px 0; padding: 14px 16px; border-radius: 16px 16px 0 0; background: white; transform: translateY(24px); transition: transform .18s; }
+      .mobile-more-overlay.open .mobile-more-panel { transform: none; }
+      .mobile-menu-search { height: 38px; display: flex; align-items: center; gap: 9px; padding: 0 12px; border: 1px solid #dedfe3; border-radius: 12px; }
+      .mobile-menu-search input { width: 100%; border: 0; outline: 0; background: transparent; }
+      .mobile-menu-links { display: grid; gap: 4px; margin-top: 18px; }
+      .mobile-menu-link { height: 42px; display: flex; align-items: center; gap: 13px; padding: 0 11px; border: 0; border-radius: 11px; background: transparent; color: inherit; text-decoration: none; font-weight: 600; cursor: pointer; }
+      .mobile-menu-link :is(i, .app-icon) { width: 16px; font-size: 15px; }
+      .mobile-menu-link.active { background: color-mix(in srgb, var(--red) 13%, white); color: var(--red); }
+      html[data-theme="dark"] .mobile-header, html[data-theme="dark"] .mobile-more-panel { background: #1d1f24; }
+      html[data-theme="dark"] .mobile-menu-link.active { background: color-mix(in srgb, var(--red) 18%, #1d1f24); }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+      <symbol id="icon-akar-icons-home-alt1" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 19v-6.733a4 4 0 0 0-1.245-2.9L13.378 3.31a2 2 0 0 0-2.755 0L4.245 9.367A4 4 0 0 0 3 12.267V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2"/><path d="M9 15a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6H9z"/></g></symbol>
+      <symbol id="icon-ci-ticket-voucher" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 6H6c-.932 0-1.398 0-1.766.152a2 2 0 0 0-1.082 1.083C3 7.602 3 8.068 3 9a3 3 0 1 1 0 6c0 .932 0 1.398.152 1.765a2 2 0 0 0 1.082 1.083C4.602 18 5.068 18 6 18h8m0-12h4c.932 0 1.398 0 1.765.152a2 2 0 0 1 1.083 1.083C21 7.602 21 8.068 21 9a3 3 0 1 0 0 6c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C19.398 18 18.932 18 18 18h-4m0-12v12"/></symbol>
+      <symbol id="icon-ci-users" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 20c0-1.742-1.67-3.223-4-3.773M15 20c0-2.21-2.686-4-6-4s-6 1.79-6 4m12-7a4 4 0 0 0 0-8m-6 8a4 4 0 1 1 0-8a4 4 0 0 1 0 8"/></symbol>
+      <symbol id="icon-ci-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17v1a3 3 0 1 1-6 0v-1m6 0H9m6 0h3.59c.383 0 .575 0 .73-.052a1 1 0 0 0 .627-.628c.053-.156.053-.348.053-.734c0-.169 0-.253-.014-.334a1 1 0 0 0-.173-.42c-.048-.067-.108-.127-.227-.246l-.39-.39a.67.67 0 0 1-.196-.474V10a7 7 0 1 0-14 0v3.722a.67.67 0 0 1-.196.474l-.39.39c-.12.12-.179.179-.226.245a1 1 0 0 0-.175.421c-.013.08-.013.165-.013.334c0 .386 0 .578.052.734a1 1 0 0 0 .629.628c.155.052.346.052.729.052H9"/></symbol>
+      <symbol id="icon-ci-user-03" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 19c0-2.21-2.686-4-6-4s-6 1.79-6 4m6-7a4 4 0 1 1 0-8a4 4 0 0 1 0 8"/></symbol>
+      <symbol id="icon-codicon-globe" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1C4.141 1 1 4.141 1 8s3.141 7 7 7s7-3.141 7-7s-3.141-7-7-7m0 13c-.578 0-1.314-1.094-1.712-3h3.425c-.398 1.906-1.134 3-1.712 3zm-1.879-4A16 16 0 0 1 6 8c0-.723.044-1.392.121-2h3.757c.077.608.121 1.277.121 2s-.044 1.392-.121 2zM2 8c0-.701.121-1.374.343-2h2.778a16.6 16.6 0 0 0 0 4H2.343A6 6 0 0 1 2 8m6-6c.578 0 1.314 1.094 1.712 3H6.287C6.685 3.094 7.422 2 8 2m2.879 4h2.778c.222.626.343 1.299.343 2s-.121 1.374-.343 2h-2.778a16.6 16.6 0 0 0 0-4m2.316-1h-2.473c-.206-1.062-.523-2.02-.947-2.732A6.03 6.03 0 0 1 13.195 5M6.226 2.268c-.424.712-.742 1.67-.947 2.732H2.806a6.03 6.03 0 0 1 3.42-2.732M2.805 11h2.473c.206 1.062.523 2.02.947 2.732A6.03 6.03 0 0 1 2.805 11m6.969 2.732c.424-.712.742-1.67.947-2.732h2.473a6.03 6.03 0 0 1-3.42 2.732"/></symbol>
+      <symbol id="icon-codicon-settings-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6m0 4.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 13.5m9.848 1.072l-1.93-1.63a1.232 1.232 0 0 1 0-1.884l1.93-1.63a.62.62 0 0 0 .189-.662a10.5 10.5 0 0 0-2.209-3.804a.62.62 0 0 0-.668-.168l-2.381.848a1.3 1.3 0 0 1-.419.073a1.24 1.24 0 0 1-1.219-1.014l-.454-2.478a.62.62 0 0 0-.482-.493a10.7 10.7 0 0 0-4.408 0a.62.62 0 0 0-.482.493l-.453 2.478a1.24 1.24 0 0 1-1.638.942l-2.38-.848a.62.62 0 0 0-.669.168a10.5 10.5 0 0 0-2.21 3.805a.615.615 0 0 0 .189.661l1.929 1.63q.077.066.143.143c.444.52.379 1.299-.143 1.742l-1.929 1.63a.62.62 0 0 0-.189.662a10.5 10.5 0 0 0 2.21 3.803a.62.62 0 0 0 .669.168l2.38-.847a1.3 1.3 0 0 1 .419-.072c.588 0 1.11.417 1.219 1.014l.453 2.478a.62.62 0 0 0 .482.493a10.7 10.7 0 0 0 4.408 0a.62.62 0 0 0 .482-.493l.454-2.478q.018-.099.053-.194a1.24 1.24 0 0 1 1.585-.748l2.379.848q.105.036.208.036a.62.62 0 0 0 .461-.204a10.5 10.5 0 0 0 2.208-3.804a.615.615 0 0 0-.189-.662z"/></symbol>
+      <symbol id="icon-carbon-light" viewBox="0 0 32 32"><path fill="currentColor" d="M15 2h2v5h-2zm6.688 6.9l3.506-3.506l1.414 1.414l-3.506 3.506zM25 15h5v2h-5zm-3.312 8.1l1.414-1.413l3.506 3.506l-1.414 1.414zM15 25h2v5h-2zm-9.606.192L8.9 21.686l1.414 1.414l-3.505 3.506zM2 15h5v2H2zm3.395-8.192l1.414-1.414L10.315 8.9L8.9 10.314zM16 12a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6"/></symbol>
+      <symbol id="icon-fluent-arrow-exit-24-filled" viewBox="0 0 24 24"><path fill="currentColor" d="M6.5 3A3.5 3.5 0 0 0 3 6.5v11A3.5 3.5 0 0 0 6.5 21H15a1 1 0 1 0 0-2H6.5A1.5 1.5 0 0 1 5 17.5v-11A1.5 1.5 0 0 1 6.5 5H15a1 1 0 1 0 0-2zm11.207 4.293a1 1 0 1 0-1.414 1.414L18.586 11H9a1 1 0 1 0 0 2h9.586l-2.293 2.293a1 1 0 0 0 1.414 1.414l4-4a1 1 0 0 0 0-1.414z"/></symbol>
+      <symbol id="icon-fluent-line-style-sketch-32-filled" viewBox="0 0 32 32"><path fill="currentColor" d="M2 7.25C2 6.56 2.56 6 3.25 6h25.5a1.25 1.25 0 1 1 0 2.5H3.25C2.56 8.5 2 7.94 2 7.25m13.308 9.387c1.209.62 2.655 1.363 4.715 1.363c1.8 0 3.183-.582 4.298-1.052q.23-.098.446-.186c1.181-.482 2.205-.794 3.711-.459a1.25 1.25 0 0 0 .544-2.44c-2.234-.497-3.826.024-5.2.584l-.49.203h-.001c-1.126.469-2.04.85-3.308.85c-1.426 0-2.404-.487-3.622-1.112l-.05-.025C15.145 13.743 13.698 13 11.638 13s-3.507.743-4.715 1.363l-.05.025C5.656 15.013 4.678 15.5 3.25 15.5a1.25 1.25 0 1 0 0 2.5c2.06 0 3.507-.743 4.715-1.363l.05-.025c1.217-.625 2.195-1.112 3.622-1.112c1.426 0 2.405.487 3.622 1.112z"/></symbol>
+      <symbol id="icon-hugeicons-user-cog" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M19.67 16.26c.21.365.33.788.33 1.24s-.12.875-.329 1.24A2.5 2.5 0 0 1 17.5 20m-2.17-3.74c-.21.365-.33.788-.33 1.24s.12.875.329 1.24A2.5 2.5 0 0 0 17.5 20m0 0v1.5m0-6.5c.93 0 1.74.507 2.17 1.26M17.5 15c-.93 0-1.74.507-2.17 1.26M17.5 15v-1.5m3.5 2l-1.33.76M14 19.5l1.329-.76M21 19.5l-1.329-.76M14 15.5l1.33.76M2.5 18.5v-2.03c0-1.242.56-2.46 1.69-2.975C5.568 12.866 7.222 12.5 9 12.5c1.054 0 2.065.129 3 .364"/><circle cx="9" cy="6" r="3.5"/></g></symbol>
+      <symbol id="icon-hugeicons-activity-01" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M4.318 19.682C3 18.364 3 16.242 3 12s0-6.364 1.318-7.682S7.758 3 12 3s6.364 0 7.682 1.318S21 7.758 21 12s0 6.364-1.318 7.682S16.242 21 12 21s-6.364 0-7.682-1.318"/><path d="m7 14l2.793-2.793a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 0 1.414 0L17 10"/></g></symbol>
+      <symbol id="icon-ci-more-horizontal" viewBox="0 0 24 24"><path fill="currentColor" d="M6 10a2 2 0 1 1-2 2a2 2 0 0 1 2-2m6 0a2 2 0 1 1-2 2a2 2 0 0 1 2-2m6 0a2 2 0 1 1-2 2a2 2 0 0 1 2-2"/></symbol>
+      <symbol id="icon-akar-icons-arrow-left" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7 7l-7-7l7-7"/></symbol>
+      <symbol id="icon-hugeicons-search-01" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M17.5 17.5L22 22"/><path d="M20 11C20 6.02944 15.9706 2 11 2C6.02944 2 2 6.02944 2 11C2 15.9706 6.02944 20 11 20C15.9706 20 20 15.9706 20 11Z" stroke-linejoin="round"/></g></symbol>
+      <symbol id="icon-akar-icons-chevron-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6l-6 6"/></symbol>
+      <symbol id="icon-ci-copy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 8h10v10H8zM4 16H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+      <symbol id="icon-akar-icons-arrow-up-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10"/></symbol>
+      <symbol id="icon-ci-wand" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4l5 5L7 22l-5-5zM19 2l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1zM5 2l.5 1l1 .5l-1 .5l-.5 1l-.5-1l-1-.5l1-.5z"/></symbol>
+      <symbol id="icon-ci-security-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3l-8 3v7c0 6 8 10 8 10zM9 12l2 2l4-4"/></symbol>
+      <symbol id="icon-ci-close-md" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="icon-ci-upload" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></symbol>
+      <symbol id="icon-ci-show" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+      <symbol id="icon-ci-hide" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/></symbol>
+      <symbol id="icon-carbon-moon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26a5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4c-.44-.06-.9-.1-1.36-.1z"/></symbol>
+      <symbol id="icon-carbon-laptop" viewBox="0 0 24 24"><path fill="currentColor" d="M4 5h16a1 1 0 0 1 1 1v10H3V6a1 1 0 0 1 1-1zm-2 13h20v2H2z"/></symbol>
+      <symbol id="icon-ci-mobile" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 16h.01"/></symbol>
+      <symbol id="icon-ci-mail" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m22 6l-10 7L2 6"/></symbol>
+      <symbol id="icon-ci-refresh" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 4v6h-6M1 20v-6h6"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+      <symbol id="icon-ci-user-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8a4 4 0 0 0 0 8zm11 1v6m-3-3h6"/></symbol>
+      <symbol id="icon-hugeicons-sorting-01" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 7H21M6 12H18M10 17H14"/></symbol>
+      <symbol id="icon-ci-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M4.93 4.93l14.14 14.14"/></symbol>
+      <symbol id="icon-ci-trash-empty" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+      <symbol id="icon-hugeicons-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 20v-3.015c0-.621-.282-1.22-.816-1.536C14.157 14.546 12.17 14 10 14s-4.157.546-5.684 1.45c-.534.316-.816.914-.816 1.535V20"/><circle cx="10" cy="7.5" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M20.5 20.001v-3.015c0-.621-.282-1.22-.816-1.536A9.7 9.7 0 0 0 18 14.668"/><path stroke-linecap="round" d="M15 4.145a3.502 3.502 0 0 1 0 6.71"/></g></symbol>
+      <symbol id="icon-hugeicons-mail-01" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2.5"><path d="m2 6l6.913 3.917c2.549 1.444 3.625 1.444 6.174 0L22 6"/><path d="M2.016 13.476c.065 3.065.098 4.598 1.229 5.733c1.131 1.136 2.705 1.175 5.854 1.254c1.94.05 3.862.05 5.802 0c3.149-.079 4.723-.118 5.854-1.254c1.131-1.135 1.164-2.668 1.23-5.733c.02-.986.02-1.966 0-2.952c-.066-3.065-.099-4.598-1.23-5.733c-1.131-1.136-2.705-1.175-5.854-1.254a115 115 0 0 0-5.802 0c-3.149.079-4.723.118-5.854 1.254c-1.131 1.135-1.164 2.668-1.23 5.733a69 69 0 0 0 0 2.952Z"/></g></symbol>
+      <symbol id="icon-hugeicons-user-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 13.503A12.2 12.2 0 0 0 9.5 13c-1.778 0-3.431.366-4.81.995C3.56 14.51 3 15.728 3 16.97V19"/><circle cx="9.5" cy="6.5" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M17.5 21v-7M14 17.5h7"/></g></symbol>
+      <symbol id="icon-hugeicons-refresh-03" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M20.945 13q.055-.492.055-1A9 9 0 0 0 5 6.343M3.055 11A9 9 0 0 0 19 17.657"/><path d="M8 7H7c-1.414 0-2.121 0-2.56-.44C4 6.122 4 5.415 4 4V3m12 14h1c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v1"/></g></symbol>
+    </defs>
+  </svg>
+  <div class="app">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <img class="logo" src="Asett/favicon.png" alt="Festinger" />
+      <nav class="nav">
+        <a class="nav-link active" href="dashboard.html"><span class="icon-box"><iconify-icon icon="akar-icons:home-alt1"></iconify-icon></span><span>Home</span></a>
+        <a class="nav-link" href="#subfests"><span class="icon-box"><iconify-icon icon="ci:ticket-voucher"></iconify-icon></span><span>Subfests</span></a>
+        <a class="nav-link" href="dashboard.html?tab=users" data-dashboard-tab="users"><span class="icon-box"><iconify-icon icon="hugeicons:users"></iconify-icon></span><span>Users</span></a>
+        <a class="nav-link" href="#website"><span class="icon-box"><iconify-icon icon="codicon:globe"></iconify-icon></span><span>Website</span></a>
+        <a class="nav-link" id="settings-nav" href="#settings"><span class="icon-box"><iconify-icon icon="codicon:settings-gear"></iconify-icon></span><span>Settings</span></a>
+        <button class="nav-link mobile-more" id="mobile-more-button" type="button"><span class="icon-box"><iconify-icon icon="ci:more-horizontal"></iconify-icon></span><span>More</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="side-action" id="theme-shortcut" type="button" aria-label="Open appearance preferences"><iconify-icon icon="carbon:light"></iconify-icon></button>
+        <button class="side-action" type="button" aria-label="Notifications"><iconify-icon icon="ci:bell"></iconify-icon></button>
+        <button class="avatar" id="account-trigger" type="button" title="Account" aria-label="Open account menu" aria-haspopup="menu" aria-expanded="false" data-user-initials data-user-avatar>--</button>
+      </div>
+    </aside>
+
+    <header class="mobile-header" aria-label="Mobile header">
+      <button class="back" type="button" aria-label="Go back" onclick="history.back()"><iconify-icon icon="akar-icons:arrow-left"></iconify-icon></button>
+      <img class="mobile-logo" src="Asett/favicon.png" alt="Festinger" />
+      <span class="spacer"></span>
+      <button class="mobile-action" type="button" aria-label="Search"><iconify-icon icon="hugeicons:search-01"></iconify-icon></button>
+        <button class="mobile-action" type="button" aria-label="Notifications"><iconify-icon icon="ci:bell"></iconify-icon></button>
+      <button class="mobile-avatar" id="mobile-account" type="button" aria-label="Account" data-user-initials data-user-avatar>--</button>
+    </header>
+
+    <div class="account-menu" id="account-menu" role="menu" aria-hidden="true">
+        <div class="account-header">
+        <span class="account-avatar" data-user-initials data-user-avatar>--</span>
+        <span class="account-copy"><strong data-user-name>Account user</strong><span data-user-email>Anonymous Firebase account</span></span>
+      </div>
+      <div class="account-links">
+        <button class="account-item" id="manage-account" type="button" role="menuitem"><iconify-icon icon="hugeicons:user-cog"></iconify-icon>Manage Account</button>
+      </div>
+      <div class="account-logout">
+        <button class="account-item" id="logout-button" type="button" role="menuitem"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out</button>
+      </div>
+    </div>
+
+    <main class="shell">
+      <header class="topbar">
+        <div class="breadcrumb"><iconify-icon icon="akar-icons:home-alt1"></iconify-icon><iconify-icon icon="akar-icons:chevron-right" class="chevron"></iconify-icon><span>Home</span></div>
+        <label class="search"><iconify-icon icon="hugeicons:search-01"></iconify-icon><input type="search" placeholder="Search" aria-label="Search" /><span class="key">⌘</span><span class="key">K</span></label>
+      </header>
+
+      <section class="content" aria-labelledby="dashboard-title">
+        <div class="page-title-row">
+          <div class="page-title"><span class="page-title-icon"><iconify-icon icon="akar-icons:home-alt1"></iconify-icon></span><h1 id="dashboard-title">Festival Dashboard</h1></div>
+        </div>
+
+        <article class="trial-card">
+          <div class="trial-content">
+            <h2>Controll Festival<br />Smoothly</h2>
+            <p>Helps to Controll the Fest Easily Without any troubles and overflow. and keeps free Paper</p>
+          </div>
+        </article>
+
+        <article class="site-card" id="website">
+          <div class="site-icon"><iconify-icon icon="codicon:globe"></iconify-icon><span class="online"></span></div>
+          <div class="site-info"><h3>Mā Warā’ Website</h3><a id="site-url" href="https://mawaradj.festie.app" target="_blank" rel="noopener">https://mawaradj.festie.app</a></div>
+          <div class="site-actions">
+            <button class="site-button" id="copy-link" type="button"><iconify-icon icon="ci:copy"></iconify-icon>Copy Link</button>
+            <button class="site-button primary" id="view-site" type="button"><iconify-icon icon="akar-icons:arrow-up-right"></iconify-icon>View Website</button>
+            <button class="site-button" type="button"><iconify-icon icon="ci:wand"></iconify-icon>Customize</button>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-more-overlay" id="mobile-more-overlay" aria-hidden="true">
+    <div class="mobile-more-panel" role="dialog" aria-label="More navigation">
+      <label class="mobile-menu-search"><iconify-icon icon="hugeicons:search-01"></iconify-icon><input id="mobile-menu-search" type="search" placeholder="Search" /></label>
+      <nav class="mobile-menu-links">
+        <a class="mobile-menu-link active" href="dashboard.html"><iconify-icon icon="akar-icons:home-alt1"></iconify-icon>Home</a>
+        <a class="mobile-menu-link" href="#subfests"><iconify-icon icon="ci:ticket-voucher"></iconify-icon>Subfests</a>
+        <a class="mobile-menu-link" href="dashboard.html?tab=users" data-dashboard-tab="users"><iconify-icon icon="hugeicons:users"></iconify-icon>Users</a>
+        <a class="mobile-menu-link" href="#website"><iconify-icon icon="codicon:globe"></iconify-icon>Website</a>
+        <button class="mobile-menu-link" id="mobile-settings" type="button"><iconify-icon icon="codicon:settings-gear"></iconify-icon>Settings</button>
+      </nav>
+    </div>
+  </div>
+
+  <div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+    <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <aside class="settings-sidebar">
+        <div class="settings-user"><span class="settings-user-avatar" data-user-initials data-user-avatar>--</span><span class="settings-user-copy"><strong data-user-name>Account user</strong><span data-user-email>Anonymous Firebase account</span></span></div>
+        <p class="settings-label">SETTINGS</p>
+        <nav class="settings-tabs" aria-label="Account settings">
+          <button class="settings-tab active" data-panel="profile" type="button"><iconify-icon icon="ci:user-03"></iconify-icon><span>Profile</span></button>
+          <button class="settings-tab" data-panel="security" type="button"><iconify-icon icon="ci:security-check"></iconify-icon><span>Security</span></button>
+          <button class="settings-tab" data-panel="preference" type="button"><iconify-icon icon="fluent:line-style-sketch-32-filled"></iconify-icon><span>Preference</span></button>
+          <button class="settings-tab" data-panel="notifications" type="button"><iconify-icon icon="ci:bell"></iconify-icon><span>Notifications</span></button>
+          <button class="settings-tab" data-panel="activity" type="button"><iconify-icon icon="hugeicons:activity-01"></iconify-icon><span>Activity</span></button>
+        </nav>
+      </aside>
+      <div class="settings-main">
+        <header class="settings-topbar"><span class="settings-crumb">SETTINGS</span><iconify-icon icon="akar-icons:chevron-right" class="settings-crumb-icon" aria-hidden="true"></iconify-icon><span class="settings-current">Profile</span><button class="settings-close" id="settings-close" type="button" aria-label="Close settings"><iconify-icon icon="ci:close-md" aria-hidden="true"></iconify-icon></button></header>
+        <div class="settings-body">
+          <section class="settings-panel active" data-content="profile">
+            <h2 class="settings-heading" id="settings-title"><span class="settings-heading-icon"><iconify-icon icon="ci:user-03"></iconify-icon></span>Profile Settings</h2>
+            <div class="profile-photo-row"><span class="profile-photo" data-user-initials data-user-avatar>--</span><button class="settings-button" id="change-photo" type="button"><iconify-icon icon="ci:upload"></iconify-icon><span>Change photo</span></button><input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden /></div>
+            <div class="settings-fields"><label class="settings-field">Full Name<input class="settings-input" id="profile-name" /></label><label class="settings-field">Contact Email <span style="color:#999;font-weight:400">(optional)</span><input class="settings-input" id="profile-email" type="email" placeholder="No email set" /></label></div>
+            <div class="settings-message" id="profile-message" role="status"></div>
+            <div class="settings-actions"><button class="settings-button" id="modal-logout" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Logout</button><button class="settings-button primary" id="save-profile" type="button">Save Changes</button></div>
+            <div class="account-created" id="account-created">ACCOUNT CREATED —</div>
+          </section>
+
+          <section class="settings-panel" data-content="security">
+            <h2 class="settings-heading"><span class="settings-heading-icon"><iconify-icon icon="ci:security-check"></iconify-icon></span>Password &amp; Security</h2>
+            <div class="password-fields">
+              <label class="settings-field">Username<input class="settings-input" id="security-username" type="text" autocomplete="username" placeholder="Choose a username" /></label>
+              <label class="settings-field">Password<span class="password-wrap"><input class="settings-input" id="account-password" type="password" autocomplete="current-password" placeholder="••••••••" aria-describedby="password-help" /><button class="password-eye" type="button" aria-label="Show password"><iconify-icon icon="ci:show"></iconify-icon></button></span><small id="password-help" style="color:#8a8c91;font-weight:400">Edit this value to change the password.</small></label>
+            </div>
+            <div class="settings-message" id="security-message" role="status"></div>
+            <div class="settings-actions"><button class="settings-button primary" id="update-password" type="button">Save Credentials</button></div>
+          </section>
+
+          <section class="settings-panel" data-content="preference">
+            <h2 class="settings-heading"><span class="settings-heading-icon"><iconify-icon icon="fluent:line-style-sketch-32-filled"></iconify-icon></span>Interface Preferences</h2>
+            <div class="preference-group"><h3 class="section-title">VISUAL THEME</h3><div class="choice-row" id="theme-choices"><button class="choice" data-theme-choice="light" type="button" title="Light"><iconify-icon icon="carbon:light"></iconify-icon></button><button class="choice" data-theme-choice="dark" type="button" title="Dark"><iconify-icon icon="carbon:moon"></iconify-icon></button><button class="choice" data-theme-choice="system" type="button" title="System"><iconify-icon icon="carbon:laptop"></iconify-icon></button></div><div class="preference-note">YOUR PREFERENCE IS SAVED AUTOMATICALLY</div></div>
+            <div class="preference-group"><h3 class="section-title">FONT SIZE</h3><div class="choice-row"><button class="choice active" type="button"><small>AA</small></button><button class="choice" type="button"><small>AA</small></button><button class="choice" type="button"><strong>AA</strong></button></div></div>
+            <div class="preference-group"><h3 class="section-title">MAIN THEME COLOR</h3><div class="choice-row" id="accent-choices"><button class="choice color" data-accent="#fa5458" type="button" title="Red"><span class="swatch" style="--swatch:#fa5458"></span></button><button class="choice color" data-accent="#3478ba" type="button" title="Blue"><span class="swatch" style="--swatch:#3478ba"></span></button><button class="choice color" data-accent="#d08a00" type="button" title="Gold"><span class="swatch" style="--swatch:#d08a00"></span></button></div></div>
+          </section>
+
+          <section class="settings-panel" data-content="notifications">
+            <h2 class="settings-heading"><span class="settings-heading-icon"><iconify-icon icon="ci:bell"></iconify-icon></span>Notifications</h2>
+            <div class="notification-card"><button class="toggle" type="button" aria-label="Toggle push notifications"></button><strong>Push notifications</strong><p>Receive new Festie alerts even when this app is closed. On iPhone and iPad, install Festie to your Home Screen first.</p></div>
+            <div class="notification-card"><strong>You are now the owner of Mā Warā'</strong><p>Start managing your festival Mā Warā' now.</p><span class="notification-date">OCT 01, 2026 • 03:43 PM</span></div>
+          </section>
+
+          <section class="settings-panel" data-content="activity">
+            <div class="activity-head"><h2 class="settings-heading" style="margin:0"><span class="settings-heading-icon"><iconify-icon icon="hugeicons:activity-01"></iconify-icon></span>Account Activity</h2><button class="settings-button" id="logout-other-sessions" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out other sessions</button></div>
+            <p id="activity-summary" style="font-size:9px">Loading sessions…</p>
+            <div id="activity-list"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status">Link copied</div>
+
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyCxbG-k87afwF687taz-TupzSkxI4_9p2g",
+      authDomain: "festinger-panel.firebaseapp.com",
+      projectId: "festinger-panel",
+      storageBucket: "festinger-panel.firebasestorage.app",
+      messagingSenderId: "375631831919",
+      appId: "1:375631831919:web:e40c8c00dbe07f18bebe9a",
+      measurementId: "G-L4BQZEL1MK"
+    };
+    const cloudinaryConfig = { cloudName: 'da6fjyirm', uploadPreset: 'festinger' };
+    let firebase = null;
+    let currentPhotoURL = '';
+    const sessionId = sessionStorage.getItem('festieSessionId') || crypto.randomUUID();
+    sessionStorage.setItem('festieSessionId', sessionId);
+    let stopSessionsListener = null;
+    async function getFirebase() {
+      if (firebase) return firebase;
+      const [{ initializeApp }, authModule, firestoreModule] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+      ]);
+      const app = initializeApp(firebaseConfig);
+      firebase = { auth: authModule.getAuth(app), db: firestoreModule.getFirestore(app), ...authModule, ...firestoreModule };
+      return firebase;
+    }
+    function bytesToBase64(bytes) {
+      return btoa(String.fromCharCode(...bytes));
+    }
+    async function passwordHash(password, saltBase64) {
+      const salt = Uint8Array.from(atob(saltBase64), (character) => character.charCodeAt(0));
+      const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 210000 }, key, 256);
+      return bytesToBase64(new Uint8Array(bits));
+    }
+    const siteUrl = document.querySelector('#site-url').href;
+    const toast = document.querySelector('#toast');
+    let toastTimer;
+    function showToast(message, type = 'success') {
+      clearTimeout(toastTimer);
+      toast.className = `toast ${type}`;
+      toast.replaceChildren(
+        Object.assign(document.createElement('span'), { className: 'toast-icon', textContent: type === 'error' ? '!' : '✓' }),
+        Object.assign(document.createElement('span'), { className: 'toast-message', textContent: message })
+      );
+      requestAnimationFrame(() => toast.classList.add('show'));
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    document.querySelector('#copy-link').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(siteUrl);
+        showToast('Link copied');
+      } catch {
+        showToast('Could not copy link', 'error');
+      }
+    });
+    document.querySelector('#view-site').addEventListener('click', () => window.open(siteUrl, '_blank', 'noopener'));
+
+    async function loadDashboardTab(tab) {
+      if (tab !== 'users') return;
+      try {
+        const response = await fetch('manageUser.html', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Could not load users.');
+        const content = document.querySelector('.content');
+        content.classList.add('users-content');
+        content.innerHTML = await response.text();
+        document.querySelector('.breadcrumb').innerHTML = '<iconify-icon icon="akar-icons:home-alt1"></iconify-icon><iconify-icon icon="akar-icons:chevron-right" class="chevron"></iconify-icon><span>Users</span><iconify-icon icon="akar-icons:chevron-right" class="chevron"></iconify-icon><strong>Members</strong>';
+        document.querySelectorAll('.nav-link').forEach((item) => item.classList.toggle('active', item.dataset.dashboardTab === 'users'));
+        initializeUsersView();
+      } catch (error) {
+        showToast(error.message || 'Could not load users.', 'error');
+      }
+    }
+
+    function initializeUsersView() {
+      const usersView = document.querySelector('.users-view:not(.email-view)');
+      const emailView = document.querySelector('#email-view');
+      document.querySelectorAll('[data-user-section]').forEach((button) => button.addEventListener('click', () => {
+        const showEmails = button.dataset.userSection === 'emails';
+        document.querySelectorAll('[data-user-section]').forEach((item) => item.classList.toggle('active', item === button));
+        usersView.hidden = showEmails;
+        emailView.hidden = !showEmails;
+        document.querySelector('.breadcrumb strong').textContent = showEmails ? 'Emails' : 'Members';
+        const url = new URL(location.href);
+        if (showEmails) url.searchParams.set('section', 'emails');
+        else url.searchParams.delete('section');
+        history.replaceState({}, '', url);
+      }));
+      const ownerRow = document.querySelector('#users-table-body tr');
+      const empty = document.querySelector('#users-empty');
+      const query = document.querySelector('#users-query');
+      const setupSelection = (table, bar, countElement, removeButton, protectOwner, onRemove) => {
+        const update = () => {
+          const selected = [...table.querySelectorAll('tbody input[type="checkbox"]:checked')];
+          countElement.textContent = selected.length;
+          bar.classList.toggle('show', selected.length > 0);
+          removeButton.disabled = !selected.length || (protectOwner && selected.some((checkbox) => checkbox.closest('tr').dataset.owner === 'true'));
+        };
+        table.addEventListener('change', (event) => {
+          if (!event.target.matches('input[type="checkbox"]')) return;
+          if (event.target.closest('thead')) table.querySelectorAll('tbody input[type="checkbox"]').forEach((checkbox) => checkbox.checked = event.target.checked);
+          update();
+        });
+        removeButton.addEventListener('click', () => { if (!removeButton.disabled) onRemove?.([...table.querySelectorAll('tbody input[type="checkbox"]:checked')], update); });
+        return update;
+      };
+      setupSelection(document.querySelector('.users-table:not(.emails-table)'), document.querySelector('#users-selection-bar'), document.querySelector('#users-selected-count'), document.querySelector('#users-remove-access'), true, async (selected, update) => {
+        const fb = await getFirebase();
+        await Promise.all(selected.map((checkbox) => fb.deleteDoc(fb.doc(fb.db, 'appConfig', 'auth', 'assignedUsers', checkbox.closest('tr').dataset.assignmentId))));
+        update();
+      });
+      const displayName = localStorage.getItem('festieDisplayName') || sessionStorage.getItem('festieAccountUsername') || 'Admin';
+      document.querySelector('#managed-user-name').textContent = displayName;
+      document.querySelector('#managed-user-avatar').textContent = userInitials(displayName);
+      const applyFilter = () => {
+        const filter = document.querySelector('.users-tab.active')?.dataset.userFilter || 'all';
+        let visibleCount = 0;
+        document.querySelectorAll('#users-table-body tr').forEach((row) => {
+          const rowText = row.textContent.toLowerCase();
+          const visible = (filter === 'all' || row.dataset.userStatus === filter) && rowText.includes(query.value.trim().toLowerCase());
+          row.hidden = !visible;
+          if (visible) visibleCount++;
+        });
+        empty.style.display = visibleCount ? 'none' : 'block';
+      };
+      document.querySelectorAll('.users-tab').forEach((tab) => tab.addEventListener('click', () => {
+        document.querySelectorAll('.users-tab').forEach((item) => item.classList.toggle('active', item === tab));
+        applyFilter();
+      }));
+      query.addEventListener('input', applyFilter);
+      document.querySelector('#users-search-toggle').addEventListener('click', () => { document.querySelector('#users-inline-search').classList.toggle('open'); query.focus(); });
+      document.querySelector('#users-refresh').addEventListener('click', () => loadDashboardTab('users'));
+      document.querySelector('#emails-refresh').addEventListener('click', () => loadDashboardTab('users'));
+      document.querySelector('#emails-copy').addEventListener('click', async () => {
+        const link = new URL('registerEmail.html', location.href).href;
+        try { await navigator.clipboard.writeText(link); toast.textContent = 'Email link copied'; }
+        catch { toast.textContent = 'Could not copy link'; }
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1600);
+      });
+      document.querySelector('#emails-add').addEventListener('click', () => window.open('registerEmail.html', '_blank', 'noopener'));
+      let registeredEmails = [];
+      getFirebase().then((fb) => {
+        fb.onSnapshot(fb.collection(fb.db, 'appConfig', 'auth', 'assignedUsers'), (snapshot) => {
+          document.querySelectorAll('#users-table-body tr:not([data-owner="true"])').forEach((row) => row.remove());
+          snapshot.docs.forEach((item) => {
+            const user = item.data();
+            const assignedRow = document.createElement('tr');
+            assignedRow.dataset.userStatus = 'active';
+            assignedRow.dataset.assignmentId = item.id;
+            assignedRow.innerHTML = `<td class="users-check"><input type="checkbox" aria-label="Select ${user.name || 'user'}" /></td><td><span class="users-person"><span class="users-avatar">${userInitials(user.name || 'User')}</span><span></span></span></td><td></td><td></td><td><span class="users-status">ACTIVE</span></td>`;
+            assignedRow.querySelector('.users-person span:last-child').textContent = user.name || 'User';
+            assignedRow.children[2].textContent = user.email || '—';
+            const assignments = assignedRow.children[3];
+            assignments.append(Object.assign(document.createElement('span'), { className:'users-pill', textContent:'Main Event' }));
+            (user.roles || []).forEach((role) => assignments.append(Object.assign(document.createElement('span'), { className:'users-pill', textContent:role })));
+            document.querySelector('#users-table-body').append(assignedRow);
+          });
+          applyFilter();
+        });
+        return fb.onSnapshot(fb.collection(fb.db, 'appConfig', 'auth', 'emailRegistrations'), (snapshot) => {
+        const body = document.querySelector('#email-registrations');
+        const emptyState = document.querySelector('#emails-empty');
+        if (!body || !emptyState) return;
+        const registrations = snapshot.docs.map((item) => ({ id:item.id, ...item.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        registeredEmails = registrations;
+        body.replaceChildren(...registrations.map((registration) => {
+          const row = document.createElement('tr');
+          row.dataset.registrationId = registration.id;
+          const nameCell = document.createElement('td');
+          const emailCell = document.createElement('td');
+          const usernameCell = document.createElement('td');
+          const passwordCell = document.createElement('td');
+          const deleteCell = document.createElement('td');
+          deleteCell.className = 'email-delete-column';
+          const person = document.createElement('span');
+          person.className = 'users-person';
+          const avatar = document.createElement('span');
+          avatar.className = 'users-avatar';
+          avatar.textContent = userInitials(registration.name || 'User');
+          const personName = document.createElement('span');
+          personName.textContent = registration.name || '—';
+          person.append(avatar, personName);
+          nameCell.append(person);
+          emailCell.textContent = registration.email || '—';
+          usernameCell.textContent = registration.username || '—';
+          passwordCell.className = 'email-password';
+          const passwordValue = document.createElement('span');
+          passwordValue.className = 'email-password-value';
+          passwordValue.textContent = registration.password ? '••••••••' : 'Not set';
+          const viewPasswordButton = document.createElement('button');
+          viewPasswordButton.className = 'email-password-view';
+          viewPasswordButton.type = 'button';
+          viewPasswordButton.innerHTML = '<iconify-icon icon="ci:show"></iconify-icon>';
+          viewPasswordButton.setAttribute('aria-label', `View password for ${registration.username || registration.email || 'user'}`);
+          viewPasswordButton.title = 'View password';
+          let passwordVisible = false;
+          viewPasswordButton.addEventListener('click', () => {
+            if (!registration.password) {
+              alert('This password is securely hashed and cannot be viewed. Use Edit to set a new password.');
+              return;
+            }
+            passwordVisible = !passwordVisible;
+            passwordValue.textContent = passwordVisible ? registration.password : '••••••••';
+            viewPasswordButton.innerHTML = `<iconify-icon icon="${passwordVisible ? 'ci:hide' : 'ci:show'}"></iconify-icon>`;
+            viewPasswordButton.setAttribute('aria-label', `${passwordVisible ? 'Hide' : 'View'} password for ${registration.username || registration.email || 'user'}`);
+            viewPasswordButton.title = passwordVisible ? 'Hide password' : 'View password';
+          });
+          const editPasswordButton = document.createElement('button');
+          editPasswordButton.className = 'email-password-edit';
+          editPasswordButton.type = 'button';
+          editPasswordButton.textContent = registration.password ? 'Edit' : 'Set';
+          editPasswordButton.setAttribute('aria-label', `${registration.password ? 'Edit' : 'Set'} password for ${registration.username || registration.email || 'user'}`);
+          editPasswordButton.addEventListener('click', () => {
+            const passwordInput = document.createElement('input');
+            passwordInput.className = 'email-password-input';
+            passwordInput.type = 'password';
+            passwordInput.minLength = 6;
+            passwordInput.autocomplete = 'new-password';
+            passwordInput.placeholder = 'New password';
+            passwordInput.setAttribute('aria-label', `New password for ${registration.username || registration.email || 'user'}`);
+            const updateButton = document.createElement('button');
+            updateButton.className = 'email-password-update';
+            updateButton.type = 'button';
+            updateButton.textContent = 'Update';
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'email-password-cancel';
+            cancelButton.type = 'button';
+            cancelButton.textContent = 'Cancel';
+            const restorePasswordActions = () => passwordCell.replaceChildren(passwordValue, viewPasswordButton, editPasswordButton);
+            const updatePassword = async () => {
+              const newPassword = passwordInput.value;
+              if (newPassword.length < 6) { passwordInput.setCustomValidity('Password must contain at least 6 characters.'); passwordInput.reportValidity(); return; }
+              updateButton.disabled = true;
+              try {
+                await fb.updateDoc(fb.doc(fb.db, 'appConfig', 'auth', 'emailRegistrations', registration.id), { password:newPassword, salt:fb.deleteField(), passwordHash:fb.deleteField(), updatedAt:fb.serverTimestamp() });
+              } catch {
+                alert('Could not update the password. Please try again.');
+                updateButton.disabled = false;
+              }
+            };
+            updateButton.addEventListener('click', updatePassword);
+            passwordInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') updatePassword(); if (event.key === 'Escape') restorePasswordActions(); });
+            cancelButton.addEventListener('click', restorePasswordActions);
+            passwordCell.replaceChildren(passwordInput, updateButton, cancelButton);
+            passwordInput.focus();
+          });
+          passwordCell.append(passwordValue, viewPasswordButton, editPasswordButton);
+          const deleteButton = document.createElement('button');
+          deleteButton.className = 'email-delete-button';
+          deleteButton.type = 'button';
+          deleteButton.setAttribute('aria-label', `Delete ${registration.email || 'email'}`);
+          deleteButton.innerHTML = '<iconify-icon icon="ci:trash-empty"></iconify-icon>';
+          deleteButton.addEventListener('click', async () => {
+            if (!confirm(`Delete ${registration.email}?`)) return;
+            deleteButton.disabled = true;
+            await fb.deleteDoc(fb.doc(fb.db, 'appConfig', 'auth', 'emailRegistrations', registration.id));
+          });
+          deleteCell.append(deleteButton);
+          row.append(nameCell, emailCell, usernameCell, passwordCell, deleteCell);
+          return row;
+        }));
+        emptyState.style.display = registrations.length ? 'none' : 'block';
+        });
+      }).catch(() => {});
+      if (new URLSearchParams(location.search).get('section') === 'emails') document.querySelector('[data-user-section="emails"]').click();
+      const overlay = document.querySelector('#add-user-overlay');
+      const emailInput = document.querySelector('#invite-email');
+      const roleButton = document.querySelector('#role-toggle');
+      const roleMenu = document.querySelector('#role-menu');
+      const selectedRolesContainer = document.querySelector('#selected-roles');
+      const selectedEmailsContainer = document.querySelector('#selected-invite-emails');
+      const emailSuggestions = document.querySelector('#email-suggestions');
+      const errorMessage = document.querySelector('#add-user-error');
+      let selectedInviteEmails = [];
+      const setAddUserModal = (open) => {
+        overlay.classList.toggle('open', open);
+        overlay.setAttribute('aria-hidden', String(!open));
+        document.body.classList.toggle('modal-open', open);
+        if (open) setTimeout(() => emailInput.focus(), 0);
+      };
+      document.querySelector('#users-add').addEventListener('click', () => setAddUserModal(true));
+      document.querySelector('#add-user-close').addEventListener('click', () => setAddUserModal(false));
+      document.querySelector('#add-user-cancel').addEventListener('click', () => setAddUserModal(false));
+      overlay.addEventListener('click', (event) => { if (event.target === overlay) setAddUserModal(false); });
+      const renderSelectedEmails = () => {
+        selectedEmailsContainer.replaceChildren(...selectedInviteEmails.map((registration) => {
+          const chip = document.createElement('span');
+          chip.className = 'email-chip';
+          chip.append(document.createTextNode(registration.email));
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.textContent = '×';
+          remove.addEventListener('click', () => { selectedInviteEmails = selectedInviteEmails.filter((item) => item.id !== registration.id); renderSelectedEmails(); });
+          chip.append(remove);
+          return chip;
+        }));
+      };
+      emailInput.addEventListener('input', () => {
+        const search = emailInput.value.trim().toLowerCase();
+        const matches = search ? registeredEmails.filter((item) => !selectedInviteEmails.some((selected) => selected.id === item.id) && (item.email || '').toLowerCase().includes(search)).slice(0, 6) : [];
+        emailSuggestions.replaceChildren(...matches.map((registration) => {
+          const option = document.createElement('button');
+          option.className = 'email-suggestion';
+          option.type = 'button';
+          const avatar = document.createElement('span');
+          avatar.className = 'email-suggestion-avatar';
+          avatar.textContent = userInitials(registration.name || 'User');
+          option.append(avatar, document.createTextNode(registration.email));
+          option.addEventListener('click', () => {
+            selectedInviteEmails.push(registration);
+            emailInput.value = '';
+            emailSuggestions.classList.remove('open');
+            renderSelectedEmails();
+            emailInput.focus();
+          });
+          return option;
+        }));
+        emailSuggestions.classList.toggle('open', matches.length > 0);
+      });
+      roleButton.addEventListener('click', () => {
+        const open = !roleMenu.classList.contains('open');
+        roleMenu.classList.toggle('open', open);
+        roleButton.setAttribute('aria-expanded', String(open));
+      });
+      const renderSelectedRoles = () => {
+        const selectedRoles = [...roleMenu.querySelectorAll('.selected')].map((item) => item.dataset.role);
+        selectedRolesContainer.replaceChildren(...selectedRoles.map((role) => {
+          const chip = document.createElement('span');
+          chip.className = 'role-chip';
+          chip.append(document.createTextNode(role));
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.setAttribute('aria-label', `Remove ${role}`);
+          remove.textContent = '×';
+          remove.addEventListener('click', () => {
+            roleMenu.querySelector(`[data-role="${role}"]`).classList.remove('selected');
+            renderSelectedRoles();
+          });
+          chip.append(remove);
+          return chip;
+        }));
+      };
+      roleMenu.querySelectorAll('[data-role]').forEach((option) => option.addEventListener('click', () => {
+        option.classList.toggle('selected');
+        renderSelectedRoles();
+        roleMenu.classList.remove('open');
+        roleButton.setAttribute('aria-expanded', 'false');
+      }));
+      document.querySelector('#add-access').addEventListener('click', async () => {
+        errorMessage.textContent = '';
+        if (!selectedInviteEmails.length) {
+          errorMessage.textContent = 'Select a registered email address.';
+          emailInput.focus();
+          return;
+        }
+        const selectedRoles = [...roleMenu.querySelectorAll('.selected')].map((item) => item.dataset.role);
+        if (!selectedRoles.length) {
+          errorMessage.textContent = 'Select a role for Main Event.';
+          return;
+        }
+        const fb = await getFirebase();
+        await Promise.all(selectedInviteEmails.map((registration) => fb.setDoc(fb.doc(fb.db, 'appConfig', 'auth', 'assignedUsers', registration.id), { name:registration.name, email:registration.email, roles:selectedRoles, status:'active', updatedAt:fb.serverTimestamp() }, { merge:true })));
+        toast.textContent = 'User access saved';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1800);
+        emailInput.value = '';
+        selectedInviteEmails = [];
+        renderSelectedEmails();
+        roleButton.classList.remove('selected');
+        roleButton.textContent = '+ Add role';
+        roleMenu.classList.remove('open');
+        roleMenu.querySelectorAll('.selected').forEach((option) => option.classList.remove('selected'));
+        renderSelectedRoles();
+        setAddUserModal(false);
+      });
+    }
+
+    const accountTrigger = document.querySelector('#account-trigger');
+    const accountMenu = document.querySelector('#account-menu');
+
+    function setAccountMenu(open) {
+      accountMenu.classList.toggle('open', open);
+      accountMenu.setAttribute('aria-hidden', String(!open));
+      accountTrigger.setAttribute('aria-expanded', String(open));
+    }
+
+    accountTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setAccountMenu(!accountMenu.classList.contains('open'));
+    });
+    accountMenu.addEventListener('click', (event) => event.stopPropagation());
+    document.addEventListener('click', () => setAccountMenu(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setAccountMenu(false);
+        accountTrigger.focus();
+      }
+    });
+    async function signOutUser() {
+      try {
+        const fb = await getFirebase();
+        const user = fb.auth.currentUser;
+        if (user) {
+          await fb.setDoc(fb.doc(fb.db, 'appConfig', 'auth', 'sessions', sessionId), {
+            active: false,
+            signedOutAt: fb.serverTimestamp()
+          }, { merge: true }).catch(() => {});
+        }
+        await fb.signOut(fb.auth);
+      } finally {
+        localStorage.removeItem('festieWebsiteAuthenticated');
+        localStorage.removeItem('festieAccountUsername');
+        localStorage.removeItem('festieAccountRole');
+        localStorage.removeItem('festieLandingPage');
+        sessionStorage.removeItem('festieWebsiteAuthenticated');
+        sessionStorage.removeItem('festieAccountUsername');
+        sessionStorage.removeItem('festieAccountRole');
+        sessionStorage.removeItem('festieCurrentPassword');
+        window.location.replace('index.html');
+      }
+    }
+    document.querySelector('#logout-button').addEventListener('click', signOutUser);
+
+    const settingsOverlay = document.querySelector('#settings-overlay');
+    const settingsClose = document.querySelector('#settings-close');
+    const settingsCurrent = document.querySelector('.settings-current');
+
+    function setSettingsModal(open) {
+      settingsOverlay.classList.toggle('open', open);
+      settingsOverlay.setAttribute('aria-hidden', String(!open));
+      document.body.classList.toggle('modal-open', open);
+      if (open) settingsClose.focus();
+    }
+
+    document.querySelector('#manage-account').addEventListener('click', () => {
+      setAccountMenu(false);
+      openSettingsPanel('profile');
+    });
+    settingsClose.addEventListener('click', () => setSettingsModal(false));
+    settingsOverlay.addEventListener('click', (event) => {
+      if (event.target === settingsOverlay) setSettingsModal(false);
+    });
+
+    function openSettingsPanel(panel) {
+      const selectedTab = document.querySelector(`.settings-tab[data-panel="${panel}"]`);
+      if (!selectedTab) return;
+      document.querySelectorAll('.settings-tab').forEach((item) => item.classList.toggle('active', item === selectedTab));
+      document.querySelectorAll('.settings-panel').forEach((item) => item.classList.toggle('active', item.dataset.content === panel));
+      settingsCurrent.textContent = selectedTab.textContent.trim();
+      if (!settingsOverlay.classList.contains('open')) setSettingsModal(true);
+    }
+    document.querySelectorAll('.settings-tab').forEach((tab) => tab.addEventListener('click', () => openSettingsPanel(tab.dataset.panel)));
+    document.querySelector('#theme-shortcut').addEventListener('click', () => openSettingsPanel('preference'));
+
+    const mobileMoreOverlay = document.querySelector('#mobile-more-overlay');
+    function setMobileMore(open) {
+      mobileMoreOverlay.classList.toggle('open', open);
+      mobileMoreOverlay.setAttribute('aria-hidden', String(!open));
+      document.body.classList.toggle('modal-open', open);
+      if (open) document.querySelector('#mobile-menu-search').focus();
+    }
+    document.querySelector('#mobile-more-button').addEventListener('click', () => setMobileMore(true));
+    mobileMoreOverlay.addEventListener('click', (event) => { if (event.target === mobileMoreOverlay) setMobileMore(false); });
+    mobileMoreOverlay.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMobileMore(false)));
+    document.querySelector('#mobile-settings').addEventListener('click', () => {
+      setMobileMore(false);
+      window.location.hash = 'settings';
+    });
+    document.querySelector('#mobile-account').addEventListener('click', (event) => {
+      event.stopPropagation();
+      setAccountMenu(!accountMenu.classList.contains('open'));
+    });
+    document.querySelector('#mobile-menu-search').addEventListener('input', (event) => {
+      const query = event.target.value.trim().toLowerCase();
+      document.querySelectorAll('.mobile-menu-link').forEach((item) => item.hidden = !item.textContent.toLowerCase().includes(query));
+    });
+
+    document.querySelectorAll('.password-eye').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = button.previousElementSibling;
+        const showing = input.type === 'password';
+        input.type = showing ? 'text' : 'password';
+        button.setAttribute('aria-label', showing ? 'Hide password' : 'Show password');
+        button.innerHTML = showing
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3l18 18M10.6 6.2A11.5 11.5 0 0 1 12 6c6.5 0 10 6 10 6a16.2 16.2 0 0 1-2.1 2.8M6.2 6.2C3.5 8 2 12 2 12s3.5 6 10 6a10.8 10.8 0 0 0 4.1-.8M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>'
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
+      });
+    });
+    const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+    const accentDark = { '#fa5458': '#df363e', '#3478ba': '#28669f', '#d08a00': '#ad7200' };
+    function applyPreferences() {
+      const mode = localStorage.getItem('festieTheme') || 'system';
+      const accent = localStorage.getItem('festieAccent') || '#fa5458';
+      const dark = mode === 'dark' || (mode === 'system' && systemTheme.matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.documentElement.style.setProperty('--red', accent);
+      document.documentElement.style.setProperty('--red-dark', accentDark[accent] || accent);
+      document.querySelectorAll('[data-theme-choice]').forEach((button) => button.classList.toggle('active', button.dataset.themeChoice === mode));
+      document.querySelectorAll('[data-accent]').forEach((button) => button.classList.toggle('active', button.dataset.accent === accent));
+    }
+    document.querySelectorAll('[data-theme-choice]').forEach((button) => button.addEventListener('click', () => {
+      localStorage.setItem('festieTheme', button.dataset.themeChoice);
+      applyPreferences();
+    }));
+    document.querySelectorAll('[data-accent]').forEach((button) => button.addEventListener('click', () => {
+      localStorage.setItem('festieAccent', button.dataset.accent);
+      applyPreferences();
+    }));
+    document.querySelectorAll('.choice-row:not(#theme-choices):not(#accent-choices)').forEach((row) => {
+      row.querySelectorAll('.choice').forEach((choice) => choice.addEventListener('click', () => row.querySelectorAll('.choice').forEach((item) => item.classList.toggle('active', item === choice))));
+    });
+    systemTheme.addEventListener('change', () => { if ((localStorage.getItem('festieTheme') || 'system') === 'system') applyPreferences(); });
+    applyPreferences();
+    document.querySelectorAll('.toggle').forEach((toggle) => toggle.addEventListener('click', () => toggle.classList.toggle('on')));
+    document.querySelector('#modal-logout').addEventListener('click', signOutUser);
+
+    const profileName = document.querySelector('#profile-name');
+    const profileEmail = document.querySelector('#profile-email');
+    const profileMessage = document.querySelector('#profile-message');
+    const securityMessage = document.querySelector('#security-message');
+
+    function showSettingsMessage(element, text, type = 'error') {
+      element.textContent = text;
+      element.className = `settings-message show ${type}`;
+    }
+
+    function userInitials(name) {
+      const parts = name.trim().split(/\s+/).filter(Boolean);
+      return (parts.length > 1 ? `${parts[0][0]}${parts.at(-1)[0]}` : parts[0]?.slice(0, 2) || '--').toUpperCase();
+    }
+
+    function displayUser(name, secondaryText, photoURL = currentPhotoURL) {
+      currentPhotoURL = photoURL || '';
+      document.querySelectorAll('[data-user-name]').forEach((element) => element.textContent = name);
+      document.querySelectorAll('[data-user-email]').forEach((element) => element.textContent = secondaryText);
+      document.querySelectorAll('[data-user-initials]').forEach((element) => {
+        element.textContent = userInitials(name);
+        if (element.hasAttribute('data-user-avatar')) {
+          element.style.backgroundImage = currentPhotoURL ? `url("${currentPhotoURL.replace(/"/g, '%22')}")` : '';
+          element.style.color = currentPhotoURL ? 'transparent' : '';
+        }
+      });
+    }
+
+    function firebaseError(error) {
+      const messages = {
+        'auth/operation-not-allowed': 'Anonymous authentication is disabled in Firebase Console.',
+        'auth/wrong-password': 'The current password is incorrect.',
+        'auth/invalid-credential': 'The current password is incorrect.',
+        'auth/weak-password': 'The new password must contain at least 6 characters.',
+        'auth/requires-recent-login': 'Please log out, sign in again, and retry this change.',
+        'auth/email-already-in-use': 'That email address is already in use.',
+        'auth/invalid-email': 'Enter a valid email address.',
+        'auth/too-many-requests': 'Too many attempts. Please wait and try again.'
+      };
+      return messages[error.code] || error.message || 'The update could not be completed.';
+    }
+
+    function detectDevice() {
+      const ua = navigator.userAgent;
+      const browser = /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'Browser';
+      const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS' : /Mac OS/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'Unknown OS';
+      const type = /Mobile|Android|iPhone|iPad/.test(ua) ? 'Mobile device' : 'Computer';
+      return { browser, os, type, userAgent: ua };
+    }
+
+    async function registerSession(fb, user) {
+      let ip = 'Unavailable';
+      try {
+        const response = await fetch('https://api64.ipify.org?format=json');
+        if (response.ok) ip = (await response.json()).ip || ip;
+      } catch {}
+      const sessionRef = fb.doc(fb.db, 'appConfig', 'auth', 'sessions', sessionId);
+      const existing = await fb.getDoc(sessionRef);
+      await fb.setDoc(sessionRef, {
+        ...detectDevice(), ip, active: true, revoked: false,
+        createdAt: existing.exists() ? existing.data().createdAt : fb.serverTimestamp(),
+        lastSeen: fb.serverTimestamp()
+      }, { merge: true });
+      setInterval(() => fb.setDoc(sessionRef, { lastSeen: fb.serverTimestamp(), active: true }, { merge: true }).catch(() => {}), 60000);
+    }
+
+    function renderSessions(fb, user) {
+      const list = document.querySelector('#activity-list');
+      const summary = document.querySelector('#activity-summary');
+      stopSessionsListener?.();
+      stopSessionsListener = fb.onSnapshot(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'), (snapshot) => {
+        const sessions = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+        const current = sessions.find((item) => item.id === sessionId);
+        if (current?.revoked) signOutUser();
+        const isRecentlyActive = (item) => item.active && !item.revoked && (!item.lastSeen?.seconds || Date.now() - item.lastSeen.seconds * 1000 < 150000);
+        const active = sessions.filter(isRecentlyActive);
+        summary.textContent = `${active.length} active session${active.length === 1 ? '' : 's'} across ${new Set(active.map((item) => item.ip).filter(Boolean)).size} IP${new Set(active.map((item) => item.ip).filter(Boolean)).size === 1 ? '' : 's'}`;
+        const visibleSessions = sessions.filter((item) => !item.revoked);
+        list.replaceChildren(...visibleSessions.sort((a, b) => (b.lastSeen?.seconds || 0) - (a.lastSeen?.seconds || 0)).map((item) => {
+          const card = document.createElement('div');
+          card.className = 'activity-card';
+          const isCurrent = item.id === sessionId;
+          const isActive = isRecentlyActive(item);
+          const lastSeen = item.lastSeen?.toDate ? item.lastSeen.toDate().toLocaleString() : 'Just now';
+          card.innerHTML = `<span class="device-icon"><iconify-icon icon="${item.type === 'Mobile device' ? 'ci:mobile' : 'carbon:laptop'}"></iconify-icon></span><span class="device-copy"><strong>${item.browser || 'Browser'} on ${item.os || 'Unknown OS'}</strong>${isActive ? '<span class="badge">ACTIVE</span>' : ''}${isCurrent ? '<span class="badge device">THIS DEVICE</span>' : ''}<small style="display:block;margin-top:5px;color:#777">${item.ip || 'IP unavailable'} · Last seen ${lastSeen}</small></span><button class="settings-button session-logout" type="button"><iconify-icon icon="fluent:arrow-exit-24-filled"></iconify-icon>Log out</button>`;
+          card.querySelector('.session-logout').addEventListener('click', async () => {
+            if (isCurrent) return signOutUser();
+            await fb.setDoc(fb.doc(fb.db, 'appConfig', 'auth', 'sessions', item.id), { revoked: true, active: false }, { merge: true });
+          });
+          return card;
+        }));
+      }, (error) => {
+        summary.textContent = 'Session activity is unavailable. Deploy the included Firestore rules and try again.';
+        console.error('Session listener failed:', error);
+      });
+    }
+
+    getFirebase().then((fb) => {
+      fb.onAuthStateChanged(fb.auth, async (user) => {
+        const hasWebsiteSession =
+          localStorage.getItem('festieWebsiteAuthenticated') === 'true' ||
+          sessionStorage.getItem('festieWebsiteAuthenticated') === 'true';
+        if (!user || !hasWebsiteSession) {
+          window.location.replace('index.html');
+          return;
+        }
+        localStorage.setItem('festieWebsiteAuthenticated', 'true');
+        const profileRef = fb.doc(fb.db, 'appConfig', 'profile');
+        const credentialsRef = fb.doc(fb.db, 'appConfig', 'auth');
+        const profileSnapshot = await fb.getDoc(profileRef).catch(() => null);
+        const credentialsSnapshot = await fb.getDoc(credentialsRef).catch(() => null);
+        const profile = profileSnapshot?.exists() ? profileSnapshot.data() : {};
+        const credentials = credentialsSnapshot?.exists() ? credentialsSnapshot.data() : {};
+        const accountRole = sessionStorage.getItem('festieAccountRole') || localStorage.getItem('festieAccountRole');
+        const isMember = accountRole === 'user';
+        const username = sessionStorage.getItem('festieAccountUsername') || localStorage.getItem('festieAccountUsername') || credentials.username || 'User';
+        const name = isMember ? (localStorage.getItem('festieDisplayName') || username) : (profile.name || username);
+        localStorage.setItem('festieDisplayName', name);
+        const contactEmail = profile.contactEmail || '';
+        document.querySelector('#security-username').value = username;
+        document.querySelector('#account-password').value = sessionStorage.getItem('festieCurrentPassword') || '';
+        profileName.value = name;
+        profileEmail.value = contactEmail;
+        displayUser(name, contactEmail || `@${username} · Anonymous account`, profile.photoURL || '');
+        const createdDate = credentials.createdAt?.toDate?.() || (user.metadata.creationTime ? new Date(user.metadata.creationTime) : null);
+        document.querySelector('#account-created').textContent = createdDate
+          ? `ACCOUNT CREATED ${createdDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()}`
+          : 'ACCOUNT CREATED —';
+        if (!credentials.createdAt) await fb.setDoc(credentialsRef, { createdAt: fb.serverTimestamp() }, { merge: true }).catch(() => {});
+        await fb.setDoc(profileRef, { name, updatedAt: fb.serverTimestamp() }, { merge: true }).catch(() => {});
+        await registerSession(fb, user).catch((error) => console.error('Session registration failed:', error));
+        renderSessions(fb, user);
+      });
+    }).catch(() => window.location.replace('index.html'));
+
+    document.querySelector('#logout-other-sessions').addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const fb = await getFirebase();
+        const user = fb.auth.currentUser;
+        const snapshot = await fb.getDocs(fb.collection(fb.db, 'appConfig', 'auth', 'sessions'));
+        await Promise.all(snapshot.docs.filter((item) => item.id !== sessionId).map((item) => fb.setDoc(item.ref, { revoked: true, active: false }, { merge: true })));
+      } finally { button.disabled = false; }
+    });
+
+    const changePhotoButton = document.querySelector('#change-photo');
+    const profilePhotoInput = document.querySelector('#profile-photo-input');
+    changePhotoButton.addEventListener('click', () => profilePhotoInput.click());
+    profilePhotoInput.addEventListener('change', async () => {
+      const file = profilePhotoInput.files?.[0];
+      if (!file) return;
+      profileMessage.className = 'settings-message';
+      if (!file.type.startsWith('image/')) {
+        showSettingsMessage(profileMessage, 'Choose a valid image file.');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showSettingsMessage(profileMessage, 'The profile image must be smaller than 5 MB.');
+        return;
+      }
+      const label = changePhotoButton.querySelector('span');
+      changePhotoButton.disabled = true;
+      label.textContent = 'Uploading…';
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+        formData.append('folder', 'festinger/profiles');
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (!response.ok || !result.secure_url) throw new Error(result.error?.message || 'Image upload failed.');
+        const fb = await getFirebase();
+        await fb.setDoc(fb.doc(fb.db, 'appConfig', 'profile'), { photoURL: result.secure_url, updatedAt: fb.serverTimestamp() }, { merge: true });
+        const name = profileName.value.trim() || 'User';
+        const username = document.querySelector('#security-username').value.trim() || 'User';
+        displayUser(name, profileEmail.value.trim() || `@${username} · Anonymous account`, result.secure_url);
+        showSettingsMessage(profileMessage, 'Profile photo updated successfully.', 'success');
+      } catch (error) {
+        showSettingsMessage(profileMessage, error.message || 'The image could not be uploaded.');
+      } finally {
+        changePhotoButton.disabled = false;
+        label.textContent = 'Change photo';
+        profilePhotoInput.value = '';
+      }
+    });
+
+    document.querySelector('#save-profile').addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      profileMessage.className = 'settings-message';
+      button.disabled = true;
+      try {
+        const fb = await getFirebase();
+        const user = fb.auth.currentUser;
+        if (!user) throw new Error('Please sign in with your Firebase account first.');
+        const name = profileName.value.trim();
+        const email = profileEmail.value.trim();
+        if (!name) throw new Error('Name is required.');
+        if (name !== user.displayName) await fb.updateProfile(user, { displayName: name });
+        await fb.setDoc(fb.doc(fb.db, 'appConfig', 'profile'), { name, contactEmail: email, updatedAt: fb.serverTimestamp() }, { merge: true });
+        localStorage.setItem('festieDisplayName', name);
+        const username = document.querySelector('#security-username').value.trim() || 'User';
+        displayUser(name, email || `@${username} · Anonymous account`);
+        showSettingsMessage(profileMessage, 'Profile updated successfully.', 'success');
+      } catch (error) {
+        showSettingsMessage(profileMessage, firebaseError(error));
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.querySelector('#update-password').addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      const passwordInput = document.querySelector('#account-password');
+      const usernameInput = document.querySelector('#security-username');
+      securityMessage.className = 'settings-message';
+      const activeFirebase = await getFirebase();
+      const username = usernameInput.value.trim();
+      if (!/^[a-zA-Z0-9._-]{3,30}$/.test(username)) {
+        showSettingsMessage(securityMessage, 'Username must be 3–30 characters and use only letters, numbers, dots, dashes, or underscores.');
+        return;
+      }
+      if (passwordInput.value && passwordInput.value.length < 6) {
+        showSettingsMessage(securityMessage, 'The password must contain at least 6 characters.');
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Updating…';
+      try {
+        const fb = activeFirebase;
+        const credentialsRef = fb.doc(fb.db, 'appConfig', 'auth');
+        const credentialsSnapshot = await fb.getDoc(credentialsRef);
+        if (!credentialsSnapshot.exists()) throw new Error('Website credentials have not been initialized.');
+        const credentials = credentialsSnapshot.data();
+        const normalizedUsername = username.toLowerCase();
+        const credentialUpdate = { username: normalizedUsername, updatedAt: fb.serverTimestamp() };
+        if (passwordInput.value) {
+          credentialUpdate.salt = bytesToBase64(crypto.getRandomValues(new Uint8Array(16)));
+          credentialUpdate.passwordHash = await passwordHash(passwordInput.value, credentialUpdate.salt);
+        }
+        await fb.setDoc(credentialsRef, credentialUpdate, { merge: true });
+        sessionStorage.setItem('festieAccountUsername', normalizedUsername);
+        if (passwordInput.value) sessionStorage.setItem('festieCurrentPassword', passwordInput.value);
+        usernameInput.value = normalizedUsername;
+        document.querySelectorAll('[data-user-email]').forEach((element) => element.textContent = `@${normalizedUsername}`);
+        showSettingsMessage(securityMessage, 'Username and security settings saved successfully.', 'success');
+      } catch (error) {
+        showSettingsMessage(securityMessage, firebaseError(error));
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Save Credentials';
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && settingsOverlay.classList.contains('open')) setSettingsModal(false);
+    });
+    loadDashboardTab(new URLSearchParams(window.location.search).get('tab'));
+  </script>
+  <script>
+    (() => {
+      const renderIcons = (root = document) => {
+        root.querySelectorAll?.('iconify-icon[icon]').forEach((icon) => {
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+          svg.classList.add('app-icon');
+          svg.setAttribute('aria-hidden', 'true');
+          use.setAttribute('href', `#icon-${icon.getAttribute('icon').replace(':', '-')}`);
+          svg.append(use);
+          icon.replaceWith(svg);
+        });
+      };
+      renderIcons();
+      new MutationObserver((mutations) => mutations.forEach((mutation) => mutation.addedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        if (node.matches?.('iconify-icon[icon]')) renderIcons({ querySelectorAll: () => [node] });
+        renderIcons(node);
+      }))).observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>
+</body>
+</html>

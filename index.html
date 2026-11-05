@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Festinger 2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Primary colours */
+      --color-red: #D2202D;
+      --color-yellow: #F0B81B;
+      --color-green: #22AC5E;
+
+      /* Secondary colours */
+      --color-coral: #D9653D;
+      --color-bright-green: #28AE62;
+      --color-golden: #E9B449;
+
+      /* Additional palette */
+      --color-light-gold: #EAB750;
+      --color-soft-green: #51B26C;
+      --color-green-light: #53B26D;
+      --color-dark-red: #C54A43;
+      --color-deep-red: #BF2530;
+      --color-mustard: #E2AF3F;
+      --color-muted-red: #C64842;
+      --color-brown-red: #B34333;
+      --color-orange-red: #D9673F;
+      --color-light-golden: #E6B550;
+      --color-leaf-green: #33B061;
+      --color-coral-red: #D03F42;
+      --color-warm-gold: #E4B450;
+      --color-muted-coral: #C64B44;
+
+      /* Background */
+      --color-background: transparent;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--color-background);
+      color: var(--color-brown-red);
+      padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 480px;
+      text-align: left;
+    }
+
+    .icon-svg {
+      width: clamp(40px, 8vw, 48px);
+      height: clamp(40px, 8vw, 48px);
+      display: block;
+      margin-bottom: clamp(1rem, 3vw, 1.5rem);
+    }
+
+    h1 {
+      font-size: clamp(1.25rem, 4.5vw, 1.5rem);
+      font-weight: 700;
+      color: var(--color-deep-red);
+      line-height: 1.35;
+      margin-bottom: clamp(0.85rem, 2.5vw, 1.25rem);
+      letter-spacing: -0.015em;
+    }
+
+    .try-label {
+      font-size: clamp(0.875rem, 2.5vw, 0.9375rem);
+      font-weight: 600;
+      color: var(--color-dark-red);
+      margin-bottom: 0.625rem;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 1.35rem;
+      margin-bottom: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    li {
+      font-size: clamp(0.875rem, 2.5vw, 0.9375rem);
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--color-muted-red);
+      word-break: break-word;
+    }
+
+    li::marker {
+      color: var(--color-yellow);
+    }
+
+    li a {
+      color: var(--color-yellow);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.15s ease;
+    }
+
+    li a:hover {
+      color: var(--color-golden);
+    }
+
+    .error-code {
+      font-size: clamp(0.6875rem, 2vw, 0.75rem);
+      font-weight: 600;
+      color: var(--color-muted-coral);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    @media (max-width: 360px) {
+      body {
+        padding: 1rem;
+      }
+      ul {
+        padding-left: 1.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <!-- Icon matching image -->
+    <svg class="icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Status alert icon">
+      <circle cx="24" cy="24" r="23" fill="#F0B81B"/>
+      <rect x="21.5" y="11" width="5" height="16" rx="2.5" fill="#FFFFFF"/>
+      <circle cx="24" cy="34" r="2.75" fill="#FFFFFF"/>
+    </svg>
+
+    <!-- Main Title -->
+    <h1>Updating to Festinger 2.0</h1>
+
+    <!-- Minimal Try Section -->
+    <p class="try-label">Try:</p>
+    <ul>
+      <li>Checking back at a later time</li>
+      <li><a href="mailto:admin@example.com">Contacting the system administrator</a></li>
+      <li>Verifying your access privileges</li>
+    </ul>
+
+    <!-- Error Code / Status -->
+    <div class="error-code">ERR_WEBSITE_UNDER_CONSTRUCTION</div>
+  </div>
+</body>
+</html>

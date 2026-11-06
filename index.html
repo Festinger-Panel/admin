@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - Festinger 2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Primary colours */
+      --color-red: #D2202D;
+      --color-yellow: #F0B81B;
+      --color-green: #22AC5E;
+
+      /* Secondary colours */
+      --color-coral: #D9653D;
+      --color-bright-green: #28AE62;
+      --color-golden: #E9B449;
+
+      /* Additional palette */
+      --color-light-gold: #EAB750;
+      --color-soft-green: #51B26C;
+      --color-green-light: #53B26D;
+      --color-dark-red: #C54A43;
+      --color-deep-red: #BF2530;
+      --color-mustard: #E2AF3F;
+      --color-muted-red: #C64842;
+      --color-brown-red: #B34333;
+      --color-orange-red: #D9673F;
+      --color-light-golden: #E6B550;
+      --color-leaf-green: #33B061;
+      --color-coral-red: #D03F42;
+      --color-warm-gold: #E4B450;
+      --color-muted-coral: #C64B44;
+
+      /* UI Specific */
+      --input-bg: #FDF2F3;
+      --input-placeholder: #9E8C8E;
+      --card-border: #C54A43;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #FFFFFF;
+      color: #111111;
+      padding: 1.5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 760px;
+      min-height: 420px;
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 26px;
+      display: flex;
+      align-items: stretch;
+      position: relative;
+    }
+
+    /* Left Decorative Arch Panel */
+    .left-panel {
+      width: 320px;
+      flex-shrink: 0;
+      margin: -1px 0 -1px -1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .arch-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .arch-inner-img {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 84%;
+      max-height: 76%;
+      object-fit: contain;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    /* Right Form Content */
+    .right-panel {
+      flex: 1;
+      padding: 42px 36px 38px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .welcome-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .welcome-subtitle {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #2B2B2B;
+      line-height: 1.4;
+      margin-bottom: 22px;
+    }
+
+    /* 4 Diamonds Row */
+    .diamonds-row {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      margin-bottom: 26px;
+    }
+
+    .diamonds-svg {
+      width: 64px;
+      height: 16px;
+      display: block;
+    }
+
+    /* Form Controls */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-of-type {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #1E1E1E;
+      margin-bottom: 7px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--input-bg);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      height: 40px;
+      padding: 0 14px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--color-golden);
+      box-shadow: 0 0 0 2px rgba(240, 184, 27, 0.18);
+    }
+
+    .input-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--input-placeholder);
+      display: block;
+    }
+
+    .form-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #1E1E1E;
+    }
+
+    .form-input::placeholder {
+      color: var(--input-placeholder);
+      opacity: 1;
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 40px;
+      background: var(--color-yellow);
+      color: #111111;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .login-btn:hover {
+      background: var(--color-golden);
+    }
+
+    .login-btn:active {
+      transform: translateY(1px);
+    }
+
+    .input-wrapper.error {
+      border-color: var(--color-red);
+      animation: shake 0.3s ease-in-out;
+    }
+
+    .login-status {
+      min-height: 18px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .login-status.error {
+      display: block;
+      color: var(--color-red);
+    }
+
+    .login-status.success {
+      display: block;
+      color: var(--color-green);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    /* Responsive adjustments for mobile: place all contents inside the arch inner white area */
+    @media (max-width: 640px) {
+      body {
+        background: var(--color-red);
+        padding: 0.35rem;
+      }
+
+      .login-card {
+        width: 100%;
+        max-width: 100%;
+        min-height: 550px;
+        border: none;
+        background: transparent;
+        border-radius: 28px;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+      }
+
+      .left-panel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        z-index: 0;
+      }
+
+      .arch-inner-img {
+        display: block;
+        top: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 165px;
+        max-height: 145px;
+      }
+
+      .right-panel {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 162px 11.5% 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .welcome-title {
+        font-size: 1.65rem;
+        margin-bottom: 5px;
+        text-align: center;
+      }
+
+      .welcome-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 14px;
+        text-align: center;
+      }
+
+      .diamonds-row {
+        justify-content: center;
+        margin-bottom: 18px;
+      }
+
+      .form-group {
+        margin-bottom: 14px;
+      }
+
+      .form-group:last-of-type {
+        margin-bottom: 18px;
+      }
+
+      .input-wrapper {
+        height: 42px;
+      }
+
+      .login-btn {
+        height: 42px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .login-card {
+        min-height: 510px;
+      }
+
+      .arch-inner-img {
+        top: 24px;
+        width: 145px;
+        max-height: 130px;
+      }
+
+      .right-panel {
+        padding: 144px 10.5% 36px;
+      }
+
+      .welcome-title {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="login-card">
+    <!-- Left Arch Panel -->
+    <div class="left-panel" aria-hidden="true">
+      <svg class="arch-svg" viewBox="0 0 284 368" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <!-- Outer Red Rounded Frame -->
+        <rect x="0" y="0" width="284" height="368" rx="23" fill="#D2202D" />
+        <!-- Inner Yellow Rounded Frame (widened) -->
+        <rect x="8" y="12" width="268" height="346" rx="15" fill="#F0B81B" />
+        <!-- Inner White Stepped Arch Shape (widened) -->
+        <path
+          d="M 34 344
+             H 250
+             A 12 12 0 0 0 262 332
+             V 84
+             A 10 10 0 0 0 252 74
+             H 226
+             A 6 6 0 0 1 220.5 70.2
+             A 84 84 0 0 0 63.5 70.2
+             A 6 6 0 0 1 58 74
+             H 32
+             A 10 10 0 0 0 22 84
+             V 332
+             A 12 12 0 0 0 34 344
+             Z"
+          fill="#FFFFFF"
+        />
+      </svg>
+      <img src="./Asett/Logo.png" alt="Make It Your Own" class="arch-inner-img" />
+    </div>
+
+    <!-- Right Sign-In Form -->
+    <div class="right-panel">
+      <h1 class="welcome-title">Welcome Back</h1>
+      <p class="welcome-subtitle">Please enter your details to sign in.</p>
+
+      <!-- 4 Alternating Red & Yellow Diamonds -->
+      <div class="diamonds-row" aria-hidden="true">
+        <svg class="diamonds-svg" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="7,0.5 13.5,7 7,13.5 0.5,7" fill="#BF2530" />
+          <polygon points="21,0.5 27.5,7 21,13.5 14.5,7" fill="#F0B81B" />
+          <polygon points="35,0.5 41.5,7 35,13.5 28.5,7" fill="#BF2530" />
+          <polygon points="49,0.5 55.5,7 49,13.5 42.5,7" fill="#F0B81B" />
+        </svg>
+      </div>
+
+      <form class="login-form" id="loginForm" onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label" for="username">User Name</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="5.25" r="2.5" stroke="currentColor" stroke-width="1.2" />
+              <path d="M3.5 13.25C3.5 10.9 5.5 9.5 8 9.5C10.5 9.5 12.5 10.9 12.5 13.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-input"
+              placeholder="Enter Your Username"
+              autocomplete="username"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3.25" y="7" width="9.5" height="6.75" rx="1.75" stroke="currentColor" stroke-width="1.2" />
+              <path d="M5.25 7V5.25C5.25 3.73122 6.48122 2.5 8 2.5C9.51878 2.5 10.75 3.73122 10.75 5.25V7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              <circle cx="8" cy="10.35" r="0.85" fill="currentColor" />
+            </svg>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="Enter Your Password"
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <div id="loginStatus" class="login-status" role="alert"></div>
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Firebase SDKs & Backend Config from https://api-festinger.vercel.app/ -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://api-festinger.vercel.app/config.js"></script>
+  <script>
+    // Immediate local check: block access to /admin folder if toggle is OFF
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("unlock") === "340") {
+        localStorage.setItem("festinger_admin_access", "true");
+        return;
+      }
+      if (
+        localStorage.getItem("festinger_admin_access") === "false" &&
+        sessionStorage.getItem("festinger_admin_auth") !== "true"
+      ) {
+        window.location.replace("../index.html");
+      }
+    })();
+
+    (async function () {
+      let config = window.BACKEND_CONFIG;
+      if (typeof window.loadBackendEnv === "function") {
+        config = await window.loadBackendEnv("https://api-festinger.vercel.app/.env");
+      } else {
+        try {
+          const res = await fetch("https://api-festinger.vercel.app/api/config");
+          if (res.ok) config = await res.json();
+        } catch (_) {}
+      }
+
+      // Initialize Firebase with config from backend
+      let db = null;
+      try {
+        if (typeof firebase !== "undefined" && config?.firebaseConfig) {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(config.firebaseConfig);
+          }
+          db = firebase.firestore();
+
+          // Check Firestore access toggle setting ("settings/access")
+          const params = new URLSearchParams(window.location.search);
+          if (params.get("unlock") !== "340") {
+            const accessSnap = await db.collection("settings").doc("access").get();
+            if (
+              accessSnap.exists &&
+              accessSnap.data().adminAccessEnabled === false &&
+              sessionStorage.getItem("festinger_admin_auth") !== "true"
+            ) {
+              localStorage.setItem("festinger_admin_access", "false");
+              window.location.replace("../index.html");
+              return;
+            }
+          }
+
+          // Ensure default admin credentials ("aslan" / "340") exist in Firebase Firestore
+          const adminDocRef = db.collection("admins").doc("default");
+          const snap = await adminDocRef.get();
+          if (!snap.exists) {
+            await adminDocRef.set({
+              username: "aslan",
+              password: "340",
+              updatedAt: new Date().toISOString()
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Firestore connection notice:", err.message);
+      }
+
+      const loginForm = document.getElementById("loginForm");
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const loginStatus = document.getElementById("loginStatus");
+      const loginBtn = loginForm.querySelector(".login-btn");
+      const inputWrappers = document.querySelectorAll(".input-wrapper");
+
+      function clearError() {
+        loginStatus.className = "login-status";
+        loginStatus.textContent = "";
+        inputWrappers.forEach((w) => w.classList.remove("error"));
+      }
+
+      usernameInput.addEventListener("input", clearError);
+      passwordInput.addEventListener("input", clearError);
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const enteredUser = usernameInput.value.trim();
+        const enteredPass = passwordInput.value.trim();
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Verifying...";
+
+        let isValid = false;
+
+        try {
+          if (db) {
+            // Verify credentials against Firebase Firestore ("admins" collection)
+            const docSnap = await db.collection("admins").doc("default").get();
+            if (docSnap.exists) {
+              const data = docSnap.data();
+              if (
+                String(data.username || "").toLowerCase() === enteredUser.toLowerCase() &&
+                String(data.password || "") === enteredPass
+              ) {
+                isValid = true;
+              }
+            } else {
+              // Query collection in case admin document has a custom ID
+              const querySnap = await db
+                .collection("admins")
+                .where("username", "==", enteredUser.toLowerCase())
+                .where("password", "==", enteredPass)
+                .limit(1)
+                .get();
+              isValid = !querySnap.empty;
+            }
+          } else {
+            isValid = enteredUser.toLowerCase() === "aslan" && enteredPass === "340";
+          }
+        } catch (err) {
+          console.warn("Firebase verification fallback:", err.message);
+          isValid = enteredUser.toLowerCase() === "aslan" && enteredPass === "340";
+        } finally {
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login";
+        }
+
+        if (isValid) {
+          sessionStorage.setItem("festinger_admin_auth", "true");
+          sessionStorage.setItem("festinger_admin_user", enteredUser);
+          sessionStorage.setItem("festinger_backend_config", JSON.stringify(config));
+
+          loginStatus.textContent = "Verified via Firebase! Redirecting...";
+          loginStatus.className = "login-status success";
+
+          setTimeout(() => {
+            window.location.href = "./dashboard.html";
+          }, 300);
+        } else {
+          loginStatus.textContent = "Invalid username or password.";
+          loginStatus.className = "login-status error";
+          inputWrappers.forEach((w) => {
+            w.classList.remove("error");
+            void w.offsetWidth;
+            w.classList.add("error");
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

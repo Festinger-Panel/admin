@@ -11,9 +11,16 @@
     { "source": "/admin/user_form", "destination": "/admin/user_form.html" },
     { "source": "/admin/user_welcome", "destination": "/admin/user_welcome.html" },
     { "source": "/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/dashboard.html", "destination": "/admin/dashboard.html" },
     { "source": "/setup_fest", "destination": "/admin/setup_fest.html" },
+    { "source": "/setup_fest.html", "destination": "/admin/setup_fest.html" },
     { "source": "/user_managment", "destination": "/admin/user_managment.html" },
+    { "source": "/user_managment.html", "destination": "/admin/user_managment.html" },
     { "source": "/user_form", "destination": "/admin/user_form.html" },
-    { "source": "/user_welcome", "destination": "/admin/user_welcome.html" }
+    { "source": "/user_form.html", "destination": "/admin/user_form.html" },
+    { "source": "/user_welcome", "destination": "/admin/user_welcome.html" },
+    { "source": "/user_welcome.html", "destination": "/admin/user_welcome.html" },
+    { "source": "/firebase_sync.js", "destination": "/admin/firebase_sync.js" },
+    { "source": "/Asett/:path*", "destination": "/admin/Asett/:path*" }
   ]
 }

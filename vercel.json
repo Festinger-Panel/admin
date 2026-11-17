@@ -5,6 +5,15 @@
     { "source": "/index", "destination": "/index.html" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/index", "destination": "/admin/index.html" },
-    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" }
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/admin/setup_fest", "destination": "/admin/setup_fest.html" },
+    { "source": "/admin/user_managment", "destination": "/admin/user_managment.html" },
+    { "source": "/admin/user_form", "destination": "/admin/user_form.html" },
+    { "source": "/admin/user_welcome", "destination": "/admin/user_welcome.html" },
+    { "source": "/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/setup_fest", "destination": "/admin/setup_fest.html" },
+    { "source": "/user_managment", "destination": "/admin/user_managment.html" },
+    { "source": "/user_form", "destination": "/admin/user_form.html" },
+    { "source": "/user_welcome", "destination": "/admin/user_welcome.html" }
   ]
 }

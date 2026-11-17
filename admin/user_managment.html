@@ -1,0 +1,2999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management - Festinger 2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+  <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+</head>
+<body style="margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: #FFFFFF;">
+
+  <!-- User Management Component Root (Passed to dashboard.html) -->
+  <div id="userManagementRoot" class="um-wrapper">
+    <style>
+      :root {
+        /* Primary colours */
+        --color-red: #D2202D;
+        --color-yellow: #F0B81B;
+        --color-green: #22AC5E;
+
+        /* Secondary colours */
+        --color-coral: #D9653D;
+        --color-bright-green: #28AE62;
+        --color-golden: #E9B449;
+
+        /* Additional palette */
+        --color-light-gold: #EAB750;
+        --color-soft-green: #51B26C;
+        --color-green-light: #53B26D;
+        --color-dark-red: #C54A43;
+        --color-deep-red: #BF2530;
+        --color-mustard: #E2AF3F;
+        --color-muted-red: #C64842;
+        --color-brown-red: #B34333;
+        --color-orange-red: #D9673F;
+        --color-light-golden: #E6B550;
+        --color-leaf-green: #33B061;
+        --color-coral-red: #D03F42;
+        --color-warm-gold: #E4B450;
+        --color-muted-coral: #C64B44;
+
+        /* UI Specific */
+        --input-bg: #FDF2F3;
+        --input-placeholder: #9E8C8E;
+        --card-border: #C54A43;
+      }
+
+      .um-wrapper {
+        width: 100%;
+        padding: 20px 0 28px 0;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #111111;
+      }
+
+      .um-layout {
+        display: flex;
+        align-items: flex-start;
+        gap: clamp(2rem, 5vw, 4rem);
+        width: 100%;
+        max-width: 100%;
+      }
+
+      /* Left Sub-Navigation Menu */
+      .um-subnav {
+        width: 176px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .um-subnav-btn {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #1E1E1E;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 600;
+        padding: 9px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.15s ease, color 0.15s ease;
+      }
+
+      .um-subnav-btn svg,
+      .um-subnav-btn i {
+        width: 15px;
+        height: 15px;
+        font-size: 15px;
+        flex-shrink: 0;
+        color: currentColor;
+      }
+
+      .um-subnav-btn:hover {
+        background: var(--input-bg);
+        color: var(--color-deep-red);
+      }
+
+      .um-subnav-btn.active {
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      /* Right Main Content Area */
+      .um-main {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      /* Top Header Row */
+      .um-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 16px;
+      }
+
+      .um-title-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .um-title-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--color-red);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .um-title-icon svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .um-title {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: #111111;
+        letter-spacing: -0.01em;
+      }
+
+      .um-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .um-form-link-btn {
+        background: var(--color-yellow);
+        color: #111111;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+
+      .um-form-link-btn:hover {
+        background: var(--color-golden);
+      }
+
+      .um-form-link-btn:active {
+        transform: translateY(1px);
+      }
+
+      .um-add-btn {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 15px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+
+      .um-add-btn:hover {
+        background: var(--color-deep-red);
+      }
+
+      .um-add-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* Filter Pills & Search Row */
+      .um-filters-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+
+      .um-filter-pills {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+
+      .um-filter-pill {
+        background: #FFFFFF;
+        color: #1E1E1E;
+        border: 1px solid var(--input-placeholder);
+        border-radius: 999px;
+        padding: 4px 11px;
+        font-family: inherit;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+
+      .um-filter-pill .pill-dot {
+        width: 4.5px;
+        height: 4.5px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .um-filter-pill:hover {
+        border-color: var(--color-dark-red);
+        background: var(--input-bg);
+      }
+
+      .um-filter-pill.active {
+        background: var(--input-bg);
+        border-color: var(--color-dark-red);
+        color: var(--color-red);
+      }
+
+      .um-search-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .um-inline-search {
+        width: 0;
+        opacity: 0;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        height: 27px;
+        font-family: inherit;
+        font-size: 0.72rem;
+        outline: none;
+        transition: width 0.2s ease, opacity 0.18s ease, padding 0.2s ease, border-color 0.2s ease;
+      }
+
+      .um-inline-search.open {
+        width: 170px;
+        opacity: 1;
+        padding: 0 10px;
+        border-color: var(--color-dark-red);
+        background: var(--input-bg);
+      }
+
+      .um-search-btn {
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        border: 1px solid var(--input-placeholder);
+        color: #1E1E1E;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.14s ease, border-color 0.14s ease;
+      }
+
+      .um-search-btn:hover {
+        background: var(--input-bg);
+        border-color: var(--color-dark-red);
+      }
+
+      /* Table Card */
+      .um-table-card {
+        background: #FFFFFF;
+        border: 1px solid var(--input-bg);
+        box-shadow: 0 0 0 1px rgba(197, 74, 67, 0.18);
+        border-radius: 12px;
+        overflow: visible;
+      }
+
+      .um-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .um-table thead tr {
+        background: var(--input-bg);
+        border-bottom: 1px solid rgba(197, 74, 67, 0.15);
+      }
+
+      .um-table th {
+        padding: 10px 16px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .um-table tbody tr {
+        border-bottom: 1px solid var(--input-bg);
+        transition: background-color 0.12s ease;
+      }
+
+      .um-table tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      .um-table tbody tr:hover {
+        background: var(--input-bg);
+      }
+
+      .um-table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+      }
+
+      .um-user-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .um-avatar-circle {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--color-red);
+        color: #FFFFFF;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      /* Role Initials Square Badge */
+      .um-role-badge-sq {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--color-red);
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        font-size: 0.7rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .um-role-badge-sq.panel-TEAM {
+        background: rgba(34, 172, 94, 0.12);
+        color: var(--color-green);
+        border-color: rgba(34, 172, 94, 0.35);
+      }
+
+      .um-role-badge-sq.panel-JUDGE {
+        background: rgba(240, 184, 27, 0.18);
+        color: #111111;
+        border-color: var(--color-golden);
+      }
+
+      .um-role-badge-sq.panel-MEDIA {
+        background: rgba(217, 101, 61, 0.14);
+        color: var(--color-coral);
+        border-color: rgba(217, 101, 61, 0.35);
+      }
+
+      .um-role-badge-sq.panel-VENUE_MANAGER {
+        background: rgba(233, 180, 73, 0.18);
+        color: var(--color-brown-red);
+        border-color: var(--color-warm-gold);
+      }
+
+      .um-user-meta {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+      }
+
+      .um-user-name {
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      .um-role-subdesc {
+        font-size: 0.65rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+      }
+
+      .um-user-email {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #111111;
+      }
+
+      .um-pass-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--input-bg);
+        padding: 4px 8px 4px 10px;
+        border-radius: 8px;
+      }
+
+      .um-pass-text {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #111111;
+        letter-spacing: 0.04em;
+        min-width: 54px;
+      }
+
+      .um-pass-action-btn {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        color: var(--color-deep-red);
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        transition: background-color 0.14s ease, color 0.14s ease;
+      }
+
+      .um-pass-action-btn:hover {
+        background: var(--color-yellow);
+        color: #111111;
+        border-color: var(--color-yellow);
+      }
+
+      /* Panel & System Pills in Role Definitions */
+      .um-panel-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 3.5px 10px;
+        border-radius: 999px;
+        font-size: 0.58rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      .um-panel-pill.panel-TEAM {
+        background: rgba(34, 172, 94, 0.12);
+        color: var(--color-green);
+      }
+
+      .um-panel-pill.panel-JUDGE {
+        background: rgba(240, 184, 27, 0.2);
+        color: #111111;
+      }
+
+      .um-panel-pill.panel-MEDIA {
+        background: rgba(217, 101, 61, 0.15);
+        color: var(--color-coral);
+      }
+
+      .um-panel-pill.panel-VENUE_MANAGER {
+        background: rgba(233, 180, 73, 0.2);
+        color: var(--color-brown-red);
+      }
+
+      .um-type-badge {
+        display: inline-flex;
+        align-items: center;
+        background: var(--input-bg);
+        color: #1E1E1E;
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 3.5px 9px;
+        border-radius: 999px;
+      }
+
+      .um-perm-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      .um-perm-prop-tag {
+        font-size: 0.62rem;
+        font-weight: 700;
+        padding: 2.5px 8px;
+        border-radius: 6px;
+        background: var(--input-bg);
+        color: var(--color-deep-red);
+        border: 1px solid rgba(197, 74, 67, 0.22);
+      }
+
+      .um-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--input-bg);
+        color: var(--color-red);
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 3.5px 9px;
+        border-radius: 999px;
+      }
+
+      .um-status-badge.active-status {
+        color: var(--color-green);
+      }
+
+      .um-status-badge::before {
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .um-actions-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+      }
+
+      .um-action-icon-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        border: 1px solid transparent;
+        background: var(--input-bg);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.14s ease;
+      }
+
+      .um-action-icon-btn.grant-btn {
+        color: var(--color-green);
+      }
+
+      .um-action-icon-btn.grant-btn:hover {
+        background: var(--color-green);
+        color: #FFFFFF;
+      }
+
+      .um-action-icon-btn.revoke-btn {
+        color: var(--color-yellow);
+      }
+
+      .um-action-icon-btn.revoke-btn:hover {
+        background: var(--color-yellow);
+        color: #111111;
+      }
+
+      .um-delete-row-btn {
+        width: 26px;
+        height: 26px;
+        background: var(--input-bg);
+        border: none;
+        color: var(--color-muted-coral);
+        cursor: pointer;
+        padding: 0;
+        border-radius: 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.14s ease, background-color 0.14s ease;
+      }
+
+      .um-delete-row-btn:hover {
+        color: #FFFFFF;
+        background: var(--color-red);
+      }
+
+      .um-dots-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: #1E1E1E;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.14s ease;
+      }
+
+      .um-dots-btn:hover {
+        background: #FFFFFF;
+        box-shadow: 0 0 0 1px rgba(197, 74, 67, 0.25);
+      }
+
+      .um-role-row-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        width: 130px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        border-radius: 10px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+        padding: 4px;
+        display: none;
+        z-index: 40;
+      }
+
+      .um-role-row-menu.open {
+        display: block;
+      }
+
+      .um-role-menu-item {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .um-role-menu-item:hover {
+        background: var(--input-bg);
+      }
+
+      .um-role-menu-item.danger {
+        color: var(--color-red);
+      }
+
+      .um-empty-state {
+        padding: 24px 16px;
+        text-align: center;
+        font-size: 0.76rem;
+        color: var(--input-placeholder);
+      }
+
+      /* Modals (Add User & Add/Edit Role) */
+      .um-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 5000;
+      }
+
+      .um-modal-backdrop.open {
+        display: flex;
+      }
+
+      .um-wrapper:has(.um-modal-backdrop.open) .um-layout {
+        filter: blur(20px);
+        opacity: 0.15;
+        pointer-events: none;
+      }
+
+      .um-modal-card {
+        width: 100%;
+        max-width: 360px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.25);
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+        padding: 1.2rem;
+      }
+
+      /* Role Modal Card (Larger like screenshot 3) */
+      .um-role-modal-card {
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        border-radius: 18px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+        padding: 1.35rem 1.4rem;
+        scrollbar-width: thin;
+      }
+
+      .um-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .um-modal-title {
+        font-size: 0.96rem;
+        font-weight: 800;
+        color: #111111;
+        margin: 0;
+      }
+
+      .um-modal-close {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        border: none;
+        background: var(--input-bg);
+        color: var(--color-red);
+        cursor: pointer;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .um-modal-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .um-form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .um-form-field label {
+        font-size: 0.73rem;
+        font-weight: 700;
+        color: #1E1E1E;
+      }
+
+      .um-req-star {
+        color: var(--color-red);
+        margin-left: 2px;
+      }
+
+      .um-opt-label {
+        font-weight: 500;
+        color: var(--input-placeholder);
+        font-size: 0.68rem;
+      }
+
+      .um-form-field input,
+      .um-form-field select {
+        height: 38px;
+        border-radius: 9px;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        background: #FFFFFF;
+        padding: 0 12px;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #111111;
+        outline: none;
+        transition: border-color 0.14s ease, box-shadow 0.14s ease;
+      }
+
+      .um-form-field input:focus,
+      .um-form-field select:focus {
+        border-color: var(--color-golden);
+        box-shadow: 0 0 0 2px rgba(240, 184, 27, 0.16);
+      }
+
+      /* Panel Type Cards Grid in Role Modal */
+      .um-panel-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+
+      .um-panel-card-opt {
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        background: #FFFFFF;
+        border-radius: 10px;
+        padding: 10px 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.14s ease;
+        font-family: inherit;
+      }
+
+      .um-panel-card-opt svg {
+        width: 16px;
+        height: 16px;
+        color: var(--input-placeholder);
+      }
+
+      .um-panel-card-opt span {
+        font-size: 0.62rem;
+        font-weight: 800;
+        color: #1E1E1E;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+
+      .um-panel-card-opt:hover {
+        background: var(--input-bg);
+        border-color: var(--color-dark-red);
+      }
+
+      .um-panel-card-opt.selected {
+        background: var(--input-bg);
+        border-color: var(--color-red);
+        box-shadow: 0 0 0 1px var(--color-red);
+      }
+
+      .um-panel-card-opt.selected svg,
+      .um-panel-card-opt.selected span {
+        color: var(--color-red);
+      }
+
+      .um-panel-hint {
+        font-size: 0.66rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        margin-top: 2px;
+      }
+
+      /* Permissions Section inside Role Modal */
+      .um-perms-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 4px;
+      }
+
+      .um-perms-title {
+        font-size: 0.66rem;
+        font-weight: 800;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .um-perms-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #1E1E1E;
+      }
+
+      .um-perms-toggle-all {
+        border: none;
+        background: transparent;
+        color: var(--color-deep-red);
+        font-family: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .um-perms-toggle-all:hover {
+        text-decoration: underline;
+      }
+
+      .um-perms-search-box {
+        height: 36px;
+        border-radius: 9px;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        background: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 11px;
+      }
+
+      .um-perms-search-box svg {
+        width: 14px;
+        height: 14px;
+        color: var(--input-placeholder);
+        flex-shrink: 0;
+      }
+
+      .um-perms-search-input {
+        flex: 1;
+        border: none !important;
+        height: 100% !important;
+        padding: 0 !important;
+        background: transparent !important;
+        font-size: 0.75rem !important;
+        box-shadow: none !important;
+      }
+
+      .um-perms-list {
+        max-height: 220px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        padding-right: 2px;
+      }
+
+      .um-perm-group {
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 10px;
+        background: #FFFFFF;
+        overflow: hidden;
+      }
+
+      .um-perm-group-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .um-perm-group-head:hover {
+        background: var(--input-bg);
+      }
+
+      .um-perm-group-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      .um-perm-chevron {
+        font-size: 0.72rem;
+        color: var(--input-placeholder);
+        transition: transform 0.15s ease;
+      }
+
+      .um-perm-group.expanded .um-perm-chevron {
+        transform: rotate(90deg);
+      }
+
+      .um-perm-all-badge {
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(34, 172, 94, 0.14);
+        color: var(--color-green);
+      }
+
+      .um-perm-group-toggle {
+        border: none;
+        background: transparent;
+        color: var(--input-placeholder);
+        font-family: inherit;
+        font-size: 0.66rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .um-perm-group-toggle:hover {
+        color: var(--color-red);
+      }
+
+      .um-perm-group-body {
+        display: none;
+        padding: 10px 14px 12px 28px;
+        border-top: 1px solid var(--input-bg);
+        background: #FFFFFF;
+        gap: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .um-perm-group.expanded .um-perm-group-body {
+        display: flex;
+      }
+
+      /* 2-Toggle Switch Style (Read / Write) */
+      .um-toggle-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #1E1E1E;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .um-toggle-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+      }
+
+      .um-toggle-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: rgba(158, 140, 142, 0.32);
+        position: relative;
+        transition: background-color 0.18s ease;
+        flex-shrink: 0;
+      }
+
+      .um-toggle-thumb {
+        position: absolute;
+        top: 2.5px;
+        left: 2.5px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+        transition: transform 0.18s ease;
+      }
+
+      .um-toggle-input:checked + .um-toggle-track {
+        background: var(--color-red);
+      }
+
+      .um-toggle-input:checked + .um-toggle-track .um-toggle-thumb {
+        transform: translateX(15px);
+      }
+
+      .um-role-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--input-bg);
+      }
+
+      .um-btn-cancel {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 9px;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        background: #FFFFFF;
+        color: #1E1E1E;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .um-btn-cancel:hover {
+        background: var(--input-bg);
+      }
+
+      .um-btn-save {
+        height: 36px;
+        padding: 0 16px;
+        border-radius: 9px;
+        border: none;
+        background: var(--color-red);
+        color: #FFFFFF;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .um-btn-save:hover {
+        background: var(--color-deep-red);
+      }
+
+      .um-radio-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 7px;
+      }
+
+      .um-radio-option {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .um-radio-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .um-radio-pill {
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--input-placeholder);
+        background: var(--input-bg);
+        color: #1E1E1E;
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.14s ease;
+      }
+
+      .um-radio-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--input-placeholder);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .um-radio-option input[type="radio"]:checked + .um-radio-pill {
+        background: #FFFFFF;
+        border-color: var(--color-red);
+        color: var(--color-red);
+      }
+
+      .um-radio-option input[type="radio"]:checked + .um-radio-pill .um-radio-dot {
+        border-color: var(--color-red);
+        background: var(--color-red);
+      }
+
+      .um-modal-submit {
+        margin-top: 4px;
+        height: 36px;
+        border: none;
+        border-radius: 8px;
+        background: var(--color-red);
+        color: #FFFFFF;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .um-modal-submit:hover {
+        background: var(--color-deep-red);
+      }
+
+      /* Festival Duty Modal (Matches screenshot) */
+      .um-duty-modal-card {
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        border-radius: 18px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+        padding: 1.35rem 1.45rem;
+      }
+
+      .um-duty-add-fest-btn {
+        align-self: flex-start;
+        background: var(--color-red);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background-color 0.14s ease;
+      }
+
+      .um-duty-add-fest-btn:hover {
+        background: var(--color-deep-red);
+      }
+
+      .um-duty-table-card {
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        border-radius: 12px;
+        overflow: visible;
+        background: #FFFFFF;
+      }
+
+      .um-duty-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .um-duty-table thead tr {
+        background: var(--input-bg);
+        border-bottom: 1px solid rgba(197, 74, 67, 0.16);
+      }
+
+      .um-duty-table th {
+        padding: 9px 14px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .um-duty-table td {
+        padding: 11px 14px;
+        border-top: 1px solid var(--input-bg);
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #111111;
+        vertical-align: middle;
+      }
+
+      .um-duty-roles-cell {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+      }
+
+      .um-duty-role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--input-bg);
+        color: var(--color-deep-red);
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: 0.66rem;
+        font-weight: 700;
+      }
+
+      .um-duty-role-pill button {
+        border: none;
+        background: transparent;
+        color: var(--color-red);
+        font-size: 0.78rem;
+        font-weight: 800;
+        line-height: 1;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .um-duty-add-role-btn {
+        border: 1px dashed rgba(197, 74, 67, 0.35);
+        background: #FFFFFF;
+        color: #1E1E1E;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-family: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+
+      .um-duty-add-role-btn:hover {
+        background: var(--input-bg);
+        border-color: var(--color-red);
+        color: var(--color-red);
+      }
+
+      .um-duty-picker-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        min-width: 170px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+        padding: 5px;
+        display: none;
+        z-index: 60;
+      }
+
+      .um-duty-picker-menu.open {
+        display: block;
+      }
+
+      .um-duty-picker-opt {
+        width: 100%;
+        border: none;
+        background: transparent;
+        border-radius: 7px;
+        padding: 6px 9px;
+        text-align: left;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .um-duty-picker-opt:hover {
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      .um-duty-fest-select {
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        background: #FFFFFF;
+        padding: 0 8px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #111111;
+        outline: none;
+        max-width: 180px;
+      }
+
+      /* Searchable User Selector inside Festival Duty Modal */
+      .um-user-combo {
+        position: relative;
+        width: 100%;
+      }
+
+      .um-user-combo input {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .um-user-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        max-height: 170px;
+        overflow-y: auto;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+        padding: 4px;
+        display: none;
+        z-index: 70;
+      }
+
+      .um-user-dropdown.open {
+        display: block;
+      }
+
+      .um-user-opt {
+        width: 100%;
+        border: none;
+        background: transparent;
+        border-radius: 7px;
+        padding: 7px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: #111111;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .um-user-opt:hover,
+      .um-user-opt.selected {
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      .um-user-opt-email {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+      }
+
+      @media (max-width: 768px) {
+        .um-layout {
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .um-subnav {
+          width: 100%;
+          flex-direction: row;
+          overflow-x: auto;
+        }
+
+        .um-subnav-btn {
+          width: auto;
+          white-space: nowrap;
+        }
+
+        .um-table-card {
+          overflow-x: auto;
+        }
+
+        .um-panel-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+
+    <div class="um-layout">
+      <!-- Left Sub-Navigation Menu -->
+      <nav class="um-subnav" aria-label="User Management Sections">
+        <button type="button" class="um-subnav-btn" data-um-tab="roles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <polyline points="9 12 11 14 15 10" />
+          </svg>
+          <span>Roles</span>
+        </button>
+
+        <button type="button" class="um-subnav-btn active" data-um-tab="users">
+          <i class="hgi hgi-stroke hgi-rounded hgi-users" aria-hidden="true"></i>
+          <span>Users</span>
+        </button>
+
+        <button type="button" class="um-subnav-btn" data-um-tab="festival">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span>Festival</span>
+        </button>
+      </nav>
+
+      <!-- Right Main Content Area -->
+      <div class="um-main">
+        <div class="um-header-row">
+          <div class="um-title-group">
+            <span class="um-title-icon" id="umHeaderIcon">
+              <i class="hgi hgi-stroke hgi-rounded hgi-users" aria-hidden="true"></i>
+            </span>
+            <h2 class="um-title" id="umSectionTitle">All Users</h2>
+          </div>
+
+          <div class="um-header-actions">
+            <button type="button" class="um-form-link-btn" id="umCopyFormLinkBtn" title="Copy registration form link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <span>Form</span>
+            </button>
+
+            <button type="button" class="um-add-btn" id="umOpenAddModalBtn">
+              <span>+</span>
+              <span id="umAddBtnLabel">Add User</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= 1. USERS VIEW ================= -->
+        <div id="umUsersPane">
+          <div class="um-filters-row">
+            <div class="um-filter-pills" id="umFilterPills">
+              <button type="button" class="um-filter-pill active" data-filter="ALL">
+                <span class="pill-dot"></span>ALL
+              </button>
+              <button type="button" class="um-filter-pill" data-filter="ACTIVE">
+                <span class="pill-dot"></span>ACTIVE
+              </button>
+              <button type="button" class="um-filter-pill" data-filter="INVITED">
+                <span class="pill-dot"></span>INVITED
+              </button>
+              <button type="button" class="um-filter-pill" data-filter="REQUESTS">
+                <span class="pill-dot"></span>REQUESTS
+              </button>
+            </div>
+
+            <div class="um-search-wrap" id="usersSearchWrap">
+              <input type="text" id="umInlineSearchInput" class="um-inline-search" placeholder="Filter users..." />
+              <button type="button" class="um-search-btn" id="umSearchToggleBtn" title="Search" aria-label="Search">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="20" y1="20" x2="16.35" y2="16.35" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="um-table-card">
+            <table class="um-table">
+              <thead>
+                <tr>
+                  <th>NAME</th>
+                  <th>EMAIL</th>
+                  <th>ROLE</th>
+                  <th>PASSWORD</th>
+                  <th>STATUS</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="umTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= 2. ROLES VIEW (Role Definitions) ================= -->
+        <div id="umRolesPane" style="display: none;">
+          <div class="um-filters-row">
+            <div class="um-filter-pills" id="umRoleFilterPills">
+              <button type="button" class="um-filter-pill active" data-role-filter="ALL">
+                <span class="pill-dot"></span>ALL
+              </button>
+              <button type="button" class="um-filter-pill" data-role-filter="ADMIN">
+                <span class="pill-dot"></span>ADMIN
+              </button>
+              <button type="button" class="um-filter-pill" data-role-filter="JUDGE">
+                <span class="pill-dot"></span>JUDGE
+              </button>
+              <button type="button" class="um-filter-pill" data-role-filter="MEDIA">
+                <span class="pill-dot"></span>MEDIA
+              </button>
+              <button type="button" class="um-filter-pill" data-role-filter="VENUE_MANAGER">
+                <span class="pill-dot"></span>VENUE MANAGER
+              </button>
+              <button type="button" class="um-filter-pill" data-role-filter="TEAM">
+                <span class="pill-dot"></span>TEAM
+              </button>
+            </div>
+
+            <div class="um-search-wrap">
+              <input type="text" id="umRoleSearchInput" class="um-inline-search" placeholder="Filter roles..." />
+              <button type="button" class="um-search-btn" id="umRoleSearchToggleBtn" title="Search Roles" aria-label="Search Roles">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="20" y1="20" x2="16.35" y2="16.35" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="um-table-card">
+            <table class="um-table">
+              <thead>
+                <tr>
+                  <th>ROLE</th>
+                  <th>PANEL</th>
+                  <th>TYPE</th>
+                  <th>PERMISSIONS</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="umRolesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= 3. FESTIVAL DUTY VIEW ================= -->
+        <div id="umFestivalPane" style="display: none;">
+          <div class="um-filters-row">
+            <div class="um-filter-pills">
+              <button type="button" class="um-filter-pill active">
+                <span class="pill-dot"></span>ALL DUTIES
+              </button>
+            </div>
+
+            <div class="um-search-wrap">
+              <input type="text" id="umDutySearchInput" class="um-inline-search open" placeholder="Search name, email, fest or role..." />
+            </div>
+          </div>
+
+          <div class="um-table-card">
+            <table class="um-table">
+              <thead>
+                <tr>
+                  <th>NAME / EMAIL</th>
+                  <th>FEST</th>
+                  <th>ROLES</th>
+                  <th style="text-align: right;">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="umDutyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="um-modal-backdrop" id="umAddOwnerModal" role="dialog" aria-modal="true" aria-labelledby="umModalTitle">
+      <div class="um-modal-card">
+        <div class="um-modal-header">
+          <h3 class="um-modal-title" id="umModalTitle">Add User</h3>
+          <button type="button" class="um-modal-close" id="umCloseModalBtn" aria-label="Close">&times;</button>
+        </div>
+        <form class="um-modal-form" id="umAddOwnerForm" onsubmit="return false;">
+          <div class="um-form-field">
+            <label for="umOwnerName">Name</label>
+            <input type="text" id="umOwnerName" placeholder="e.g. Suhail" required />
+          </div>
+          <div class="um-form-field">
+            <label for="umOwnerEmail">Email</label>
+            <input type="email" id="umOwnerEmail" placeholder="e.g. suhail@gmail.com" required />
+          </div>
+          <div class="um-form-field">
+            <label for="umOwnerRoleSelect">Role</label>
+            <select id="umOwnerRoleSelect"></select>
+          </div>
+          <div class="um-form-field">
+            <label for="umOwnerPassword">Password</label>
+            <input type="text" id="umOwnerPassword" placeholder="Enter password" required />
+          </div>
+          <div class="um-form-field">
+            <label>Status</label>
+            <div class="um-radio-group" role="radiogroup" aria-label="Status">
+              <label class="um-radio-option">
+                <input type="radio" name="umOwnerStatus" value="ACTIVE" checked />
+                <span class="um-radio-pill"><span class="um-radio-dot"></span>ACTIVE</span>
+              </label>
+              <label class="um-radio-option">
+                <input type="radio" name="umOwnerStatus" value="INVITED" />
+                <span class="um-radio-pill"><span class="um-radio-dot"></span>INVITED</span>
+              </label>
+              <label class="um-radio-option">
+                <input type="radio" name="umOwnerStatus" value="REQUESTS" />
+                <span class="um-radio-pill"><span class="um-radio-dot"></span>REQUESTS</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="um-modal-submit">Add User</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add / Edit Role Modal (Matches screenshot 3 with Panel Type & Permissions: entry - read & write) -->
+    <div class="um-modal-backdrop" id="umRoleModal" role="dialog" aria-modal="true" aria-labelledby="umRoleModalTitle">
+      <div class="um-role-modal-card">
+        <div class="um-modal-header">
+          <h3 class="um-modal-title" id="umRoleModalTitle">Edit Role</h3>
+          <button type="button" class="um-modal-close" id="umCloseRoleModalBtn" aria-label="Close">&times;</button>
+        </div>
+
+        <form class="um-modal-form" id="umRoleForm" onsubmit="return false;">
+          <div class="um-form-field">
+            <label for="umRoleNameInput">Name <span class="um-req-star">*</span></label>
+            <input type="text" id="umRoleNameInput" placeholder="e.g. Media Manager" required />
+          </div>
+
+          <div class="um-form-field">
+            <label for="umRoleDescInput">Description <span class="um-opt-label">(optional)</span></label>
+            <input type="text" id="umRoleDescInput" placeholder="Brief description of this role..." />
+          </div>
+
+          <!-- PERMISSIONS (Temporary property: entry - read & write) -->
+          <div class="um-perms-header">
+            <span class="um-perms-title">PERMISSIONS</span>
+            <div class="um-perms-meta">
+              <span id="umPermsSelectedCount">2 / 2 selected</span>
+              <button type="button" class="um-perms-toggle-all" id="umPermsToggleAllBtn">Deselect all</button>
+            </div>
+          </div>
+
+          <div class="um-perms-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="20" y1="20" x2="16.35" y2="16.35" />
+            </svg>
+            <input type="text" id="umPermsSearchInput" class="um-perms-search-input" placeholder="Search permissions..." />
+          </div>
+
+          <div class="um-perms-list" id="umPermsAccordionList"></div>
+
+          <div class="um-role-modal-footer">
+            <button type="button" class="um-btn-cancel" id="umCancelRoleModalBtn">Cancel</button>
+            <button type="submit" class="um-btn-save" id="umSaveRoleBtn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Festival Duty Modal (Add User to Fests & Assign Roles) -->
+    <div class="um-modal-backdrop" id="umFestivalDutyModal" role="dialog" aria-modal="true" aria-labelledby="umDutyModalTitle">
+      <div class="um-duty-modal-card">
+        <div class="um-modal-header">
+          <h3 class="um-modal-title" id="umDutyModalTitle">Add User to Fests</h3>
+          <button type="button" class="um-modal-close" id="umCloseDutyModalBtn" aria-label="Close">&times;</button>
+        </div>
+
+        <form class="um-modal-form" id="umFestivalDutyForm" onsubmit="return false;">
+          <div class="um-form-field">
+            <label for="umDutyUserSearchInput">Name / Email <span class="um-req-star">*</span></label>
+            <div class="um-user-combo">
+              <input
+                type="text"
+                id="umDutyUserSearchInput"
+                placeholder="Search &amp; select user by name or email..."
+                autocomplete="off"
+                required
+              />
+              <div class="um-user-dropdown" id="umDutyUserDropdown"></div>
+            </div>
+          </div>
+
+          <div class="um-duty-table-card">
+            <table class="um-duty-table">
+              <thead>
+                <tr>
+                  <th>FEST</th>
+                  <th>ROLES</th>
+                  <th style="width: 40px;"></th>
+                </tr>
+              </thead>
+              <tbody id="umDutyModalRowsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="um-role-modal-footer">
+            <button type="button" class="um-btn-cancel" id="umCancelDutyModalBtn">Cancel</button>
+            <button type="submit" class="um-btn-save" id="umSaveDutyBtn">Add Access</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script id="userManagementScript">
+    window.initUserManagement = function (options = {}) {
+      const root = document.getElementById("userManagementRoot");
+      if (!root || root.dataset.initialized === "true") return;
+      root.dataset.initialized = "true";
+
+      const notify =
+        typeof options.showToast === "function"
+          ? options.showToast
+          : function () {};
+
+      const STORAGE_KEY = "festinger_festival_owners";
+      const ROLES_STORAGE_KEY = "festinger_roles_definitions";
+      const DUTIES_STORAGE_KEY = "festinger_festival_duties";
+      const FESTS_STORAGE_KEY = "festinger_fests_list";
+
+      const PANEL_SCOPE_DESCRIPTIONS = {
+        ADMIN: "Admin handles all festival modules, users, fests, and settings.",
+        MEDIA: "Media can only use this web for media & content uploads only.",
+        TEAM: "Team Manager uses team-based lines & participant entries only.",
+        JUDGE: "Judge can only access scoring and evaluation panels.",
+        VENUE_MANAGER: "Venue Manager handles venue & stage scheduling lines only."
+      };
+
+      const PANEL_LABELS = {
+        ADMIN: "ADMIN",
+        MEDIA: "MEDIA",
+        TEAM: "TEAM",
+        JUDGE: "JUDGE",
+        VENUE_MANAGER: "VENUE MANAGER"
+      };
+
+      const TEMP_ROLE_IDS = new Set([
+        "role-admin",
+        "role-team-manager",
+        "role-judge",
+        "role-media-manager",
+        "role-venue-manager",
+        "role-volunteer"
+      ]);
+
+      let ownersList = [];
+      let rolesList = [];
+      let festivalDuties = [];
+      let availableFestsCache = [];
+
+      let activeTab = "users";
+      let activeFilter = "ALL";
+      let searchQuery = "";
+      let activeRoleFilter = "ALL";
+      let roleSearchQuery = "";
+      const visiblePasswords = new Set();
+
+      const usersPane = root.querySelector("#umUsersPane");
+      const rolesPane = root.querySelector("#umRolesPane");
+      const headerIcon = root.querySelector("#umHeaderIcon");
+      const sectionTitle = root.querySelector("#umSectionTitle");
+      const addBtnLabel = root.querySelector("#umAddBtnLabel");
+      const copyFormLinkBtn = root.querySelector("#umCopyFormLinkBtn");
+      const openAddModalBtn = root.querySelector("#umOpenAddModalBtn");
+      const subnavBtns = root.querySelectorAll(".um-subnav-btn");
+
+      // Users DOM
+      const tableBody = root.querySelector("#umTableBody");
+      const filterBtns = root.querySelectorAll("#umFilterPills .um-filter-pill");
+      const searchToggleBtn = root.querySelector("#umSearchToggleBtn");
+      const inlineSearchInput = root.querySelector("#umInlineSearchInput");
+      const addOwnerModal = root.querySelector("#umAddOwnerModal");
+      const closeModalBtn = root.querySelector("#umCloseModalBtn");
+      const addOwnerForm = root.querySelector("#umAddOwnerForm");
+      const ownerRoleSelect = root.querySelector("#umOwnerRoleSelect");
+
+      // Roles DOM
+      const rolesTableBody = root.querySelector("#umRolesTableBody");
+      const roleFilterBtns = root.querySelectorAll("#umRoleFilterPills .um-filter-pill");
+      const roleSearchToggleBtn = root.querySelector("#umRoleSearchToggleBtn");
+      const roleSearchInput = root.querySelector("#umRoleSearchInput");
+
+      // Role Modal DOM
+      const roleModal = root.querySelector("#umRoleModal");
+      const roleModalTitle = root.querySelector("#umRoleModalTitle");
+      const closeRoleModalBtn = root.querySelector("#umCloseRoleModalBtn");
+      const cancelRoleModalBtn = root.querySelector("#umCancelRoleModalBtn");
+      const roleForm = root.querySelector("#umRoleForm");
+      const roleNameInput = root.querySelector("#umRoleNameInput");
+      const roleDescInput = root.querySelector("#umRoleDescInput");
+      const panelTypeGrid = root.querySelector("#umPanelTypeGrid");
+      const panelScopeHint = root.querySelector("#umPanelScopeHint");
+      const permsSelectedCount = root.querySelector("#umPermsSelectedCount");
+      const permsToggleAllBtn = root.querySelector("#umPermsToggleAllBtn");
+      const permsSearchInput = root.querySelector("#umPermsSearchInput");
+      const permsAccordionList = root.querySelector("#umPermsAccordionList");
+      const saveRoleBtn = root.querySelector("#umSaveRoleBtn");
+
+      let editingRoleId = null;
+      let selectedPanelType = "ADMIN";
+      let selectedPermissions = new Set(["entry:read", "entry:write"]);
+
+      const PERMISSION_GROUPS = [
+        {
+          id: "entry",
+          title: "Owner Page",
+          items: [
+            { key: "entry:read", label: "Read" },
+            { key: "entry:write", label: "Write" }
+          ]
+        }
+      ];
+
+      function saveOwners() {
+        if (window.FestingerDB) {
+          window.FestingerDB.saveDoc("owners", ownersList);
+        }
+      }
+
+      function saveRoles() {
+        if (window.FestingerDB) {
+          window.FestingerDB.saveDoc("roles", rolesList);
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function populateUserRoleOptions() {
+        if (!ownerRoleSelect) return;
+        if (rolesList.length === 0) {
+          ownerRoleSelect.innerHTML = `<option value="User">User</option>`;
+          return;
+        }
+        ownerRoleSelect.innerHTML = rolesList
+          .map(
+            (r) =>
+              `<option value="${escapeHtml(r.name)}">${escapeHtml(r.name)}</option>`
+          )
+          .join("");
+      }
+
+      // ================= USERS TABLE RENDER =================
+      function renderTable() {
+        const q = searchQuery.trim().toLowerCase();
+        const filtered = ownersList.filter((item) => {
+          const matchesStatus = activeFilter === "ALL" || item.status === activeFilter;
+          const matchesQuery =
+            !q ||
+            String(item.name || "").toLowerCase().includes(q) ||
+            String(item.email || "").toLowerCase().includes(q) ||
+            String(item.role || "").toLowerCase().includes(q);
+          return matchesStatus && matchesQuery;
+        });
+
+        if (filtered.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="6" class="um-empty-state">No matching records found.</td></tr>`;
+          return;
+        }
+
+        tableBody.innerHTML = filtered
+          .map((item) => {
+            const initial = (item.name || "U").trim().charAt(0).toUpperCase();
+            const rawPass = String(item.password || "340");
+            const isShown = visiblePasswords.has(item.id);
+            const displayPass = isShown ? escapeHtml(rawPass) : "••••••••";
+            const currentStatus = String(item.status || "ACTIVE").toUpperCase();
+            const isActive = currentStatus === "ACTIVE";
+            const userRoleName = item.role || "User";
+            const matchedRole = rolesList.find((r) => r.name.toLowerCase() === String(userRoleName).toLowerCase());
+            const panelKey = matchedRole ? matchedRole.panel : "ADMIN";
+
+            const accessActionBtn = isActive
+              ? `<button type="button" class="um-action-icon-btn revoke-btn" data-revoke-id="${escapeHtml(item.id)}" title="Move back to Requests" aria-label="Move back to Requests">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </button>`
+              : `<button type="button" class="um-action-icon-btn grant-btn" data-grant-id="${escapeHtml(item.id)}" title="Grant Access (Set Active)" aria-label="Grant Access">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>`;
+
+            return `
+              <tr data-owner-id="${escapeHtml(item.id)}">
+                <td>
+                  <div class="um-user-cell">
+                    <span class="um-avatar-circle">${escapeHtml(initial)}</span>
+                    <div class="um-user-meta">
+                      <span class="um-user-name">${escapeHtml(item.name)}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="um-user-email">${escapeHtml(item.email)}</span>
+                </td>
+                <td>
+                  <span class="um-panel-pill panel-${escapeHtml(panelKey)}">${escapeHtml(userRoleName)}</span>
+                </td>
+                <td>
+                  <div class="um-pass-cell">
+                    <span class="um-pass-text">${displayPass}</span>
+                    <button type="button" class="um-pass-action-btn" data-view-pass="${escapeHtml(item.id)}" title="${isShown ? "Hide Password" : "View Password"}" aria-label="View Password">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+                    <button type="button" class="um-pass-action-btn" data-copy-pass="${escapeHtml(item.id)}" title="Copy Password" aria-label="Copy Password">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <span class="um-status-badge ${isActive ? "active-status" : ""}">${escapeHtml(currentStatus)}</span>
+                </td>
+                <td>
+                  <div class="um-actions-cell">
+                    ${accessActionBtn}
+                    <button type="button" class="um-delete-row-btn" data-delete-id="${escapeHtml(item.id)}" title="Remove User" aria-label="Remove User">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        tableBody.querySelectorAll("[data-grant-id]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-grant-id");
+            const found = ownersList.find((o) => o.id === id);
+            if (found) {
+              found.status = "ACTIVE";
+              saveOwners();
+              renderTable();
+              notify("Access granted! User moved to Active.", "success");
+            }
+          });
+        });
+
+        tableBody.querySelectorAll("[data-revoke-id]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-revoke-id");
+            const found = ownersList.find((o) => o.id === id);
+            if (found) {
+              found.status = "REQUESTS";
+              saveOwners();
+              renderTable();
+              notify("Access moved back to Requests.", "success");
+            }
+          });
+        });
+
+        tableBody.querySelectorAll("[data-view-pass]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-view-pass");
+            if (visiblePasswords.has(id)) {
+              visiblePasswords.delete(id);
+            } else {
+              visiblePasswords.add(id);
+            }
+            renderTable();
+          });
+        });
+
+        tableBody.querySelectorAll("[data-copy-pass]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const id = btn.getAttribute("data-copy-pass");
+            const found = ownersList.find((o) => o.id === id);
+            const passToCopy = String(found?.password || "340");
+            try {
+              await navigator.clipboard.writeText(passToCopy);
+              notify("Password copied!", "success");
+            } catch (_) {
+              const temp = document.createElement("input");
+              temp.value = passToCopy;
+              document.body.appendChild(temp);
+              temp.select();
+              document.execCommand("copy");
+              temp.remove();
+              notify("Password copied!", "success");
+            }
+          });
+        });
+
+        tableBody.querySelectorAll("[data-delete-id]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-delete-id");
+            ownersList = ownersList.filter((o) => o.id !== id);
+            saveOwners();
+            renderTable();
+            notify("User removed", "success");
+          });
+        });
+      }
+
+      // ================= ROLES TABLE RENDER (Role Definitions) =================
+      function formatPermissionSummary(perms = []) {
+        const hasRead = perms.includes("entry:read");
+        const hasWrite = perms.includes("entry:write");
+        if (hasRead && hasWrite) return "owner page - read & write";
+        if (hasRead) return "owner page - read";
+        if (hasWrite) return "owner page - write";
+        return "No permissions";
+      }
+
+      function renderRolesTable() {
+        const q = roleSearchQuery.trim().toLowerCase();
+        const filtered = rolesList.filter((role) => {
+          const matchesPanel = activeRoleFilter === "ALL" || role.panel === activeRoleFilter;
+          const matchesQuery =
+            !q ||
+            String(role.name || "").toLowerCase().includes(q) ||
+            String(role.panel || "").toLowerCase().includes(q) ||
+            String(role.description || "").toLowerCase().includes(q);
+          return matchesPanel && matchesQuery;
+        });
+
+        if (filtered.length === 0) {
+          rolesTableBody.innerHTML = `<tr><td colspan="5" class="um-empty-state">No matching roles found.</td></tr>`;
+          return;
+        }
+
+        rolesTableBody.innerHTML = filtered
+          .map((role) => {
+            const initial = (role.name || "R").trim().charAt(0).toUpperCase();
+            const panelLabel = PANEL_LABELS[role.panel] || role.panel;
+            const perms = Array.isArray(role.permissions) ? role.permissions : ["entry:read", "entry:write"];
+            const permSummary = formatPermissionSummary(perms);
+
+            return `
+              <tr data-role-id="${escapeHtml(role.id)}">
+                <td>
+                  <div class="um-user-cell">
+                    <span class="um-role-badge-sq panel-${escapeHtml(role.panel)}">${escapeHtml(initial)}</span>
+                    <div class="um-user-meta">
+                      <span class="um-user-name">${escapeHtml(role.name)}</span>
+                      ${role.description ? `<span class="um-role-subdesc">${escapeHtml(role.description)}</span>` : ""}
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="um-panel-pill panel-${escapeHtml(role.panel)}">${escapeHtml(panelLabel)}</span>
+                </td>
+                <td>
+                  <span class="um-type-badge">${escapeHtml(role.type || "CUSTOM")}</span>
+                </td>
+                <td>
+                  <div class="um-perm-summary">
+                    <span>${perms.length}</span>
+                    <span class="um-perm-prop-tag">${escapeHtml(permSummary)}</span>
+                  </div>
+                </td>
+                <td style="text-align: right;">
+                  <div class="um-actions-cell">
+                    <button type="button" class="um-dots-btn" data-role-menu-btn="${escapeHtml(role.id)}" aria-label="Role actions">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                      </svg>
+                    </button>
+                    <div class="um-role-row-menu" id="roleMenu-${escapeHtml(role.id)}">
+                      <button type="button" class="um-role-menu-item" data-edit-role="${escapeHtml(role.id)}">
+                        Edit Role
+                      </button>
+                      <button type="button" class="um-role-menu-item danger" data-delete-role="${escapeHtml(role.id)}">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        rolesTableBody.querySelectorAll("[data-role-menu-btn]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-role-menu-btn");
+            const menu = root.querySelector(`#roleMenu-${CSS.escape(id)}`);
+            root.querySelectorAll(".um-role-row-menu.open").forEach((m) => {
+              if (m !== menu) m.classList.remove("open");
+            });
+            menu?.classList.toggle("open");
+          });
+        });
+
+        rolesTableBody.querySelectorAll("[data-edit-role]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            root.querySelectorAll(".um-role-row-menu.open").forEach((m) => m.classList.remove("open"));
+            openRoleModal(btn.getAttribute("data-edit-role"));
+          });
+        });
+
+        rolesTableBody.querySelectorAll("[data-delete-role]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-delete-role");
+            rolesList = rolesList.filter((r) => r.id !== id);
+            saveRoles();
+            renderRolesTable();
+            populateUserRoleOptions();
+            notify("Role deleted", "success");
+          });
+        });
+      }
+
+      document.addEventListener("click", () => {
+        root.querySelectorAll(".um-role-row-menu.open").forEach((m) => m.classList.remove("open"));
+      });
+
+      // ================= ROLE MODAL & PERMISSIONS ACCORDION =================
+      function updatePanelSelectionUI(panelKey) {
+        selectedPanelType = panelKey || "ADMIN";
+      }
+
+      function renderPermissionsAccordion() {
+        const q = (permsSearchInput?.value || "").trim().toLowerCase();
+        const totalKeys = ["entry:read", "entry:write"];
+        const selectedCount = totalKeys.filter((k) => selectedPermissions.has(k)).length;
+        permsSelectedCount.textContent = `${selectedCount} / ${totalKeys.length} selected`;
+        permsToggleAllBtn.textContent = selectedCount === totalKeys.length ? "Deselect all" : "Select all";
+
+        const filteredGroups = PERMISSION_GROUPS.filter((g) => {
+          if (!q) return true;
+          return (
+            g.title.toLowerCase().includes(q) ||
+            g.items.some((it) => it.label.toLowerCase().includes(q) || it.key.toLowerCase().includes(q))
+          );
+        });
+
+        permsAccordionList.innerHTML = filteredGroups
+          .map((group) => {
+            const groupSelected = group.items.filter((i) => selectedPermissions.has(i.key)).length;
+            const allSelected = groupSelected === group.items.length;
+
+            return `
+              <div class="um-perm-group expanded" data-perm-group="${escapeHtml(group.id)}">
+                <div class="um-perm-group-head">
+                  <div class="um-perm-group-left">
+                    <span class="um-perm-chevron">&rsaquo;</span>
+                    <span>${escapeHtml(group.title)}</span>
+                    ${
+                      groupSelected > 0
+                        ? `<span class="um-perm-all-badge">${allSelected ? "All (read & write)" : `${groupSelected}/${group.items.length}`}</span>`
+                        : ""
+                    }
+                  </div>
+                  <button type="button" class="um-perm-group-toggle" data-toggle-group="${escapeHtml(group.id)}">
+                    ${allSelected ? "Deselect all" : "Select all"}
+                  </button>
+                </div>
+                <div class="um-perm-group-body">
+                  ${group.items
+                    .map(
+                      (item) => `
+                        <label class="um-toggle-label">
+                          <input type="checkbox" class="um-toggle-input" data-perm-key="${escapeHtml(item.key)}" ${
+                            selectedPermissions.has(item.key) ? "checked" : ""
+                          } />
+                          <span class="um-toggle-track"><span class="um-toggle-thumb"></span></span>
+                          <span>${escapeHtml(item.label)}</span>
+                        </label>
+                      `
+                    )
+                    .join("")}
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        permsAccordionList.querySelectorAll(".um-perm-group-head").forEach((head) => {
+          head.addEventListener("click", (e) => {
+            if (e.target.closest("[data-toggle-group]")) return;
+            head.closest(".um-perm-group")?.classList.toggle("expanded");
+          });
+        });
+
+        permsAccordionList.querySelectorAll("[data-toggle-group]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const group = PERMISSION_GROUPS.find((g) => g.id === btn.getAttribute("data-toggle-group"));
+            if (!group) return;
+            const allChecked = group.items.every((i) => selectedPermissions.has(i.key));
+            group.items.forEach((i) => {
+              if (allChecked) selectedPermissions.delete(i.key);
+              else selectedPermissions.add(i.key);
+            });
+            renderPermissionsAccordion();
+          });
+        });
+
+        permsAccordionList.querySelectorAll("[data-perm-key]").forEach((chk) => {
+          chk.addEventListener("change", () => {
+            const key = chk.getAttribute("data-perm-key");
+            if (chk.checked) selectedPermissions.add(key);
+            else selectedPermissions.delete(key);
+            renderPermissionsAccordion();
+          });
+        });
+      }
+
+      function openRoleModal(roleId = null) {
+        editingRoleId = roleId;
+        if (permsSearchInput) permsSearchInput.value = "";
+
+        if (roleId) {
+          const existing = rolesList.find((r) => r.id === roleId);
+          if (!existing) return;
+          roleModalTitle.textContent = "Edit Role";
+          saveRoleBtn.textContent = "Save Changes";
+          roleNameInput.value = existing.name || "";
+          roleDescInput.value = existing.description || "";
+          updatePanelSelectionUI(existing.panel || "ADMIN");
+          selectedPermissions = new Set(
+            Array.isArray(existing.permissions) ? existing.permissions : ["entry:read", "entry:write"]
+          );
+        } else {
+          roleModalTitle.textContent = "Add Role";
+          saveRoleBtn.textContent = "Create Role";
+          roleNameInput.value = "";
+          roleDescInput.value = "";
+          updatePanelSelectionUI("MEDIA");
+          selectedPermissions = new Set(["entry:read", "entry:write"]);
+        }
+
+        renderPermissionsAccordion();
+        roleModal.classList.add("open");
+        setTimeout(() => roleNameInput.focus(), 40);
+      }
+
+      function closeRoleModal() {
+        roleModal.classList.remove("open");
+      }
+
+      permsToggleAllBtn.addEventListener("click", () => {
+        const allKeys = ["entry:read", "entry:write"];
+        const hasAll = allKeys.every((k) => selectedPermissions.has(k));
+        if (hasAll) {
+          selectedPermissions.clear();
+        } else {
+          allKeys.forEach((k) => selectedPermissions.add(k));
+        }
+        renderPermissionsAccordion();
+      });
+
+      permsSearchInput.addEventListener("input", renderPermissionsAccordion);
+      closeRoleModalBtn.addEventListener("click", closeRoleModal);
+      cancelRoleModalBtn.addEventListener("click", closeRoleModal);
+      roleModal.addEventListener("click", (e) => {
+        if (e.target === roleModal) closeRoleModal();
+      });
+
+      roleForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const rName = roleNameInput.value.trim();
+        const rDesc = roleDescInput.value.trim();
+        if (!rName) {
+          notify("Please enter Role Name.", "error");
+          roleNameInput.focus();
+          return;
+        }
+
+        const permsArray = Array.from(selectedPermissions);
+
+        if (editingRoleId) {
+          const idx = rolesList.findIndex((r) => r.id === editingRoleId);
+          if (idx !== -1) {
+            rolesList[idx] = {
+              ...rolesList[idx],
+              name: rName,
+              panel: selectedPanelType,
+              description: rDesc,
+              permissions: permsArray
+            };
+          }
+          notify(`Role "${rName}" updated!`, "success");
+        } else {
+          rolesList.push({
+            id: "role-" + Date.now(),
+            name: rName,
+            panel: selectedPanelType,
+            type: "CUSTOM",
+            description: rDesc || PANEL_SCOPE_DESCRIPTIONS[selectedPanelType],
+            permissions: permsArray
+          });
+          notify(`Role "${rName}" created!`, "success");
+        }
+
+        saveRoles();
+        renderRolesTable();
+        populateUserRoleOptions();
+        renderTable();
+        closeRoleModal();
+      });
+
+      // ================= FILTER & SUB-TAB SWITCHING =================
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeFilter = btn.getAttribute("data-filter") || "ALL";
+          renderTable();
+        });
+      });
+
+      roleFilterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          roleFilterBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeRoleFilter = btn.getAttribute("data-role-filter") || "ALL";
+          renderRolesTable();
+        });
+      });
+
+      const festivalPane = root.querySelector("#umFestivalPane");
+      const dutyTableBody = root.querySelector("#umDutyTableBody");
+      const dutySearchInput = root.querySelector("#umDutySearchInput");
+      const festivalDutyModal = root.querySelector("#umFestivalDutyModal");
+      const closeDutyModalBtn = root.querySelector("#umCloseDutyModalBtn");
+      const cancelDutyModalBtn = root.querySelector("#umCancelDutyModalBtn");
+      const festivalDutyForm = root.querySelector("#umFestivalDutyForm");
+      const dutyUserSearchInput = root.querySelector("#umDutyUserSearchInput");
+      const dutyUserDropdown = root.querySelector("#umDutyUserDropdown");
+      const dutyModalSearchInput = root.querySelector("#umDutyModalSearchInput");
+      const dutyModalRowsBody = root.querySelector("#umDutyModalRowsBody");
+      let draftDutyRows = [];
+      let selectedDutyUserId = "";
+
+      function saveDuties() {
+        if (window.FestingerDB) {
+          window.FestingerDB.saveDoc("duties", festivalDuties);
+        }
+      }
+
+      function getAvailableFestsList() {
+        return availableFestsCache.filter((f) => f && f.id !== "fest-main-1");
+      }
+
+      function renderFestivalDutyTable() {
+        if (!dutyTableBody) return;
+        const q = (dutySearchInput?.value || "").trim().toLowerCase();
+        const filtered = festivalDuties.filter((d) => {
+          if (!q) return true;
+          const rolesStr = (d.roles || []).join(" ").toLowerCase();
+          return (
+            String(d.userName || "").toLowerCase().includes(q) ||
+            String(d.userEmail || "").toLowerCase().includes(q) ||
+            String(d.festName || "").toLowerCase().includes(q) ||
+            rolesStr.includes(q)
+          );
+        });
+
+        if (filtered.length === 0) {
+          dutyTableBody.innerHTML = `<tr><td colspan="4" class="um-empty-state">No festival duties assigned yet. Click "+ Add Fest" to assign.</td></tr>`;
+          return;
+        }
+
+        dutyTableBody.innerHTML = filtered
+          .map((d) => {
+            const initial = (d.userName || d.userEmail || "U").trim().charAt(0).toUpperCase();
+            const rolesHtml = (d.roles || [])
+              .map((r) => `<span class="um-duty-role-pill">${escapeHtml(r)}</span>`)
+              .join("");
+
+            return `
+              <tr data-duty-id="${escapeHtml(d.id)}">
+                <td>
+                  <div class="um-user-cell">
+                    <span class="um-avatar-circle">${escapeHtml(initial)}</span>
+                    <div class="um-user-meta">
+                      <span class="um-user-name">${escapeHtml(d.userName || "User")}</span>
+                      <span class="um-role-subdesc">${escapeHtml(d.userEmail || "")}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="um-panel-pill">${escapeHtml(d.festName)}</span>
+                </td>
+                <td>
+                  <div class="um-duty-roles-cell">${rolesHtml || `<span class="um-role-subdesc">No roles</span>`}</div>
+                </td>
+                <td style="text-align: right;">
+                  <button type="button" class="um-delete-row-btn" data-delete-duty="${escapeHtml(d.id)}" title="Remove Duty" aria-label="Remove Duty">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        dutyTableBody.querySelectorAll("[data-delete-duty]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-delete-duty");
+            festivalDuties = festivalDuties.filter((d) => d.id !== id);
+            saveDuties();
+            renderFestivalDutyTable();
+            notify("Festival duty removed", "success");
+          });
+        });
+      }
+
+      function renderDutyModalRows() {
+        if (!dutyModalRowsBody) return;
+        const availableFests = getAvailableFestsList();
+        const q = (dutyModalSearchInput?.value || "").trim().toLowerCase();
+
+        const visibleRows = draftDutyRows
+          .map((row, idx) => ({ row, idx }))
+          .filter(({ row }) => {
+            if (!q) return true;
+            return (
+              String(row.festName || "").toLowerCase().includes(q) ||
+              (row.roles || []).some((r) => r.toLowerCase().includes(q))
+            );
+          });
+
+        if (visibleRows.length === 0) {
+          dutyModalRowsBody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--input-placeholder);padding:16px;">Click "+ Add Fest" above to add a fest assignment row.</td></tr>`;
+          return;
+        }
+
+        dutyModalRowsBody.innerHTML = visibleRows
+          .map(({ row, idx }) => {
+            const festOptionsHtml =
+              availableFests.length > 0
+                ? availableFests
+                    .map(
+                      (f) =>
+                        `<option value="${escapeHtml(f.name)}" ${f.name === row.festName ? "selected" : ""}>${escapeHtml(f.name)}</option>`
+                    )
+                    .join("")
+                : `<option value="">No Fests created yet</option>`;
+
+            const rolesPillsHtml = (row.roles || [])
+              .map(
+                (rName, rIdx) => `
+                  <span class="um-duty-role-pill">
+                    <span>${escapeHtml(rName)}</span>
+                    <button type="button" data-remove-duty-role="${idx}:${rIdx}" title="Remove role">&times;</button>
+                  </span>
+                `
+              )
+              .join("");
+
+            const rolePickerOptsHtml =
+              rolesList.length > 0
+                ? rolesList
+                    .map(
+                      (r) => `
+                        <button type="button" class="um-duty-picker-opt" data-pick-duty-role="${idx}" data-role-name="${escapeHtml(r.name)}">
+                          <span>${escapeHtml(r.name)}</span>
+                          <span>${(row.roles || []).includes(r.name) ? "✓" : "+"}</span>
+                        </button>
+                      `
+                    )
+                    .join("")
+                : `<div style="padding:6px 8px;font-size:0.7rem;color:var(--input-placeholder);">No roles created yet. Add roles in Roles tab.</div>`;
+
+            return `
+              <tr>
+                <td>
+                  <select class="um-duty-fest-select" data-duty-fest-select="${idx}">
+                    ${festOptionsHtml}
+                  </select>
+                </td>
+                <td>
+                  <div class="um-duty-roles-cell">
+                    ${rolesPillsHtml}
+                    <button type="button" class="um-duty-add-role-btn" data-toggle-role-picker="${idx}">+ Add role</button>
+                    <div class="um-duty-picker-menu" id="dutyRolePicker-${idx}">
+                      ${rolePickerOptsHtml}
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align: right;">
+                  <button type="button" class="um-delete-row-btn" data-remove-duty-row="${idx}" title="Remove Row">&times;</button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        dutyModalRowsBody.querySelectorAll("[data-duty-fest-select]").forEach((sel) => {
+          sel.addEventListener("change", () => {
+            const idx = Number(sel.getAttribute("data-duty-fest-select"));
+            if (draftDutyRows[idx]) draftDutyRows[idx].festName = sel.value;
+          });
+        });
+
+        dutyModalRowsBody.querySelectorAll("[data-toggle-role-picker]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const idx = btn.getAttribute("data-toggle-role-picker");
+            const menu = root.querySelector(`#dutyRolePicker-${idx}`);
+            root.querySelectorAll(".um-duty-picker-menu.open").forEach((m) => {
+              if (m !== menu) m.classList.remove("open");
+            });
+            menu?.classList.toggle("open");
+          });
+        });
+
+        dutyModalRowsBody.querySelectorAll("[data-pick-duty-role]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const idx = Number(btn.getAttribute("data-pick-duty-role"));
+            const rName = btn.getAttribute("data-role-name");
+            if (!draftDutyRows[idx] || !rName) return;
+            const list = draftDutyRows[idx].roles || [];
+            const pos = list.indexOf(rName);
+            if (pos === -1) list.push(rName);
+            else list.splice(pos, 1);
+            draftDutyRows[idx].roles = list;
+            renderDutyModalRows();
+          });
+        });
+
+        dutyModalRowsBody.querySelectorAll("[data-remove-duty-role]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const [rowIdx, rIdx] = btn.getAttribute("data-remove-duty-role").split(":").map(Number);
+            if (draftDutyRows[rowIdx]) {
+              draftDutyRows[rowIdx].roles.splice(rIdx, 1);
+              renderDutyModalRows();
+            }
+          });
+        });
+
+        dutyModalRowsBody.querySelectorAll("[data-remove-duty-row]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const idx = Number(btn.getAttribute("data-remove-duty-row"));
+            draftDutyRows.splice(idx, 1);
+            renderDutyModalRows();
+          });
+        });
+      }
+
+      function renderDutyUserDropdown(filterText = "") {
+        if (!dutyUserDropdown) return;
+        const q = String(filterText || "").trim().toLowerCase();
+        const matches = ownersList.filter((u) => {
+          if (!q) return true;
+          return (
+            String(u.name || "").toLowerCase().includes(q) ||
+            String(u.email || "").toLowerCase().includes(q)
+          );
+        });
+
+        if (matches.length === 0) {
+          dutyUserDropdown.innerHTML = `<div style="padding:8px 10px;font-size:0.72rem;color:var(--input-placeholder);">No matching users found.</div>`;
+          return;
+        }
+
+        dutyUserDropdown.innerHTML = matches
+          .map(
+            (u) => `
+              <button type="button" class="um-user-opt ${u.id === selectedDutyUserId ? "selected" : ""}" data-select-duty-user="${escapeHtml(u.id)}">
+                <span>${escapeHtml(u.name)}</span>
+                <span class="um-user-opt-email">${escapeHtml(u.email)}</span>
+              </button>
+            `
+          )
+          .join("");
+
+        dutyUserDropdown.querySelectorAll("[data-select-duty-user]").forEach((optBtn) => {
+          optBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const uid = optBtn.getAttribute("data-select-duty-user");
+            const found = ownersList.find((u) => u.id === uid);
+            if (found) {
+              selectedDutyUserId = found.id;
+              if (dutyUserSearchInput) {
+                dutyUserSearchInput.value = `${found.name} (${found.email})`;
+              }
+              dutyUserDropdown.classList.remove("open");
+            }
+          });
+        });
+      }
+
+      function openFestivalDutyModal() {
+        selectedDutyUserId = "";
+        if (dutyUserSearchInput) {
+          dutyUserSearchInput.value = "";
+        }
+        renderDutyUserDropdown("");
+        dutyUserDropdown?.classList.remove("open");
+
+        const festsAvail = getAvailableFestsList();
+        draftDutyRows = festsAvail.map((f) => ({ festName: f.name, roles: [] }));
+        if (dutyModalSearchInput) dutyModalSearchInput.value = "";
+        renderDutyModalRows();
+        festivalDutyModal?.classList.add("open");
+        setTimeout(() => dutyUserSearchInput?.focus(), 40);
+      }
+
+      function closeFestivalDutyModal() {
+        festivalDutyModal?.classList.remove("open");
+        dutyUserDropdown?.classList.remove("open");
+      }
+
+      dutyUserSearchInput?.addEventListener("focus", (e) => {
+        e.stopPropagation();
+        renderDutyUserDropdown(dutyUserSearchInput.value);
+        dutyUserDropdown?.classList.add("open");
+      });
+
+      dutyUserSearchInput?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        renderDutyUserDropdown(dutyUserSearchInput.value);
+        dutyUserDropdown?.classList.add("open");
+      });
+
+      dutyUserSearchInput?.addEventListener("input", () => {
+        selectedDutyUserId = "";
+        renderDutyUserDropdown(dutyUserSearchInput.value);
+        dutyUserDropdown?.classList.add("open");
+      });
+
+      document.addEventListener("click", () => {
+        root.querySelectorAll(".um-duty-picker-menu.open").forEach((m) => m.classList.remove("open"));
+        dutyUserDropdown?.classList.remove("open");
+      });
+
+      dutyModalSearchInput?.addEventListener("input", renderDutyModalRows);
+      dutySearchInput?.addEventListener("input", renderFestivalDutyTable);
+      closeDutyModalBtn?.addEventListener("click", closeFestivalDutyModal);
+      cancelDutyModalBtn?.addEventListener("click", closeFestivalDutyModal);
+      festivalDutyModal?.addEventListener("click", (e) => {
+        if (e.target === festivalDutyModal) closeFestivalDutyModal();
+      });
+
+      festivalDutyForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let selectedUser = ownersList.find((u) => u.id === selectedDutyUserId);
+        if (!selectedUser && dutyUserSearchInput) {
+          const typed = dutyUserSearchInput.value.trim().toLowerCase();
+          selectedUser = ownersList.find(
+            (u) =>
+              `${u.name} (${u.email})`.toLowerCase() === typed ||
+              String(u.email || "").toLowerCase() === typed ||
+              String(u.name || "").toLowerCase() === typed
+          );
+        }
+        if (!selectedUser) {
+          notify("Please search and select a User.", "error");
+          dutyUserSearchInput?.focus();
+          return;
+        }
+        const assignedRows = draftDutyRows.filter((r) => r.festName && (r.roles || []).length > 0);
+        const validRows = assignedRows.length > 0 ? assignedRows : draftDutyRows.filter((r) => r.festName);
+        if (validRows.length === 0) {
+          notify("No Fests available to assign.", "error");
+          return;
+        }
+
+        validRows.forEach((r) => {
+          festivalDuties.push({
+            id: "duty-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+            userId: selectedUser.id,
+            userName: selectedUser.name,
+            userEmail: selectedUser.email,
+            festName: r.festName,
+            roles: [...(r.roles || [])]
+          });
+        });
+
+        saveDuties();
+        renderFestivalDutyTable();
+        closeFestivalDutyModal();
+        notify(`Assigned festival duty to ${selectedUser.name}!`, "success");
+      });
+
+      function activateSubTab(tabName) {
+        const targetBtn =
+          Array.from(subnavBtns).find((b) => b.getAttribute("data-um-tab") === tabName) ||
+          Array.from(subnavBtns).find((b) => b.getAttribute("data-um-tab") === "users") ||
+          subnavBtns[0];
+        if (!targetBtn) return;
+
+        subnavBtns.forEach((b) => b.classList.remove("active"));
+        targetBtn.classList.add("active");
+        activeTab = targetBtn.getAttribute("data-um-tab") || "users";
+        localStorage.setItem("festinger_users_subtab", activeTab);
+
+        if (activeTab === "roles") {
+          sectionTitle.textContent = "Role Definitions";
+          addBtnLabel.textContent = "Add Role";
+          if (headerIcon) {
+            headerIcon.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            `;
+          }
+          if (copyFormLinkBtn) copyFormLinkBtn.style.display = "none";
+          if (usersPane) usersPane.style.display = "none";
+          if (festivalPane) festivalPane.style.display = "none";
+          if (rolesPane) rolesPane.style.display = "block";
+          renderRolesTable();
+        } else if (activeTab === "festival") {
+          sectionTitle.textContent = "Festival Duty";
+          addBtnLabel.textContent = "Add Fest";
+          if (headerIcon) {
+            headerIcon.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            `;
+          }
+          if (copyFormLinkBtn) copyFormLinkBtn.style.display = "none";
+          if (usersPane) usersPane.style.display = "none";
+          if (rolesPane) rolesPane.style.display = "none";
+          if (festivalPane) festivalPane.style.display = "block";
+          renderFestivalDutyTable();
+        } else {
+          sectionTitle.textContent = "All Users";
+          addBtnLabel.textContent = "Add User";
+          if (headerIcon) {
+            headerIcon.innerHTML = `<i class="hgi hgi-stroke hgi-rounded hgi-users" aria-hidden="true"></i>`;
+          }
+          if (copyFormLinkBtn) copyFormLinkBtn.style.display = "inline-flex";
+          if (rolesPane) rolesPane.style.display = "none";
+          if (festivalPane) festivalPane.style.display = "none";
+          if (usersPane) usersPane.style.display = "block";
+          renderTable();
+        }
+      }
+
+      subnavBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activateSubTab(btn.getAttribute("data-um-tab") || "users");
+        });
+      });
+
+      populateUserRoleOptions();
+
+      const savedSubTab = localStorage.getItem("festinger_users_subtab");
+      activateSubTab(
+        savedSubTab === "roles" ? "roles" : savedSubTab === "festival" ? "festival" : "users"
+      );
+
+      if (copyFormLinkBtn) {
+        copyFormLinkBtn.addEventListener("click", async () => {
+          const formUrl = new URL("./user_form.html", window.location.href).href;
+          try {
+            await navigator.clipboard.writeText(formUrl);
+            notify("Form link copied!", "success");
+          } catch (_) {
+            const temp = document.createElement("input");
+            temp.value = formUrl;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("copy");
+            temp.remove();
+            notify("Form link copied!", "success");
+          }
+        });
+      }
+
+      window.addEventListener("storage", (e) => {
+        if (e.key === STORAGE_KEY) {
+          try {
+            const updated = JSON.parse(e.newValue || "[]");
+            if (Array.isArray(updated)) {
+              ownersList = updated;
+              renderTable();
+            }
+          } catch (_) {}
+        }
+      });
+
+      searchToggleBtn.addEventListener("click", () => {
+        const isOpen = inlineSearchInput.classList.toggle("open");
+        if (isOpen) {
+          inlineSearchInput.focus();
+        } else {
+          inlineSearchInput.value = "";
+          searchQuery = "";
+          renderTable();
+        }
+      });
+
+      inlineSearchInput.addEventListener("input", () => {
+        searchQuery = inlineSearchInput.value;
+        renderTable();
+      });
+
+      roleSearchToggleBtn.addEventListener("click", () => {
+        const isOpen = roleSearchInput.classList.toggle("open");
+        if (isOpen) {
+          roleSearchInput.focus();
+        } else {
+          roleSearchInput.value = "";
+          roleSearchQuery = "";
+          renderRolesTable();
+        }
+      });
+
+      roleSearchInput.addEventListener("input", () => {
+        roleSearchQuery = roleSearchInput.value;
+        renderRolesTable();
+      });
+
+      openAddModalBtn.addEventListener("click", () => {
+        if (activeTab === "roles") {
+          openRoleModal(null);
+        } else if (activeTab === "festival") {
+          openFestivalDutyModal();
+        } else {
+          addOwnerForm.reset();
+          populateUserRoleOptions();
+          addOwnerModal.classList.add("open");
+        }
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        addOwnerModal.classList.remove("open");
+      });
+
+      addOwnerModal.addEventListener("click", (e) => {
+        if (e.target === addOwnerModal) {
+          addOwnerModal.classList.remove("open");
+        }
+      });
+
+      addOwnerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = root.querySelector("#umOwnerName").value.trim();
+        const email = root.querySelector("#umOwnerEmail").value.trim();
+        const role = ownerRoleSelect ? ownerRoleSelect.value : "Media Manager";
+        const password = root.querySelector("#umOwnerPassword").value.trim();
+        const statusRadio = root.querySelector('input[name="umOwnerStatus"]:checked');
+        const status = statusRadio ? statusRadio.value : "ACTIVE";
+        if (!name || !email || !password) return;
+
+        ownersList.push({
+          id: "user-" + Date.now(),
+          name,
+          email,
+          role,
+          password,
+          status
+        });
+        saveOwners();
+        renderTable();
+        addOwnerModal.classList.remove("open");
+        notify("User added successfully!", "success");
+      });
+
+      renderTable();
+      renderRolesTable();
+      renderFestivalDutyTable();
+
+      // Load live data directly from Firebase Firestore
+      if (window.FestingerDB) {
+        window.FestingerDB.loadAll().then((fbData) => {
+          ownersList = Array.isArray(fbData.owners) ? fbData.owners : [];
+          rolesList = Array.isArray(fbData.roles)
+            ? fbData.roles.filter((r) => r && !TEMP_ROLE_IDS.has(r.id))
+            : [];
+          festivalDuties = Array.isArray(fbData.duties) ? fbData.duties : [];
+          availableFestsCache = Array.isArray(fbData.fests) ? fbData.fests : [];
+          populateUserRoleOptions();
+          renderTable();
+          renderRolesTable();
+          renderFestivalDutyTable();
+        });
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => window.initUserManagement());
+    } else {
+      window.initUserManagement();
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://api-festinger.vercel.app/config.js"></script>
+  <script src="./firebase_sync.js"></script>
+</body>
+</html>

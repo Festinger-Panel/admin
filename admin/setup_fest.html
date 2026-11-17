@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup Fests - Festinger 2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+  <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+</head>
+<body style="margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: #FFFFFF;">
+
+  <!-- Setup Fests Component Root (Passed to dashboard.html) -->
+  <div id="setupFestRoot" class="sf-wrapper">
+    <style>
+      :root {
+        /* Primary colours */
+        --color-red: #D2202D;
+        --color-yellow: #F0B81B;
+        --color-green: #22AC5E;
+
+        /* Secondary colours */
+        --color-coral: #D9653D;
+        --color-bright-green: #28AE62;
+        --color-golden: #E9B449;
+
+        /* Additional palette */
+        --color-light-gold: #EAB750;
+        --color-soft-green: #51B26C;
+        --color-green-light: #53B26D;
+        --color-dark-red: #C54A43;
+        --color-deep-red: #BF2530;
+        --color-mustard: #E2AF3F;
+        --color-muted-red: #C64842;
+        --color-brown-red: #B34333;
+        --color-orange-red: #D9673F;
+        --color-light-golden: #E6B550;
+        --color-leaf-green: #33B061;
+        --color-coral-red: #D03F42;
+        --color-warm-gold: #E4B450;
+        --color-muted-coral: #C64B44;
+
+        /* UI Specific */
+        --input-bg: #FDF2F3;
+        --input-placeholder: #9E8C8E;
+        --card-border: #C54A43;
+      }
+
+      .sf-wrapper {
+        width: 100%;
+        padding: 20px 0 28px 0;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #111111;
+      }
+
+      .sf-container {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      /* Top Header Row */
+      .sf-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 16px;
+      }
+
+      .sf-title-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sf-title-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--color-red);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .sf-title-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .sf-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111111;
+        letter-spacing: -0.01em;
+      }
+
+      .sf-add-btn {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 15px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+
+      .sf-add-btn:hover {
+        background: var(--color-deep-red);
+      }
+
+      .sf-add-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* Search & Filter Row */
+      .sf-controls-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .sf-search-box {
+        flex: 1;
+        height: 38px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .sf-search-box:focus-within {
+        border-color: var(--color-golden);
+        box-shadow: 0 0 0 2px rgba(240, 184, 27, 0.18);
+      }
+
+      .sf-search-box svg {
+        width: 14px;
+        height: 14px;
+        color: var(--input-placeholder);
+        flex-shrink: 0;
+      }
+
+      .sf-search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 500;
+        color: #111111;
+      }
+
+      .sf-search-input::placeholder {
+        color: var(--input-placeholder);
+      }
+
+      .sf-status-select {
+        width: 140px;
+        height: 38px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        border-radius: 10px;
+        padding: 0 10px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+      }
+
+      .sf-status-select:focus {
+        border-color: var(--color-golden);
+      }
+
+      /* Fests Cards Grid */
+      .sf-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 380px));
+        gap: 14px;
+      }
+
+      .sf-card {
+        position: relative;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        border-radius: 13px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .sf-card:hover {
+        border-color: var(--color-dark-red);
+        box-shadow: 0 6px 18px rgba(191, 37, 48, 0.06);
+      }
+
+      .sf-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .sf-card-left {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+      }
+
+      .sf-card-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--color-deep-red);
+        font-size: 0.76rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .sf-card-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.3;
+      }
+
+      .sf-card-name {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: #111111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sf-card-domain {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--color-deep-red);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sf-card-motto {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sf-card-subfests {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(197, 74, 67, 0.2);
+      }
+
+      .sf-subfest-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: var(--input-bg);
+        color: #111111;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+      }
+
+      .sf-subfest-tag span.slug {
+        color: var(--input-placeholder);
+        font-weight: 500;
+      }
+
+      .sf-add-subfest-inline-btn {
+        border: 1px dashed rgba(197, 74, 67, 0.45);
+        background: #FFFFFF;
+        color: var(--color-red);
+        border-radius: 6px;
+        padding: 3px 8px;
+        font-family: inherit;
+        font-size: 0.64rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+
+      .sf-add-subfest-inline-btn:hover {
+        background: var(--input-bg);
+        border-color: var(--color-red);
+      }
+
+      .sf-more-wrap {
+        position: relative;
+      }
+
+      .sf-more-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: #1E1E1E;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.14s ease;
+      }
+
+      .sf-more-btn:hover {
+        background: var(--input-bg);
+      }
+
+      .sf-card-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        width: 140px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 10px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+        padding: 4px;
+        display: none;
+        z-index: 20;
+      }
+
+      .sf-card-menu.open {
+        display: block;
+      }
+
+      .sf-menu-item {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sf-menu-item:hover {
+        background: var(--input-bg);
+      }
+
+      .sf-menu-item.danger {
+        color: var(--color-red);
+      }
+
+      .sf-empty {
+        font-size: 0.78rem;
+        color: var(--input-placeholder);
+        padding: 16px 4px;
+      }
+
+      /* =========================================
+         CREATE FEST WIZARD (SLIDE 1 & SLIDE 2)
+         ========================================= */
+      .cs-view {
+        display: none;
+        width: 100%;
+      }
+
+      .cs-view.active {
+        display: block;
+      }
+
+      .cs-slide {
+        display: none;
+      }
+
+      .cs-slide.active {
+        display: block;
+        animation: festSlideIn 0.18s ease-out;
+      }
+
+      @keyframes festSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Slide 1: "Tell us about your festival" Card */
+      .fest-step1-card {
+        max-width: 680px;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 16px;
+        padding: 28px 30px;
+        box-shadow: 0 10px 30px rgba(191, 37, 48, 0.04);
+      }
+
+      .fest-step1-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #111111;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px 0;
+      }
+
+      .fest-step1-sub {
+        font-size: 0.84rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        margin: 0 0 24px 0;
+      }
+
+      .fest-step1-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 18px;
+      }
+
+      .fest-step1-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      .fest-step1-input {
+        width: 100%;
+        height: 44px;
+        border-radius: 10px;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        background: var(--input-bg);
+        padding: 0 14px;
+        font-family: inherit;
+        font-size: 0.84rem;
+        font-weight: 500;
+        color: #111111;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+      }
+
+      .fest-step1-input::placeholder {
+        color: var(--input-placeholder);
+      }
+
+      .fest-step1-input:focus {
+        background: #FFFFFF;
+        border-color: var(--color-red);
+        box-shadow: 0 0 0 3px rgba(210, 32, 45, 0.1);
+      }
+
+      .fest-step1-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 28px;
+        padding-top: 8px;
+      }
+
+      .fest-back-link {
+        border: none;
+        background: transparent;
+        color: var(--input-placeholder);
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        cursor: pointer;
+        padding: 8px 10px;
+        border-radius: 8px;
+        transition: color 0.14s ease, background-color 0.14s ease;
+      }
+
+      .fest-back-link:hover {
+        color: #111111;
+        background: var(--input-bg);
+      }
+
+      .fest-next-btn {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        padding: 11px 22px;
+        font-family: inherit;
+        font-size: 0.84rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+
+      .fest-next-btn:hover {
+        background: var(--color-deep-red);
+      }
+
+      .fest-next-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* Slide 2: Create Multiple Subfests */
+      .cs-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+
+      .cs-topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .cs-back-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        background: #FFFFFF;
+        color: #1E1E1E;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.14s ease, color 0.14s ease;
+      }
+
+      .cs-back-btn:hover {
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      .cs-page-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0;
+      }
+
+      .cs-fest-summary-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--input-bg);
+        color: var(--color-deep-red);
+        border: 1px solid rgba(197, 74, 67, 0.24);
+      }
+
+      .cs-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cs-cancel-btn {
+        height: 34px;
+        padding: 0 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        background: #FFFFFF;
+        color: #1E1E1E;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.14s ease, border-color 0.14s ease;
+      }
+
+      .cs-cancel-btn:hover {
+        background: var(--input-bg);
+        border-color: var(--color-dark-red);
+      }
+
+      .cs-add-another-btn {
+        height: 34px;
+        padding: 0 14px;
+        border-radius: 8px;
+        border: 1px solid var(--color-golden);
+        background: var(--color-yellow);
+        color: #111111;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: filter 0.14s ease, transform 0.1s ease;
+      }
+
+      .cs-add-another-btn:hover {
+        filter: brightness(0.96);
+      }
+
+      .cs-submit-btn {
+        height: 34px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: none;
+        background: var(--color-red);
+        color: #FFFFFF;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.14s ease, transform 0.1s ease;
+      }
+
+      .cs-submit-btn:hover {
+        background: var(--color-deep-red);
+      }
+
+      /* Added Subfests Queue Bar on Slide 2 */
+      .cs-added-queue {
+        background: var(--input-bg);
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+
+      .cs-added-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--color-deep-red);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .cs-added-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .cs-added-chip {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.28);
+        border-radius: 8px;
+        padding: 5px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      .cs-added-chip-slug {
+        font-size: 0.66rem;
+        font-weight: 600;
+        color: var(--input-placeholder);
+      }
+
+      .cs-added-chip-remove {
+        border: none;
+        background: var(--input-bg);
+        color: var(--color-red);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 0.74rem;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cs-added-chip-remove:hover {
+        background: var(--color-red);
+        color: #FFFFFF;
+      }
+
+      .cs-section-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .cs-section-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .cs-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .cs-grid-2:last-child {
+        margin-bottom: 0;
+      }
+
+      .cs-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+
+      .cs-grid-2 .cs-field {
+        margin-bottom: 0;
+      }
+
+      .cs-label {
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: #1E1E1E;
+      }
+
+      .cs-req {
+        color: var(--color-red);
+        margin-left: 2px;
+      }
+
+      .cs-input-box {
+        height: 38px;
+        border-radius: 9px;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        background: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 12px;
+        transition: border-color 0.14s ease, box-shadow 0.14s ease;
+      }
+
+      .cs-input-box:focus-within {
+        border-color: var(--color-golden);
+        box-shadow: 0 0 0 2px rgba(240, 184, 27, 0.18);
+      }
+
+      .cs-input-box svg {
+        width: 15px;
+        height: 15px;
+        color: var(--input-placeholder);
+        flex-shrink: 0;
+      }
+
+      .cs-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #111111;
+      }
+
+      .cs-input::placeholder {
+        color: var(--input-placeholder);
+      }
+
+      /* Inherit Location Checkbox Row */
+      .cs-inherit-box {
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 10px;
+        padding: 11px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .cs-inherit-box input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--color-red);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .cs-inherit-title {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #111111;
+        line-height: 1.3;
+      }
+
+      .cs-inherit-sub {
+        font-size: 0.68rem;
+        font-weight: 400;
+        color: var(--input-placeholder);
+        line-height: 1.3;
+      }
+
+      /* Location Selection Row */
+      .cs-location-row {
+        display: grid;
+        grid-template-columns: 1fr 180px;
+        gap: 12px;
+      }
+
+      .cs-address-card {
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 11px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .cs-pin-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--input-bg);
+        color: var(--color-red);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .cs-address-heading {
+        font-size: 0.64rem;
+        font-weight: 800;
+        color: #111111;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 2px;
+      }
+
+      .cs-address-value {
+        font-size: 0.74rem;
+        font-weight: 500;
+        color: #1E1E1E;
+      }
+
+      .cs-pin-map-btn {
+        border: 1.5px dashed rgba(197, 74, 67, 0.35);
+        border-radius: 11px;
+        background: #FFFFFF;
+        color: #111111;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.14s ease, border-color 0.14s ease;
+      }
+
+      .cs-pin-map-btn:hover {
+        background: var(--input-bg);
+        border-color: var(--color-red);
+      }
+
+      /* Open Button on Fest Card */
+      .sf-card-actions-right {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sf-open-fest-btn {
+        background: var(--input-bg);
+        color: var(--color-red);
+        border: 1px solid rgba(197, 74, 67, 0.3);
+        border-radius: 7px;
+        padding: 4px 10px;
+        font-family: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.14s ease;
+      }
+
+      .sf-open-fest-btn:hover {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border-color: var(--color-red);
+      }
+
+      .sf-subfest-tag {
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+
+      .sf-subfest-tag:hover {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border-color: var(--color-red);
+      }
+
+      /* =========================================
+         3. SUB-DASHBOARD VIEW (Inner Dashboard Layout)
+         ========================================= */
+      .sd-view {
+        display: none;
+        width: 100%;
+        height: 100%;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .sd-view.active {
+        display: flex;
+        flex-direction: column;
+        animation: festSlideIn 0.18s ease-out;
+      }
+
+      .sd-shell {
+        display: flex;
+        align-items: stretch;
+        flex: 1;
+        height: 100%;
+        min-height: 76vh;
+        width: 100%;
+        gap: 0;
+      }
+
+      /* Inner Left Pink Sidebar (Matches Mockup) */
+      .sd-sidebar {
+        width: 228px;
+        flex-shrink: 0;
+        background: var(--input-bg);
+        border-right: 1px solid rgba(197, 74, 67, 0.22);
+        padding: 16px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .sd-sidebar-top {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* Fest Identity Header: Yellow Square + Fest Name + Motto */
+      .sd-fest-brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 2px 2px 6px 2px;
+      }
+
+      .sd-fest-yellow-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--color-yellow);
+        color: #111111;
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .sd-fest-brand-text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.2;
+      }
+
+      .sd-fest-brand-name {
+        font-size: 0.96rem;
+        font-weight: 700;
+        color: #111111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sd-fest-brand-motto {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #3D3132;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+      }
+
+      /* Subfest Switcher Dropdown inside Pink Sidebar */
+      .sd-switcher-wrap {
+        position: relative;
+      }
+
+      .sd-switcher-btn {
+        width: 100%;
+        border: 1px solid rgba(197, 74, 67, 0.24);
+        background: #FFFFFF;
+        border-radius: 10px;
+        padding: 7px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color 0.14s ease, background-color 0.14s ease;
+      }
+
+      .sd-switcher-btn:hover {
+        border-color: var(--color-red);
+      }
+
+      .sd-switcher-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .sd-switcher-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--input-bg);
+        color: var(--color-red);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      }
+
+      .sd-switcher-meta {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        min-width: 0;
+        line-height: 1.2;
+      }
+
+      .sd-switcher-name {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #111111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sd-switcher-fest {
+        display: none;
+      }
+
+      .sd-switcher-chevron {
+        color: var(--input-placeholder);
+        flex-shrink: 0;
+      }
+
+      .sd-switcher-menu {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        padding: 5px;
+        display: none;
+        z-index: 35;
+      }
+
+      .sd-switcher-menu.open {
+        display: block;
+      }
+
+      .sd-switcher-opt {
+        width: 100%;
+        border: none;
+        background: transparent;
+        border-radius: 7px;
+        padding: 7px 9px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: inherit;
+        font-size: 0.73rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .sd-switcher-opt:hover,
+      .sd-switcher-opt.active {
+        background: var(--input-bg);
+        color: var(--color-red);
+      }
+
+      /* Search Navigation Box */
+      .sd-nav-search {
+        height: 33px;
+        border-radius: 9px;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        background: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 10px;
+      }
+
+      .sd-nav-search svg {
+        width: 13px;
+        height: 13px;
+        color: var(--input-placeholder);
+        flex-shrink: 0;
+      }
+
+      .sd-nav-search input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #111111;
+      }
+
+      .sd-nav-search input::placeholder {
+        color: var(--input-placeholder);
+      }
+
+      /* Navigation Links (Home, Candidate, Programs) */
+      .sd-nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .sd-nav-item {
+        width: 100%;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: 9px;
+        padding: 9px 11px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: inherit;
+        font-size: 0.77rem;
+        font-weight: 600;
+        color: #1E1E1E;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.14s ease;
+      }
+
+      .sd-nav-item svg {
+        width: 16px;
+        height: 16px;
+        color: currentColor;
+        flex-shrink: 0;
+      }
+
+      .sd-nav-item:hover {
+        background: #FFFFFF;
+        color: var(--color-deep-red);
+      }
+
+      .sd-nav-item.active {
+        background: #FFFFFF;
+        color: var(--color-red);
+        border-color: rgba(197, 74, 67, 0.25);
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(191, 37, 48, 0.06);
+      }
+
+      .sd-back-all-btn {
+        width: 100%;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        background: #FFFFFF;
+        color: var(--color-deep-red);
+        border-radius: 9px;
+        padding: 8px 11px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: inherit;
+        font-size: 0.73rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+
+      .sd-back-all-btn:hover {
+        background: var(--color-red);
+        color: #FFFFFF;
+        border-color: var(--color-red);
+      }
+
+      /* Sub-Dashboard Right Content Area (Matches Mockup) */
+      .sd-main {
+        flex: 1;
+        min-width: 0;
+        background: #FFFFFF;
+        padding: 16px 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .sd-main-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .sd-green-breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--color-green);
+        color: #FFFFFF;
+        font-size: 0.76rem;
+        font-weight: 500;
+        padding: 7px 14px;
+        border-radius: 8px;
+        line-height: 1.1;
+      }
+
+      .sd-green-breadcrumb i {
+        font-size: 13px;
+        line-height: 1;
+      }
+
+      .sd-main-sub {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--input-placeholder);
+      }
+
+      .sd-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+      }
+
+      .sd-stat-card {
+        background: var(--input-bg);
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .sd-stat-label {
+        font-size: 0.66rem;
+        font-weight: 700;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .sd-stat-value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--color-red);
+      }
+
+      /* Home Overview Layout (Welcome + Quick Access | 2x2 Stats + Fest Users) */
+      .sd-home-layout {
+        display: grid;
+        grid-template-columns: 1.18fr 0.92fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .sd-home-col {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .sd-welcome-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.22);
+        border-radius: 14px;
+        padding: 22px 24px;
+        box-shadow: 0 4px 14px rgba(191, 37, 48, 0.04);
+      }
+
+      .sd-welcome-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #111111;
+        line-height: 1.2;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.02em;
+      }
+
+      .sd-welcome-title span {
+        color: var(--color-red);
+      }
+
+      .sd-welcome-sub {
+        font-size: 0.76rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        margin: 0;
+        line-height: 1.45;
+      }
+
+      .sd-qa-heading {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 4px 0 0 2px;
+      }
+
+      .sd-qa-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+      }
+
+      .sd-qa-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        border-radius: 12px;
+        padding: 18px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s ease;
+      }
+
+      .sd-qa-card:hover {
+        background: var(--input-bg);
+        border-color: var(--color-red);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(191, 37, 48, 0.08);
+      }
+
+      .sd-qa-card svg {
+        width: 20px;
+        height: 20px;
+        color: var(--color-deep-red);
+      }
+
+      .sd-qa-card.whatsapp svg {
+        color: var(--color-green);
+      }
+
+      .sd-qa-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      /* Right Column: 2x2 KPI Cards */
+      .sd-kpi-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .sd-kpi-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        border-radius: 13px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .sd-kpi-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .sd-kpi-label {
+        font-size: 0.62rem;
+        font-weight: 800;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .sd-kpi-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--color-red);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .sd-kpi-icon.green {
+        background: rgba(34, 172, 94, 0.12);
+        color: var(--color-green);
+      }
+
+      .sd-kpi-icon.yellow {
+        background: rgba(240, 184, 27, 0.18);
+        color: #111111;
+      }
+
+      .sd-kpi-icon.coral {
+        background: rgba(217, 101, 61, 0.14);
+        color: var(--color-coral);
+      }
+
+      .sd-kpi-icon svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .sd-kpi-value {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #111111;
+        line-height: 1;
+      }
+
+      .sd-kpi-sub {
+        font-size: 0.66rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        margin-top: -5px;
+      }
+
+      /* Fest Users Card */
+      .sd-fest-users-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        border-radius: 13px;
+        padding: 15px 16px;
+        min-height: 190px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sd-fest-users-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .sd-fest-users-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: #1E1E1E;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .sd-manage-btn {
+        background: var(--color-yellow);
+        color: #111111;
+        border: none;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-family: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: background-color 0.14s ease;
+      }
+
+      .sd-manage-btn:hover {
+        background: var(--color-golden);
+      }
+
+      .sd-fest-users-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sd-fest-users-empty {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.74rem;
+        font-weight: 500;
+        color: var(--input-placeholder);
+        text-align: center;
+        padding: 28px 12px;
+      }
+
+      .sd-fest-user-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 9px;
+        background: var(--input-bg);
+      }
+
+      .sd-fest-user-left {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+
+      .sd-fest-user-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--color-red);
+        color: #FFFFFF;
+        font-size: 0.68rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 900px) {
+        .sd-home-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 540px) {
+        .sd-qa-grid,
+        .sd-kpi-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Inline Add Row & Table for Candidate / Programs */
+      .sd-inline-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        background: var(--input-bg);
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(197, 74, 67, 0.2);
+      }
+
+      .sd-inline-input {
+        flex: 1;
+        min-width: 130px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 74, 67, 0.26);
+        background: #FFFFFF;
+        padding: 0 10px;
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #111111;
+        outline: none;
+      }
+
+      .sd-inline-input:focus {
+        border-color: var(--color-golden);
+      }
+
+      .sd-table-wrap {
+        border: 1px solid rgba(197, 74, 67, 0.2);
+        border-radius: 11px;
+        overflow: hidden;
+      }
+
+      .sd-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .sd-table thead tr {
+        background: var(--input-bg);
+      }
+
+      .sd-table th {
+        padding: 9px 14px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--input-placeholder);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .sd-table td {
+        padding: 10px 14px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #111111;
+        border-top: 1px solid var(--input-bg);
+      }
+
+      .sd-del-btn {
+        border: none;
+        background: var(--input-bg);
+        color: var(--color-red);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-family: inherit;
+        font-size: 0.66rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .sd-del-btn:hover {
+        background: var(--color-red);
+        color: #FFFFFF;
+      }
+
+      @media (max-width: 720px) {
+        .sd-shell {
+          flex-direction: column;
+        }
+        .sd-sidebar {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .sf-controls-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .sf-status-select {
+          width: 100%;
+        }
+
+        .sf-grid,
+        .cs-grid-2,
+        .cs-location-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <!-- 1. FESTS LIST VIEW -->
+    <div class="sf-container" id="sfListView">
+      <div class="sf-header-row">
+        <div class="sf-title-group">
+          <span class="sf-title-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="3" width="6" height="5" rx="1.5" />
+              <rect x="3" y="16" width="6" height="5" rx="1.5" />
+              <rect x="15" y="16" width="6" height="5" rx="1.5" />
+              <path d="M12 8v4M6 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" />
+            </svg>
+          </span>
+          <h2 class="sf-title">Fest</h2>
+        </div>
+
+        <button type="button" class="sf-add-btn" id="sfOpenCreateViewBtn">
+          <span>+</span>
+          <span>Fest</span>
+        </button>
+      </div>
+
+      <!-- Search & Status Filter Row -->
+      <div class="sf-controls-row">
+        <div class="sf-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="20" y1="20" x2="16.35" y2="16.35" />
+          </svg>
+          <input type="text" id="sfSearchInput" class="sf-search-input" placeholder="Search fest by name, institution, motto, or subfest..." />
+        </div>
+
+        <select id="sfStatusSelect" class="sf-status-select" aria-label="Filter by status">
+          <option value="ALL">All status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="ARCHIVED">Archived</option>
+        </select>
+      </div>
+
+      <!-- Fests Cards Grid -->
+      <div class="sf-grid" id="sfCardsGrid"></div>
+    </div>
+
+    <!-- 2. CREATE FEST WIZARD VIEW (SLIDE 1: FEST DETAILS -> SLIDE 2: MULTIPLE SUBFESTS) -->
+    <div class="cs-view" id="sfCreateView">
+
+      <!-- SLIDE 1: Tell us about your festival (Name, Institution name, Motto -> Next) -->
+      <div class="cs-slide active" id="festSlide1">
+        <div class="fest-step1-card">
+          <h2 class="fest-step1-title">Tell us about your festival</h2>
+          <p class="fest-step1-sub">You can change all details later.</p>
+
+          <div class="fest-step1-field">
+            <label class="fest-step1-label" for="festNameInput">Name <span class="cs-req">*</span></label>
+            <input type="text" id="festNameInput" class="fest-step1-input" placeholder="Festival name" required />
+          </div>
+
+          <div class="fest-step1-field">
+            <label class="fest-step1-label" for="festInstitutionInput">Institution name <span class="cs-req">*</span></label>
+            <input type="text" id="festInstitutionInput" class="fest-step1-input" placeholder="Institution or organization name" required />
+          </div>
+
+          <div class="fest-step1-field" style="margin-bottom: 0;">
+            <label class="fest-step1-label" for="festMottoInput">Motto</label>
+            <input type="text" id="festMottoInput" class="fest-step1-input" placeholder="Festival motto" />
+          </div>
+
+          <div class="fest-step1-footer">
+            <button type="button" class="fest-back-link" id="festStep1BackBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              <span>Back</span>
+            </button>
+
+            <button type="button" class="fest-next-btn" id="festStep1NextBtn">
+              <span>Next</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Create Multiple Subfests for this Fest -->
+      <div class="cs-slide" id="festSlide2">
+        <form id="csCreateForm" onsubmit="return false;" novalidate>
+          <!-- Top Action Bar -->
+          <div class="cs-topbar">
+            <div class="cs-topbar-left">
+              <button type="button" class="cs-back-btn" id="csBackToSlide1Btn" title="Back to Festival Details" aria-label="Back">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 14 4 9 9 4" />
+                  <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+                </svg>
+              </button>
+              <h2 class="cs-page-title">Create Subfest</h2>
+              <span class="cs-fest-summary-pill" id="csCurrentFestPill">Fest</span>
+            </div>
+
+            <div class="cs-topbar-actions">
+              <button type="button" class="cs-cancel-btn" id="csCancelBtn">Cancel</button>
+              <button type="button" class="cs-add-another-btn" id="csAddAnotherSubfestBtn">+ Add Another Subfest</button>
+              <button type="submit" class="cs-submit-btn" id="csFinalCreateBtn">Create</button>
+            </div>
+          </div>
+
+          <!-- Queued / Added Subfests List (Supports creating multiple subfests in one go) -->
+          <div class="cs-added-queue" id="csAddedQueueWrap">
+            <div class="cs-added-header">
+              <span>Subfests in this Fest (<span id="csAddedCount">0</span>)</span>
+              <span>You can add multiple subfests</span>
+            </div>
+            <div class="cs-added-list" id="csAddedSubfestsList"></div>
+          </div>
+
+          <!-- Basic Details Card -->
+          <div class="cs-section-card">
+            <h3 class="cs-section-title">
+              <span>Basic Details</span>
+            </h3>
+
+            <div class="cs-field" style="margin-bottom: 0;">
+              <label class="cs-label" for="csNameInput">Name <span class="cs-req">*</span></label>
+              <div class="cs-input-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="3" width="6" height="5" rx="1.5" />
+                  <rect x="3" y="16" width="6" height="5" rx="1.5" />
+                  <rect x="15" y="16" width="6" height="5" rx="1.5" />
+                  <path d="M12 8v4M6 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" />
+                </svg>
+                <input type="text" id="csNameInput" class="cs-input" placeholder="Subfest name" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Schedule Card -->
+          <div class="cs-section-card" style="margin-bottom: 0;">
+            <h3 class="cs-section-title">Schedule</h3>
+
+            <div class="cs-grid-2">
+              <div class="cs-field">
+                <label class="cs-label" for="csStartDate">Start Date</label>
+                <div class="cs-input-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <input type="date" id="csStartDate" class="cs-input" />
+                </div>
+              </div>
+
+              <div class="cs-field">
+                <label class="cs-label" for="csEndDate">End Date</label>
+                <div class="cs-input-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <input type="date" id="csEndDate" class="cs-input" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. SUB-DASHBOARD VIEW (Home, Candidate, Programs) -->
+    <div class="sd-view" id="sfSubDashboardView">
+      <div class="sd-shell">
+        <!-- Left Sub-Dashboard Sidebar (Matches Mockup: Pink bg + Yellow Box + Fest Name & Motto) -->
+        <aside class="sd-sidebar" aria-label="Subfest Dashboard Navigation">
+          <div class="sd-sidebar-top">
+            <!-- Fest Brand Header -->
+            <div class="sd-fest-brand">
+              <span class="sd-fest-yellow-box" id="sdFestYellowBox">F</span>
+              <div class="sd-fest-brand-text">
+                <span class="sd-fest-brand-name" id="sdFestBrandName">Fest Name</span>
+                <span class="sd-fest-brand-motto" id="sdFestBrandMotto">Motto</span>
+              </div>
+            </div>
+
+            <!-- Subfest Switcher Dropdown -->
+            <div class="sd-switcher-wrap">
+              <button type="button" class="sd-switcher-btn" id="sdSwitcherBtn" aria-expanded="false">
+                <div class="sd-switcher-left">
+                  <span class="sd-switcher-avatar" id="sdSwitcherAvatar">M</span>
+                  <div class="sd-switcher-meta">
+                    <span class="sd-switcher-name" id="sdSwitcherName">main</span>
+                    <span class="sd-switcher-fest" id="sdSwitcherFestName">Fest</span>
+                  </div>
+                </div>
+                <svg class="sd-switcher-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div class="sd-switcher-menu" id="sdSwitcherMenu"></div>
+            </div>
+
+            <!-- Search Navigation -->
+            <div class="sd-nav-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="20" y1="20" x2="16.35" y2="16.35" />
+              </svg>
+              <input type="text" id="sdNavSearchInput" placeholder="Search navigation..." />
+            </div>
+
+            <!-- Navigation Links: Home, Candidate, Programs -->
+            <nav class="sd-nav-list" id="sdNavList">
+              <button type="button" class="sd-nav-item active" data-sd-tab="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+                <span>Home</span>
+              </button>
+
+              <button type="button" class="sd-nav-item" data-sd-tab="candidate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                <span>Candidate</span>
+              </button>
+
+              <button type="button" class="sd-nav-item" data-sd-tab="programs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14" />
+                  <line x1="4" y1="10" x2="4" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12" y2="3" />
+                  <line x1="20" y1="21" x2="20" y2="16" />
+                  <line x1="20" y1="12" x2="20" y2="3" />
+                  <line x1="1" y1="14" x2="7" y2="14" />
+                  <line x1="9" y1="8" x2="15" y2="8" />
+                  <line x1="17" y1="16" x2="23" y2="16" />
+                </svg>
+                <span>Programs</span>
+              </button>
+            </nav>
+          </div>
+
+          <button type="button" class="sd-back-all-btn" id="sdBackToFestsBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            <span>Back to Fest</span>
+          </button>
+
+          <button type="button" class="sd-back-all-btn" id="sdLogoutBtn" style="display: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Logout</span>
+          </button>
+        </aside>
+
+        <!-- Right Sub-Dashboard Content Area -->
+        <div class="sd-main">
+          <div class="sd-main-top">
+            <div class="sd-green-breadcrumb">
+              <i class="hgi hgi-stroke hgi-rounded hgi-home-03" aria-hidden="true"></i>
+              <span>&rsaquo;</span>
+              <span id="sdGreenBreadcrumbLabel">Home</span>
+            </div>
+          </div>
+
+          <!-- 1. HOME PANE -->
+          <div id="sdPaneHome">
+            <div class="sd-home-layout">
+              <!-- Left Column: Welcome + Quick Access -->
+              <div class="sd-home-col">
+                <div class="sd-welcome-card">
+                  <h2 class="sd-welcome-title">Welcome to <br /><span id="sdWelcomeSubfestName">Subfest</span></h2>
+                  <p class="sd-welcome-sub">Manage your events, track participants, and monitor results all in one place.</p>
+                </div>
+
+                <div class="sd-qa-heading">QUICK ACCESS</div>
+
+                <div class="sd-qa-grid">
+                  <button type="button" class="sd-qa-card" data-qa-tab="candidate">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <span class="sd-qa-label">Add Candidates</span>
+                  </button>
+
+                  <button type="button" class="sd-qa-card" data-qa-tab="programs">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                    <span class="sd-qa-label">Add Programs</span>
+                  </button>
+
+                  <button type="button" class="sd-qa-card" data-qa-soon="Publish Results">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                      <path d="M4 22h16" />
+                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                    </svg>
+                    <span class="sd-qa-label">Publish Results</span>
+                  </button>
+
+                  <button type="button" class="sd-qa-card" data-qa-soon="Manage Schedules">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span class="sd-qa-label">Manage Schedules</span>
+                  </button>
+
+                  <button type="button" class="sd-qa-card" data-qa-soon="Manage Gallery">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    <span class="sd-qa-label">Manage Gallery</span>
+                  </button>
+
+                  <button type="button" class="sd-qa-card" data-qa-soon="Manage Downloads">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span class="sd-qa-label">Manage Downloads</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column: 2x2 KPI Grid + Fest Users -->
+              <div class="sd-home-col">
+                <div class="sd-kpi-grid">
+                  <div class="sd-kpi-card">
+                    <div class="sd-kpi-top">
+                      <span class="sd-kpi-label">TOTAL CANDIDATES</span>
+                      <span class="sd-kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="sd-kpi-value" id="sdStatCandidates">0</div>
+                    <div class="sd-kpi-sub">Registered participants</div>
+                  </div>
+
+                  <div class="sd-kpi-card">
+                    <div class="sd-kpi-top">
+                      <span class="sd-kpi-label">TOTAL PROGRAMS</span>
+                      <span class="sd-kpi-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="sd-kpi-value" id="sdStatPrograms">0</div>
+                    <div class="sd-kpi-sub">Active events</div>
+                  </div>
+
+                  <div class="sd-kpi-card">
+                    <div class="sd-kpi-top">
+                      <span class="sd-kpi-label">TOTAL USERS</span>
+                      <span class="sd-kpi-icon yellow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="sd-kpi-value" id="sdStatUsers">0</div>
+                    <div class="sd-kpi-sub">Account managers &amp; admins</div>
+                  </div>
+
+                  <div class="sd-kpi-card">
+                    <div class="sd-kpi-top">
+                      <span class="sd-kpi-label">RESULTS UPLOADED</span>
+                      <span class="sd-kpi-icon coral">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                          <path d="M4 22h16" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="sd-kpi-value" id="sdStatResults">0</div>
+                    <div class="sd-kpi-sub">Completed evaluations</div>
+                  </div>
+                </div>
+
+                <div class="sd-fest-users-card">
+                  <div class="sd-fest-users-head">
+                    <span class="sd-fest-users-title">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                      <span>FEST USERS</span>
+                    </span>
+                    <button type="button" class="sd-manage-btn" id="sdManageUsersBtn">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <line x1="20" y1="8" x2="20" y2="14" />
+                        <line x1="23" y1="11" x2="17" y2="11" />
+                      </svg>
+                      <span>Manage</span>
+                    </button>
+                  </div>
+                  <div class="sd-fest-users-body" id="sdFestUsersBody">
+                    <div class="sd-fest-users-empty">No fest users assigned.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CANDIDATE PANE -->
+          <div id="sdPaneCandidate" style="display: none;">
+            <form class="sd-inline-form" id="sdAddCandidateForm" onsubmit="return false;" style="margin-bottom: 12px;">
+              <input type="text" id="sdCandChest" class="sd-inline-input" placeholder="Chest No (e.g. 101)" style="max-width: 140px;" required />
+              <input type="text" id="sdCandName" class="sd-inline-input" placeholder="Candidate name *" required />
+              <input type="text" id="sdCandTeam" class="sd-inline-input" placeholder="Team / Group" />
+              <button type="submit" class="sf-add-btn">+ Add Candidate</button>
+            </form>
+
+            <div class="sd-table-wrap">
+              <table class="sd-table">
+                <thead>
+                  <tr>
+                    <th>CHEST NO</th>
+                    <th>CANDIDATE NAME</th>
+                    <th>TEAM / GROUP</th>
+                    <th style="text-align: right;">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="sdCandidatesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 3. PROGRAMS PANE -->
+          <div id="sdPanePrograms" style="display: none;">
+            <form class="sd-inline-form" id="sdAddProgramForm" onsubmit="return false;" style="margin-bottom: 12px;">
+              <input type="text" id="sdProgCode" class="sd-inline-input" placeholder="Code (e.g. P01)" style="max-width: 130px;" required />
+              <input type="text" id="sdProgName" class="sd-inline-input" placeholder="Program name *" required />
+              <input type="text" id="sdProgType" class="sd-inline-input" placeholder="Type (Single / Group)" />
+              <button type="submit" class="sf-add-btn">+ Add Program</button>
+            </form>
+
+            <div class="sd-table-wrap">
+              <table class="sd-table">
+                <thead>
+                  <tr>
+                    <th>CODE</th>
+                    <th>PROGRAM NAME</th>
+                    <th>TYPE</th>
+                    <th style="text-align: right;">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="sdProgramsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="setupFestScript">
+    window.initSetupFest = function (options = {}) {
+      const root = document.getElementById("setupFestRoot");
+      if (!root || root.dataset.initialized === "true") return;
+      root.dataset.initialized = "true";
+
+      const notify =
+        typeof options.showToast === "function"
+          ? options.showToast
+          : function () {};
+
+      let fests = [];
+
+      function syncSubfestsFlatList() {
+        if (window.FestingerDB) {
+          window.FestingerDB.saveDoc("fests", fests);
+        }
+      }
+
+      const listView = root.querySelector("#sfListView");
+      const createView = root.querySelector("#sfCreateView");
+      const subDashboardView = root.querySelector("#sfSubDashboardView");
+      const slide1 = root.querySelector("#festSlide1");
+      const slide2 = root.querySelector("#festSlide2");
+
+      // Sub-Dashboard DOM
+      const sdFestYellowBox = root.querySelector("#sdFestYellowBox");
+      const sdFestBrandName = root.querySelector("#sdFestBrandName");
+      const sdFestBrandMotto = root.querySelector("#sdFestBrandMotto");
+      const sdSwitcherBtn = root.querySelector("#sdSwitcherBtn");
+      const sdSwitcherAvatar = root.querySelector("#sdSwitcherAvatar");
+      const sdSwitcherName = root.querySelector("#sdSwitcherName");
+      const sdSwitcherFestName = root.querySelector("#sdSwitcherFestName");
+      const sdSwitcherMenu = root.querySelector("#sdSwitcherMenu");
+      const sdNavSearchInput = root.querySelector("#sdNavSearchInput");
+      const sdNavItems = root.querySelectorAll("#sdNavList .sd-nav-item");
+      const sdBackToFestsBtn = root.querySelector("#sdBackToFestsBtn");
+      const sdGreenBreadcrumbLabel = root.querySelector("#sdGreenBreadcrumbLabel");
+      const sdActiveSubfestBadge = root.querySelector("#sdActiveSubfestBadge");
+      const sdPaneHome = root.querySelector("#sdPaneHome");
+      const sdPaneCandidate = root.querySelector("#sdPaneCandidate");
+      const sdPanePrograms = root.querySelector("#sdPanePrograms");
+      const sdWelcomeSubfestName = root.querySelector("#sdWelcomeSubfestName");
+      const sdStatCandidates = root.querySelector("#sdStatCandidates");
+      const sdStatPrograms = root.querySelector("#sdStatPrograms");
+      const sdStatUsers = root.querySelector("#sdStatUsers");
+      const sdStatResults = root.querySelector("#sdStatResults");
+      const sdFestUsersBody = root.querySelector("#sdFestUsersBody");
+      const sdManageUsersBtn = root.querySelector("#sdManageUsersBtn");
+      const sdAddCandidateForm = root.querySelector("#sdAddCandidateForm");
+      const sdCandChest = root.querySelector("#sdCandChest");
+      const sdCandName = root.querySelector("#sdCandName");
+      const sdCandTeam = root.querySelector("#sdCandTeam");
+      const sdCandidatesTableBody = root.querySelector("#sdCandidatesTableBody");
+      const sdAddProgramForm = root.querySelector("#sdAddProgramForm");
+      const sdProgCode = root.querySelector("#sdProgCode");
+      const sdProgName = root.querySelector("#sdProgName");
+      const sdProgType = root.querySelector("#sdProgType");
+      const sdProgramsTableBody = root.querySelector("#sdProgramsTableBody");
+
+      let activeFestId = null;
+      let activeSubfestId = null;
+      let activeSdTab = "home";
+
+      const cardsGrid = root.querySelector("#sfCardsGrid");
+      const searchInput = root.querySelector("#sfSearchInput");
+      const statusSelect = root.querySelector("#sfStatusSelect");
+      const openCreateViewBtn = root.querySelector("#sfOpenCreateViewBtn");
+
+      // Slide 1 inputs & buttons
+      const festNameInput = root.querySelector("#festNameInput");
+      const festInstitutionInput = root.querySelector("#festInstitutionInput");
+      const festMottoInput = root.querySelector("#festMottoInput");
+      const festStep1BackBtn = root.querySelector("#festStep1BackBtn");
+      const festStep1NextBtn = root.querySelector("#festStep1NextBtn");
+
+      // Slide 2 inputs & buttons
+      const createForm = root.querySelector("#csCreateForm");
+      const backToSlide1Btn = root.querySelector("#csBackToSlide1Btn");
+      const cancelBtn = root.querySelector("#csCancelBtn");
+      const addAnotherSubfestBtn = root.querySelector("#csAddAnotherSubfestBtn");
+      const currentFestPill = root.querySelector("#csCurrentFestPill");
+      const addedCountEl = root.querySelector("#csAddedCount");
+      const addedSubfestsListEl = root.querySelector("#csAddedSubfestsList");
+
+      const nameInput = root.querySelector("#csNameInput");
+      const startDateInput = root.querySelector("#csStartDate");
+      const endDateInput = root.querySelector("#csEndDate");
+
+      let draftFest = { name: "", institution: "", motto: "" };
+      let draftSubfests = [];
+      let editingExistingFestId = null;
+
+      function getInitials(name) {
+        const clean = String(name || "FT").trim();
+        const parts = clean.split(/\s+/);
+        if (parts.length >= 2) {
+          return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return clean.slice(0, 2).toUpperCase();
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function resetSubfestFields() {
+        nameInput.value = "";
+        startDateInput.value = "";
+        endDateInput.value = "";
+      }
+
+      function renderDraftSubfestsQueue() {
+        addedCountEl.textContent = String(draftSubfests.length);
+        if (draftSubfests.length === 0) {
+          addedSubfestsListEl.innerHTML = `<span style="font-size:0.72rem; color:var(--input-placeholder);">Fill the form below and click "+ Add Another Subfest" to add multiple subfests, or click "Create" when done.</span>`;
+          return;
+        }
+        addedSubfestsListEl.innerHTML = draftSubfests
+          .map(
+            (sf, idx) => `
+            <div class="cs-added-chip">
+              <span>${escapeHtml(sf.name)}</span>
+              ${sf.startDate ? `<span class="cs-added-chip-slug">${escapeHtml(sf.startDate)}</span>` : ""}
+              <button type="button" class="cs-added-chip-remove" data-remove-draft-sf="${idx}" title="Remove Subfest">&times;</button>
+            </div>
+          `
+          )
+          .join("");
+
+        addedSubfestsListEl.querySelectorAll("[data-remove-draft-sf]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const idx = Number(btn.getAttribute("data-remove-draft-sf"));
+            draftSubfests.splice(idx, 1);
+            renderDraftSubfestsQueue();
+          });
+        });
+      }
+
+      function openCreateFestWizard() {
+        editingExistingFestId = null;
+        draftFest = { name: "", institution: "", motto: "" };
+        draftSubfests = [];
+        festNameInput.value = "";
+        festInstitutionInput.value = "";
+        festMottoInput.value = "";
+        resetSubfestFields();
+        renderDraftSubfestsQueue();
+
+        listView.style.display = "none";
+        subDashboardView.classList.remove("active");
+        createView.classList.add("active");
+        slide2.classList.remove("active");
+        slide1.classList.add("active");
+        setTimeout(() => festNameInput.focus(), 50);
+      }
+
+      function openAddSubfestsToExistingFest(festId) {
+        const targetFest = fests.find((f) => f.id === festId);
+        if (!targetFest) return;
+        editingExistingFestId = targetFest.id;
+        draftFest = {
+          name: targetFest.name,
+          institution: targetFest.institution,
+          motto: targetFest.motto || ""
+        };
+        draftSubfests = Array.isArray(targetFest.subfests) ? [...targetFest.subfests] : [];
+        currentFestPill.textContent = `${draftFest.name}${draftFest.motto ? " Ã¢â‚¬Â¢ " + draftFest.motto : ""}`;
+        resetSubfestFields();
+        renderDraftSubfestsQueue();
+
+        listView.style.display = "none";
+        subDashboardView.classList.remove("active");
+        createView.classList.add("active");
+        slide1.classList.remove("active");
+        slide2.classList.add("active");
+        setTimeout(() => nameInput.focus(), 50);
+      }
+
+      function showListPage() {
+        createView.classList.remove("active");
+        subDashboardView.classList.remove("active");
+        listView.style.display = "block";
+        sessionStorage.removeItem("festinger_open_fest_id");
+        sessionStorage.removeItem("festinger_open_subfest_id");
+        sessionStorage.removeItem("festinger_open_sd_tab");
+      }
+
+      function goToSlide2() {
+        const fName = festNameInput.value.trim();
+        const fInst = festInstitutionInput.value.trim();
+        const fMotto = festMottoInput.value.trim();
+
+        if (!fName || !fInst) {
+          notify("Please enter Festival Name and Institution name.", "error");
+          if (!fName) festNameInput.focus();
+          else festInstitutionInput.focus();
+          return;
+        }
+
+        draftFest = { name: fName, institution: fInst, motto: fMotto };
+        currentFestPill.textContent = `${fName}${fMotto ? " Ã¢â‚¬Â¢ " + fMotto : ""}`;
+        renderDraftSubfestsQueue();
+
+        slide1.classList.remove("active");
+        slide2.classList.add("active");
+        setTimeout(() => nameInput.focus(), 50);
+      }
+
+      function collectCurrentSubfestFromInputs() {
+        const sfName = nameInput.value.trim();
+        if (!sfName) return null;
+        const sfSlug = sfName
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-");
+        return {
+          id: "subfest-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+          name: sfName,
+          domain: sfSlug || "subfest",
+          startDate: startDateInput.value,
+          endDate: endDateInput.value,
+          status: "ACTIVE"
+        };
+      }
+
+      function renderCards() {
+        const q = searchInput.value.trim().toLowerCase();
+        const statusFilter = statusSelect.value;
+
+        const filtered = fests.filter((item) => {
+          const matchesStatus = statusFilter === "ALL" || item.status === statusFilter;
+          const subfestMatch = (item.subfests || []).some((sf) =>
+            String(sf.name || "").toLowerCase().includes(q)
+          );
+          const matchesQuery =
+            !q ||
+            String(item.name || "").toLowerCase().includes(q) ||
+            String(item.institution || "").toLowerCase().includes(q) ||
+            String(item.motto || "").toLowerCase().includes(q) ||
+            subfestMatch;
+          return matchesStatus && matchesQuery;
+        });
+
+        if (filtered.length === 0) {
+          cardsGrid.innerHTML = `<div class="sf-empty">No matching fests found.</div>`;
+          return;
+        }
+
+        cardsGrid.innerHTML = filtered
+          .map((item) => {
+            const initials = getInitials(item.name);
+            const subfestsArr = Array.isArray(item.subfests) ? item.subfests : [];
+            const subfestsHtml = subfestsArr
+              .map(
+                (sf) => `
+                  <span class="sf-subfest-tag" data-open-subfest-fest="${escapeHtml(item.id)}" data-open-subfest-id="${escapeHtml(sf.id)}" title="Open ${escapeHtml(sf.name)} Sub-Dashboard">
+                    <span>${escapeHtml(sf.name)}</span>
+                  </span>
+                `
+              )
+              .join("");
+
+            return `
+              <div class="sf-card" data-fest-id="${escapeHtml(item.id)}">
+                <div class="sf-card-top">
+                  <div class="sf-card-left">
+                    <span class="sf-card-badge">${escapeHtml(initials)}</span>
+                    <div class="sf-card-info">
+                      <span class="sf-card-name">${escapeHtml(item.name)}</span>
+                      <span class="sf-card-domain">${escapeHtml(item.institution || "Institution")}</span>
+                      ${item.motto ? `<span class="sf-card-motto">"${escapeHtml(item.motto)}"</span>` : ""}
+                    </div>
+                  </div>
+
+                  <div class="sf-card-actions-right">
+                    <button type="button" class="sf-open-fest-btn" data-open-fest="${escapeHtml(item.id)}">
+                      <span>Open</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </button>
+
+                    <div class="sf-more-wrap">
+                      <button type="button" class="sf-more-btn" data-menu-toggle="${escapeHtml(item.id)}" aria-label="More options">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="5" cy="12" r="2" />
+                          <circle cx="12" cy="12" r="2" />
+                          <circle cx="19" cy="12" r="2" />
+                        </svg>
+                      </button>
+                      <div class="sf-card-menu" id="sfMenu-${escapeHtml(item.id)}">
+                        <button type="button" class="sf-menu-item" data-open-fest="${escapeHtml(item.id)}">
+                          Open Sub-Dashboard
+                        </button>
+                        <button type="button" class="sf-menu-item" data-add-subfest-fest="${escapeHtml(item.id)}">
+                          + Add Subfests
+                        </button>
+                        <button type="button" class="sf-menu-item danger" data-delete-fest="${escapeHtml(item.id)}">
+                          Delete Fest
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sf-card-subfests">
+                  ${subfestsHtml}
+                  <button type="button" class="sf-add-subfest-inline-btn" data-add-subfest-fest="${escapeHtml(item.id)}">
+                    + Subfest (${subfestsArr.length})
+                  </button>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        cardsGrid.querySelectorAll("[data-open-fest]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-open-fest");
+            openSubDashboard(id);
+          });
+        });
+
+        cardsGrid.querySelectorAll("[data-open-subfest-id]").forEach((tag) => {
+          tag.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const fId = tag.getAttribute("data-open-subfest-fest");
+            const sfId = tag.getAttribute("data-open-subfest-id");
+            openSubDashboard(fId, sfId);
+          });
+        });
+
+        cardsGrid.querySelectorAll("[data-menu-toggle]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-menu-toggle");
+            const menu = root.querySelector(`#sfMenu-${CSS.escape(id)}`);
+            root.querySelectorAll(".sf-card-menu.open").forEach((m) => {
+              if (m !== menu) m.classList.remove("open");
+            });
+            menu?.classList.toggle("open");
+          });
+        });
+
+        cardsGrid.querySelectorAll("[data-add-subfest-fest]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-add-subfest-fest");
+            openAddSubfestsToExistingFest(id);
+          });
+        });
+
+        cardsGrid.querySelectorAll("[data-delete-fest]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-delete-fest");
+            fests = fests.filter((f) => f.id !== id);
+            syncSubfestsFlatList();
+      renderCards();
+            notify("Fest deleted", "success");
+          });
+        });
+      }
+
+      // =========================================
+      // SUB-DASHBOARD CONTROLLER (Home, Candidate, Programs)
+      // =========================================
+      function getActiveFestObj() {
+        return fests.find((f) => f.id === activeFestId) || null;
+      }
+
+      function getActiveSubfestObj() {
+        const fest = getActiveFestObj();
+        if (!fest) return null;
+        const list = Array.isArray(fest.subfests) ? fest.subfests : [];
+        return list.find((s) => s.id === activeSubfestId) || list[0] || null;
+      }
+
+      function switchSubDashboardTab(tab) {
+        activeSdTab = tab;
+        sessionStorage.setItem("festinger_open_sd_tab", tab);
+        sdNavItems.forEach((btn) => {
+          btn.classList.toggle("active", btn.getAttribute("data-sd-tab") === tab);
+        });
+
+        const titleMap = {
+          home: "Home",
+          candidate: "Candidate",
+          programs: "Programs"
+        };
+        if (sdGreenBreadcrumbLabel) {
+          sdGreenBreadcrumbLabel.textContent = titleMap[tab] || "Home";
+        }
+
+        sdPaneHome.style.display = tab === "home" ? "block" : "none";
+        sdPaneCandidate.style.display = tab === "candidate" ? "block" : "none";
+        sdPanePrograms.style.display = tab === "programs" ? "block" : "none";
+      }
+
+      function renderSubDashboard() {
+        const fest = getActiveFestObj();
+        const sf = getActiveSubfestObj();
+        if (!fest || !sf) {
+          showListPage();
+          return;
+        }
+        activeSubfestId = sf.id;
+        if (!Array.isArray(sf.candidates)) sf.candidates = [];
+        if (!Array.isArray(sf.programs)) sf.programs = [];
+
+        if (sdFestYellowBox) sdFestYellowBox.textContent = getInitials(fest.name);
+        if (sdFestBrandName) sdFestBrandName.textContent = fest.name || "Fest Name";
+        if (sdFestBrandMotto) sdFestBrandMotto.textContent = fest.motto || fest.institution || "Motto";
+
+        sdSwitcherAvatar.textContent = getInitials(sf.name).charAt(0);
+        sdSwitcherName.textContent = sf.name;
+        sdSwitcherFestName.textContent = fest.name;
+        if (sdActiveSubfestBadge) sdActiveSubfestBadge.textContent = sf.status || "ACTIVE";
+
+        // Populate switcher menu with all subfests of this Fest
+        sdSwitcherMenu.innerHTML = (fest.subfests || [])
+          .map(
+            (sub) => `
+              <button type="button" class="sd-switcher-opt ${sub.id === sf.id ? "active" : ""}" data-switch-sf-id="${escapeHtml(sub.id)}">
+                <span class="sd-switcher-avatar" style="width:22px;height:22px;font-size:0.62rem;">${escapeHtml(getInitials(sub.name).charAt(0))}</span>
+                <span>${escapeHtml(sub.name)}</span>
+              </button>
+            `
+          )
+          .join("");
+
+        sdSwitcherMenu.querySelectorAll("[data-switch-sf-id]").forEach((opt) => {
+          opt.addEventListener("click", (e) => {
+            e.stopPropagation();
+            activeSubfestId = opt.getAttribute("data-switch-sf-id");
+            sessionStorage.setItem("festinger_open_subfest_id", activeSubfestId);
+            sdSwitcherMenu.classList.remove("open");
+            renderSubDashboard();
+          });
+        });
+
+        // Home overview stats & welcome
+        if (sdWelcomeSubfestName) sdWelcomeSubfestName.textContent = sf.name;
+        if (sdStatCandidates) sdStatCandidates.textContent = String(sf.candidates.length);
+        if (sdStatPrograms) sdStatPrograms.textContent = String(sf.programs.length);
+        if (sdStatResults) sdStatResults.textContent = String((sf.results || []).length);
+
+        if (window.FestingerDB && sdFestUsersBody && sdStatUsers) {
+          window.FestingerDB.loadDoc("duties").then((dutiesList) => {
+            const matchedDuties = (Array.isArray(dutiesList) ? dutiesList : []).filter(
+              (d) => String(d.festName || "").toLowerCase() === String(fest.name || "").toLowerCase()
+            );
+            sdStatUsers.textContent = String(matchedDuties.length);
+            if (matchedDuties.length === 0) {
+              sdFestUsersBody.innerHTML = `<div class="sd-fest-users-empty">No fest users assigned.</div>`;
+            } else {
+              sdFestUsersBody.innerHTML = matchedDuties
+                .map((d) => {
+                  const initial = (d.userName || d.userEmail || "U").trim().charAt(0).toUpperCase();
+                  const rolesStr = (d.roles || []).join(", ") || "Assigned";
+                  return `
+                    <div class="sd-fest-user-row">
+                      <div class="sd-fest-user-left">
+                        <span class="sd-fest-user-avatar">${escapeHtml(initial)}</span>
+                        <div style="min-width:0;line-height:1.25;">
+                          <div style="font-size:0.74rem;font-weight:700;color:#111111;">${escapeHtml(d.userName || "User")}</div>
+                          <div style="font-size:0.64rem;color:var(--input-placeholder);">${escapeHtml(d.userEmail || "")}</div>
+                        </div>
+                      </div>
+                      <span class="cs-fest-summary-pill">${escapeHtml(rolesStr)}</span>
+                    </div>
+                  `;
+                })
+                .join("");
+            }
+          });
+        }
+
+        // Candidates table
+        if (sf.candidates.length === 0) {
+          sdCandidatesTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--input-placeholder);padding:18px;">No candidates added yet.</td></tr>`;
+        } else {
+          sdCandidatesTableBody.innerHTML = sf.candidates
+            .map(
+              (c, idx) => `
+                <tr>
+                  <td>${escapeHtml(c.chest)}</td>
+                  <td>${escapeHtml(c.name)}</td>
+                  <td>${escapeHtml(c.team || "Ã¢â‚¬â€")}</td>
+                  <td style="text-align: right;">
+                    <button type="button" class="sd-del-btn" data-del-cand="${idx}">Delete</button>
+                  </td>
+                </tr>
+              `
+            )
+            .join("");
+          sdCandidatesTableBody.querySelectorAll("[data-del-cand]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const idx = Number(btn.getAttribute("data-del-cand"));
+              sf.candidates.splice(idx, 1);
+              syncSubfestsFlatList();
+              renderSubDashboard();
+              notify("Candidate removed", "success");
+            });
+          });
+        }
+
+        // Programs table
+        if (sf.programs.length === 0) {
+          sdProgramsTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--input-placeholder);padding:18px;">No programs added yet.</td></tr>`;
+        } else {
+          sdProgramsTableBody.innerHTML = sf.programs
+            .map(
+              (p, idx) => `
+                <tr>
+                  <td>${escapeHtml(p.code)}</td>
+                  <td>${escapeHtml(p.name)}</td>
+                  <td>${escapeHtml(p.type || "Single")}</td>
+                  <td style="text-align: right;">
+                    <button type="button" class="sd-del-btn" data-del-prog="${idx}">Delete</button>
+                  </td>
+                </tr>
+              `
+            )
+            .join("");
+          sdProgramsTableBody.querySelectorAll("[data-del-prog]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const idx = Number(btn.getAttribute("data-del-prog"));
+              sf.programs.splice(idx, 1);
+              syncSubfestsFlatList();
+              renderSubDashboard();
+              notify("Program removed", "success");
+            });
+          });
+        }
+
+        switchSubDashboardTab(activeSdTab);
+      }
+
+      function openSubDashboard(festId, subfestId = null) {
+        const fest = fests.find((f) => f.id === festId);
+        if (!fest) return;
+        const list = Array.isArray(fest.subfests) ? fest.subfests : [];
+        if (list.length === 0) {
+          notify("Please add at least one Subfest first.", "error");
+          openAddSubfestsToExistingFest(festId);
+          return;
+        }
+        activeFestId = fest.id;
+        activeSubfestId = subfestId || list[0].id;
+        sessionStorage.setItem("festinger_open_fest_id", activeFestId);
+        sessionStorage.setItem("festinger_open_subfest_id", activeSubfestId);
+        activeSdTab = sessionStorage.getItem("festinger_open_sd_tab") || "home";
+        sdNavSearchInput.value = "";
+        sdNavItems.forEach((b) => (b.style.display = "flex"));
+
+        listView.style.display = "none";
+        createView.classList.remove("active");
+        subDashboardView.classList.add("active");
+        renderSubDashboard();
+      }
+
+      sdSwitcherBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sdSwitcherMenu.classList.toggle("open");
+      });
+
+      document.addEventListener("click", () => {
+        sdSwitcherMenu?.classList.remove("open");
+      });
+
+      sdNavItems.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          switchSubDashboardTab(btn.getAttribute("data-sd-tab") || "home");
+        });
+      });
+
+      sdNavSearchInput?.addEventListener("input", () => {
+        const q = sdNavSearchInput.value.trim().toLowerCase();
+        sdNavItems.forEach((btn) => {
+          const text = btn.textContent.trim().toLowerCase();
+          btn.style.display = !q || text.includes(q) ? "flex" : "none";
+        });
+      });
+
+      sdBackToFestsBtn?.addEventListener("click", showListPage);
+
+      root.querySelectorAll("[data-qa-tab]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          switchSubDashboardTab(btn.getAttribute("data-qa-tab") || "home");
+        });
+      });
+
+      root.querySelectorAll("[data-qa-soon]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          notify(${btn.getAttribute("data-qa-soon")} — coming soon!, "success");
+        });
+      });
+
+      sdManageUsersBtn?.addEventListener("click", () => {
+        const usersNavBtn = document.querySelector("#sidebarNav [data-section='users']");
+        if (usersNavBtn) {
+          usersNavBtn.click();
+        } else {
+          notify("Open Users -> Festival Duty in Owner Dashboard to manage fest users.", "success");
+        }
+      });
+
+      sdAddCandidateForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const sf = getActiveSubfestObj();
+        if (!sf) return;
+        const chest = sdCandChest.value.trim();
+        const name = sdCandName.value.trim();
+        const team = sdCandTeam.value.trim();
+        if (!chest || !name) {
+          notify("Enter Chest No and Candidate Name.", "error");
+          return;
+        }
+        if (!Array.isArray(sf.candidates)) sf.candidates = [];
+        sf.candidates.push({ chest, name, team });
+        syncSubfestsFlatList();
+        sdAddCandidateForm.reset();
+        renderSubDashboard();
+        notify(`Added candidate ${name}`, "success");
+      });
+
+      sdAddProgramForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const sf = getActiveSubfestObj();
+        if (!sf) return;
+        const code = sdProgCode.value.trim();
+        const name = sdProgName.value.trim();
+        const type = sdProgType.value.trim() || "Single";
+        if (!code || !name) {
+          notify("Enter Program Code and Name.", "error");
+          return;
+        }
+        if (!Array.isArray(sf.programs)) sf.programs = [];
+        sf.programs.push({ code, name, type });
+        syncSubfestsFlatList();
+        sdAddProgramForm.reset();
+        renderSubDashboard();
+        notify(`Added program ${name}`, "success");
+      });
+
+      document.addEventListener("click", () => {
+        root.querySelectorAll(".sf-card-menu.open").forEach((m) => m.classList.remove("open"));
+      });
+
+      searchInput?.addEventListener("input", renderCards);
+      statusSelect?.addEventListener("change", renderCards);
+
+      openCreateViewBtn?.addEventListener("click", openCreateFestWizard);
+      festStep1BackBtn?.addEventListener("click", showListPage);
+      festStep1NextBtn?.addEventListener("click", goToSlide2);
+
+      [festNameInput, festInstitutionInput, festMottoInput].forEach((inp) => {
+        inp?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            goToSlide2();
+          }
+        });
+      });
+
+      backToSlide1Btn?.addEventListener("click", () => {
+        if (editingExistingFestId) {
+          showListPage();
+          return;
+        }
+        slide2.classList.remove("active");
+        slide1.classList.add("active");
+      });
+
+      cancelBtn?.addEventListener("click", showListPage);
+
+      addAnotherSubfestBtn?.addEventListener("click", () => {
+        const currentSf = collectCurrentSubfestFromInputs();
+        if (!currentSf) {
+          notify("Enter Subfest Name first to add another.", "error");
+          nameInput.focus();
+          return;
+        }
+        draftSubfests.push(currentSf);
+        renderDraftSubfestsQueue();
+        resetSubfestFields();
+        nameInput.focus();
+        notify(`Added subfest "${currentSf.name}" (${draftSubfests.length} total)`, "success");
+      });
+
+      createForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const currentSf = collectCurrentSubfestFromInputs();
+        if (currentSf === false) return;
+        if (currentSf) {
+          draftSubfests.push(currentSf);
+        }
+
+        if (draftSubfests.length === 0) {
+          notify("Please add at least one Subfest.", "error");
+          nameInput.focus();
+          return;
+        }
+
+        if (editingExistingFestId) {
+          const idx = fests.findIndex((f) => f.id === editingExistingFestId);
+          if (idx !== -1) {
+            fests[idx].subfests = [...draftSubfests];
+          }
+          syncSubfestsFlatList();
+          renderCards();
+          showListPage();
+          notify(`Updated subfests for "${draftFest.name}"!`, "success");
+          return;
+        }
+
+        fests.push({
+          id: "fest-" + Date.now(),
+          name: draftFest.name,
+          institution: draftFest.institution,
+          motto: draftFest.motto,
+          status: "ACTIVE",
+          subfests: [...draftSubfests]
+        });
+
+        syncSubfestsFlatList();
+        renderCards();
+        showListPage();
+        notify(`Fest "${draftFest.name}" created with ${draftSubfests.length} subfest(s)!`, "success");
+      });
+
+      renderCards();
+
+      // If logged in with Owner Page "Read" only (festival_only), open the content website directly
+      const isFestivalOnlyMode = sessionStorage.getItem("festinger_user_access_mode") === "festival_only";
+      const sdLogoutBtn = root.querySelector("#sdLogoutBtn");
+
+      sdLogoutBtn?.addEventListener("click", () => {
+        sessionStorage.removeItem("festinger_user_auth");
+        sessionStorage.removeItem("festinger_logged_user");
+        sessionStorage.removeItem("festinger_user_access_mode");
+        sessionStorage.removeItem("festinger_assigned_fest_name");
+        window.location.replace("./index.html");
+      });
+
+      function applyFestivalOnlyView() {
+        if (!isFestivalOnlyMode) return;
+        root.style.padding = "0";
+        const sdShell = root.querySelector(".sd-shell");
+        if (sdShell) sdShell.style.minHeight = "100vh";
+        if (sdBackToFestsBtn) sdBackToFestsBtn.style.display = "none";
+        if (sdLogoutBtn) sdLogoutBtn.style.display = "flex";
+
+        const assignedName = (sessionStorage.getItem("festinger_assigned_fest_name") || "").trim().toLowerCase();
+        const targetFest =
+          fests.find((f) => String(f.name || "").trim().toLowerCase() === assignedName) || fests[0];
+
+        if (targetFest) {
+          openSubDashboard(targetFest.id);
+        } else {
+          listView.innerHTML = `
+            <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;">
+              <h2 style="margin:0;font-size:1.1rem;color:#111111;">No Festival Assigned Yet</h2>
+              <p style="margin:0;font-size:0.82rem;color:#9E8C8E;">Please ask the Admin to create a Fest and assign your Festival Duty.</p>
+              <button type="button" onclick="sessionStorage.clear();window.location.replace('./index.html');" style="background:#D2202D;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">Logout</button>
+            </div>
+          `;
+        }
+      }
+
+      // Load Fests directly from Firebase Firestore
+      if (window.FestingerDB) {
+        window.FestingerDB.loadDoc("fests").then((fbFests) => {
+          fests = Array.isArray(fbFests) ? fbFests.filter((f) => f && f.id !== "fest-main-1") : [];
+      renderCards();
+          applyFestivalOnlyView();
+        });
+      } else {
+        applyFestivalOnlyView();
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => window.initSetupFest());
+    } else {
+      window.initSetupFest();
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://api-festinger.vercel.app/config.js"></script>
+  <script src="./firebase_sync.js"></script>
+</body>
+</html>
+

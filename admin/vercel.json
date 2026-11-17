@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/setup_fest", "destination": "/setup_fest.html" },
+    { "source": "/user_managment", "destination": "/user_managment.html" },
+    { "source": "/user_form", "destination": "/user_form.html" },
+    { "source": "/user_welcome", "destination": "/user_welcome.html" }
+  ]
+}

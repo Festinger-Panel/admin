@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome - Festinger 2.0</title>
+  <link rel="icon" type="image/png" href="./Asett/Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+  <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+  <style>
+    :root {
+      /* Primary colours */
+      --color-red: #D2202D;
+      --color-yellow: #F0B81B;
+      --color-green: #22AC5E;
+
+      /* Secondary colours */
+      --color-coral: #D9653D;
+      --color-bright-green: #28AE62;
+      --color-golden: #E9B449;
+
+      /* Additional palette */
+      --color-light-gold: #EAB750;
+      --color-soft-green: #51B26C;
+      --color-green-light: #53B26D;
+      --color-dark-red: #C54A43;
+      --color-deep-red: #BF2530;
+      --color-mustard: #E2AF3F;
+      --color-muted-red: #C64842;
+      --color-brown-red: #B34333;
+      --color-orange-red: #D9673F;
+      --color-light-golden: #E6B550;
+      --color-leaf-green: #33B061;
+      --color-coral-red: #D03F42;
+      --color-warm-gold: #E4B450;
+      --color-muted-coral: #C64B44;
+
+      /* UI Specific */
+      --input-bg: #FDF2F3;
+      --input-placeholder: #9E8C8E;
+      --card-border: #C54A43;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #FFFFFF;
+      color: #111111;
+      padding: 1.5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .welcome-card {
+      width: 100%;
+      max-width: 720px;
+      min-height: 410px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--card-border);
+      border-radius: 26px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Decorative Arch Panel with Image */
+    .left-panel {
+      width: 300px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .arch-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .arch-inner-img {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 82%;
+      max-height: 74%;
+      object-fit: contain;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    /* Right Welcome & Notice Content */
+    .right-panel {
+      flex: 1;
+      padding: 38px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--input-bg);
+      color: var(--color-deep-red);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .user-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-green);
+    }
+
+    .welcome-heading {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #111111;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .welcome-heading span {
+      color: var(--color-red);
+    }
+
+    .welcome-sub {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--input-placeholder);
+      margin-bottom: 16px;
+    }
+
+    .diamonds-svg {
+      width: 60px;
+      height: 15px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .access-notice-box {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .notice-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--color-yellow);
+      color: #111111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .notice-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--color-deep-red);
+      margin-bottom: 3px;
+    }
+
+    .notice-desc {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #1E1E1E;
+      line-height: 1.45;
+    }
+
+    .logout-btn {
+      height: 40px;
+      padding: 0 22px;
+      background: var(--color-red);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--color-deep-red);
+    }
+
+    .logout-btn:active {
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 640px) {
+      .welcome-card {
+        flex-direction: column;
+      }
+
+      .left-panel {
+        width: 100%;
+        height: 200px;
+      }
+
+      .right-panel {
+        padding: 26px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="welcome-card">
+    <!-- Left Arch Panel with Brand Image -->
+    <div class="left-panel" aria-hidden="true">
+      <svg class="arch-svg" viewBox="0 0 284 368" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="0" width="284" height="368" rx="23" fill="#D2202D" />
+        <rect x="8" y="12" width="268" height="346" rx="15" fill="#F0B81B" />
+        <path
+          d="M 34 344
+             H 250
+             A 12 12 0 0 0 262 332
+             V 84
+             A 10 10 0 0 0 252 74
+             H 226
+             A 6 6 0 0 1 220.5 70.2
+             A 84 84 0 0 0 63.5 70.2
+             A 6 6 0 0 1 58 74
+             H 32
+             A 10 10 0 0 0 22 84
+             V 332
+             A 12 12 0 0 0 34 344
+             Z"
+          fill="#FFFFFF"
+        />
+      </svg>
+      <img src="./Asett/Logo.png" alt="Festinger 2.0" class="arch-inner-img" />
+    </div>
+
+    <!-- Right Welcome Content -->
+    <div class="right-panel">
+      <div class="user-pill">
+        <span class="user-pill-dot"></span>
+        <span id="userEmailBadge">User Account</span>
+      </div>
+
+      <h1 class="welcome-heading">You're Welcome, <span id="welcomeUserName">User</span>!</h1>
+      <p class="welcome-sub">Signed in to Festinger 2.0 Festival Management System</p>
+
+      <svg class="diamonds-svg" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="7,0.5 13.5,7 7,13.5 0.5,7" fill="#BF2530" />
+        <polygon points="21,0.5 27.5,7 21,13.5 14.5,7" fill="#F0B81B" />
+        <polygon points="35,0.5 41.5,7 35,13.5 28.5,7" fill="#BF2530" />
+        <polygon points="49,0.5 55.5,7 49,13.5 42.5,7" fill="#F0B81B" />
+      </svg>
+
+      <!-- Admin Not Accessed to Posts Notice -->
+      <div class="access-notice-box" role="status">
+        <div class="notice-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <div>
+          <div class="notice-title">Admin Not Accessed to Posts</div>
+          <div class="notice-desc">
+            Your account is registered and active, but the administrator has not granted access to posts yet.
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="logout-btn" id="userLogoutBtn">
+        <i class="hgi hgi-stroke hgi-rounded hgi-logout-05" aria-hidden="true"></i>
+        <span>Log out</span>
+      </button>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      if (sessionStorage.getItem("festinger_user_auth") !== "true") {
+        window.location.replace("./index.html");
+        return;
+      }
+
+      try {
+        const user = JSON.parse(sessionStorage.getItem("festinger_logged_user") || "null");
+        if (user) {
+          if (user.name) {
+            document.getElementById("welcomeUserName").textContent = user.name;
+          }
+          if (user.email) {
+            document.getElementById("userEmailBadge").textContent = user.email;
+          }
+        }
+      } catch (_) {}
+
+      document.getElementById("userLogoutBtn").addEventListener("click", () => {
+        sessionStorage.removeItem("festinger_user_auth");
+        sessionStorage.removeItem("festinger_logged_user");
+        window.location.href = "./index.html";
+      });
+    })();
+  </script>
+</body>
+</html>

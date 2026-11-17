@@ -2837,7 +2837,7 @@
 
       root.querySelectorAll("[data-qa-soon]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          notify(${btn.getAttribute("data-qa-soon")} — coming soon!, "success");
+          notify(`${btn.getAttribute("data-qa-soon")} — coming soon!`, "success");
         });
       });
 
